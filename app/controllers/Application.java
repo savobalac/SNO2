@@ -11,4 +11,8 @@ public class Application extends Controller {
         return ok(index.render("SNO2"));
     }
 
+    public static Result test() {
+        return ok(index.render("Test SNO2"));
+    }
+
 }
