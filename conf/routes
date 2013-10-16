@@ -4,6 +4,11 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+
+# Analysts
+GET     /analysts                   controllers.Analysts.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
+
+# Test URLs
 GET     /test                       controllers.Application.test()
 
 # Map static resources from the /public folder to the /assets URL path
