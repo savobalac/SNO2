@@ -39,8 +39,45 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result create() {
-        //return edit(new Long(0));
-        return ok("No create function yet");
+        return edit(new Long(0));
+        //return ok("No create function yet");
+    }
+
+    /**
+     * Display a form to create a new or edit an existing analyst.
+     * @param id    Id of the analyst to edit. 0 == Create New.
+     * @return Result
+     */
+    public static Result edit(Long id) {
+        Form<Analyst> analystForm;
+        if (id <= 0L) {
+            //analystForm.fill(new Analyst());
+            analystForm = Form.form(Analyst.class).fill(new Analyst());
+        }
+        else {
+            //analystForm.fill(Analyst.find.byId(id));
+            analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
+        }
+        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm));
+    }
+
+    /**
+     * Update the analyst from the form.
+     * @param id Id of the analyst to edit
+     * @return Result
+     */
+    public static Result update(Long id) {
+        return ok("No update function yet");
+    }
+
+
+    /**
+     * Delete the analyst.
+     * @param id Id of the analyst to delete
+     * @return Result
+     */
+    public static Result delete(Long id) {
+        return ok("No delete function yet");
     }
 
 }

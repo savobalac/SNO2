@@ -11,8 +11,13 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class Utils {
+
     // Constants
     public static final int MYSQL_TEXT_BYTES = 65535; // 2^16
+
+    public static final String FLASH_KEY_INFO = "info";
+    public static final String FLASH_KEY_ERROR = "error";
+    public static final String FLASH_KEY_SUCCESS = "success";
 
     /**
      * Returns a list of Integers based on start and end values

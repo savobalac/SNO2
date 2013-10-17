@@ -8,6 +8,9 @@ GET     /                           controllers.Application.index()
 # Analysts
 GET     /analysts                   controllers.Analysts.list(p:Int ?= 0, s ?= "lastname", o ?= "asc", f ?= "", t ?= "")
 GET     /analysts/new               controllers.Analysts.create()
+GET     /analysts/:id               controllers.Analysts.edit(id:Long)
+POST    /analysts/:id               controllers.Analysts.update(id:Long)
+POST    /analysts/:id/delete        controllers.Analysts.delete(id:Long)
 
 # Test URLs
 GET     /test                       controllers.Application.test()

@@ -1,0 +1,128 @@
+@*********************************************************
+* Page:   Create/Edit Analyst                            *
+* Author: Sav                                            *
+* Date:   17/10/13                                       *
+*                                                        *
+* @param id            The Analyst id (0 for new)        *
+* @param analystForm   The Analyst Form object           *
+*********************************************************@
+
+@(  id:             Long,
+    analystForm:    Form[models.Analyst]
+)
+
+@import helper._
+@import helper.twitterBootstrap._
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
+
+@main(if(analystForm.get().analystId==null){"New Analyst"} else {analystForm.get().firstname+analystForm.get().lastname}) {
+
+    @* The id should be zero if creating an Analyst, but also test for null *@
+    @if(id == null || id==0) {
+        <h1>New Analyst</h1>
+    } else {
+        <h1><span class="ecRecType">Analyst: </span>
+            <span class="ecRecName">@analystForm.field("firstname").value()</span>
+            <span class="ecRecName">@analystForm.field("lastname").value()</span>
+        </h1>
+    }
+
+    <hr>
+
+    @form(routes.Analysts.update(id)) {
+
+        <fieldset>
+            <input type="Hidden" id="id" name="id" value="@id" />
+            @inputText(analystForm("salutation"), 'style -> "width: 50%", '_label -> "Title:")
+            <hr>
+            @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
+            <hr>
+            @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
+            <hr>
+            @inputText(analystForm("statusId"), 'style -> "width: 50%", '_label -> "Status:")
+            <hr>
+            @inputText(analystForm("rank"), 'style -> "width: 50%", '_label -> "Rank:")
+            <hr>
+            @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
+            <hr>
+            @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
+            <hr>
+            @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
+            <hr>
+            @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
+            <hr>
+            @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
+            <hr>
+            @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
+            <hr>
+            @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
+            <hr>
+            @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
+            <hr>
+            @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
+            <hr>
+            @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
+            <hr>
+            @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
+            <hr>
+            @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
+            <hr>
+            @inputText(analystForm("emailverified"), 'style -> "width: 50%", '_label -> "emailverified:")
+            <hr>
+            @inputText(analystForm("phoneVerified"), 'style -> "width: 50%", '_label -> "phoneVerified:")
+            <hr>
+            @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
+            <hr>
+            @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
+            <hr>
+            @inputText(analystForm("contractSigned"), 'style -> "width: 50%", '_label -> "contractSigned:")
+            <hr>
+            @textarea(analystForm("position_description"), 'style -> "width: 100%", '_label -> "Position:")
+            <hr>
+            @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
+            <hr>
+            @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
+            <hr>
+            @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
+            <hr>
+            @inputText(analystForm("createOn"), 'style -> "width: 50%", '_label -> "Created on:")
+            <hr>
+            @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
+            <hr>
+            @textarea(analystForm("profile_image"), 'style -> "width: 100%", '_label -> "Profile image:")
+            <hr>
+            @textarea(analystForm("cv_document"), 'style -> "width: 100%", '_label -> "CV:")
+            <hr>
+            @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
+            <hr>
+            @inputText(analystForm("primaryDesk"), 'style -> "width: 100%", '_label -> "Primary Desk:")
+            <hr>
+        </fieldset>
+
+        <hr>
+
+        <div class="actions">
+            <input type="submit" value="Save" class="btn btn-primary" onclick="return confirmCancelChanges()">
+            <a href="@routes.Analysts.list()" class="btn btn-warning" onclick="return confirmCancelChanges()">Cancel</a>
+        </div>
+
+        <hr>
+
+    }
+
+    @if(!(id==null || id==0)) {
+        @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
+            <input type="submit" value="DELETE" class="btn btn-danger btn-mini">
+        }
+    }
+
+    <script type="text/javascript">
+
+        // Disables all fields by preventing the default action when the field attribute class="disable"
+        $(".disable").click(function(event){
+            event.preventDefault();
+        });
+
+    </script>
+
+}
