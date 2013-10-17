@@ -37,7 +37,7 @@ public class Analyst extends Model {
     public String                   zip;
     public String                   country;
     public String                   countryOfResidence;
-    public Boolean                  emailVerified;
+    public Boolean                  emailverified;
     public Boolean                  phoneVerified;
     public String                   wikiUsername;
     public String                   highriseAccount;

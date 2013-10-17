@@ -8,4 +8,6 @@ libraryDependencies ++= Seq(
   cache
 )     
 
+templatesImport += "com.avaje.ebean._"
+
 play.Project.playJavaSettings

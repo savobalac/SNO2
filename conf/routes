@@ -6,7 +6,8 @@
 GET     /                           controllers.Application.index()
 
 # Analysts
-GET     /analysts                   controllers.Analysts.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
+GET     /analysts                   controllers.Analysts.list(p:Int ?= 0, s ?= "lastname", o ?= "asc", f ?= "", t ?= "")
+GET     /analysts/new               controllers.Analysts.create()
 
 # Test URLs
 GET     /test                       controllers.Application.test()

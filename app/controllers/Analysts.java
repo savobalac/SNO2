@@ -7,6 +7,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.mvc.With;
+import views.html.Analysts.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,8 +30,17 @@ public class Analysts extends Controller {
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
         Page<Analyst> pageSongs = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        return ok("Test list analysts page");
-        //return ok(listAnalysts.render(pageSongs, sortBy, order, filter, search));
+        //return ok("Test list analysts page");
+        return ok(listAnalysts.render(pageSongs, sortBy, order, filter, search));
+    }
+
+    /**
+     * Create a new Song.
+     * @return Result
+     */
+    public static Result create() {
+        //return edit(new Long(0));
+        return ok("No create function yet");
     }
 
 }

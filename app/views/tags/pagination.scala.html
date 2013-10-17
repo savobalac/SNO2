@@ -1,0 +1,193 @@
+@**************************************************************************************************************
+* Page:    pagination (using Twitter Bootstrap)                                                               *
+* Author:  Sav                                                                                                *
+* Date:    17/10/13                                                                                           *
+* Description:  Pagination providing 10 page links, plus Next & Previous and move << >> by 10/25/50 pages.    *
+*               The current page values are passed in from the list page along with a string type,            *
+*               which is used to determine which controller to call (to display the list page).               *
+*                                                                                                             *
+* @param pageType           The type of page, e.g. Venue                                                      *
+* @param pageCount          The page count                                                                    *
+* @param page               The current page                                                                  *
+* @param hasPrev            If there's a previous page                                                        *
+* @param hasNext            If there's a next page                                                            *
+* @param sortBy             The sort column                                                                   *
+* @param sortOrder          Ascending or descending                                                           *
+* @param filter1            The first search filter                                                           *
+* @param filter2            The second search filter                                                          *
+* @param filterNum          A numeric search filter                                                           *
+**************************************************************************************************************@
+
+@(  pageType:       Integer,
+    pageCount:      Integer,
+    page:           Integer,
+    hasPrev:        Boolean,
+    hasNext:        Boolean,
+    sortBy:         String,
+    sortOrder:      String,
+    filter1:        String,
+    filter2:        String,
+    filterNum:      Long
+)
+
+@import helper._
+@import utils.Utils
+@import controllers.Application
+
+<!-- Views with many rows of data need pagination -->
+<div class="row">
+    <div class="span11">
+        <div class="pagination pagination-centered">
+            <ul>
+                <!-- Enables the Previous 50/25/10 page links if enough pages exist   -->
+                <!-- Can move down by 50 pages if at least 50 pages (1000 rows) exist -->
+                @if(pageCount > 50) {
+                    @if(page - 50 >= 0) {
+                        <li class="prev">
+                            <a href="@Application.getLink(pageType.intValue(), page - 50, sortBy, sortOrder,
+                                                          filter1, filter2, filterNum)">&laquo; 50</a>
+                        </li>
+                    } else {
+                        <li class="disabled">
+                            <a>&laquo; 50</a>
+                        </li>
+                    }
+                }
+                <!-- Can move down by 25 pages if at least 25 pages (500 rows) exist -->
+                @if(pageCount > 25) {
+                    @if(page - 25 >= 0) {
+                        <li class="prev">
+                            <a href="@Application.getLink(pageType.intValue(), page - 25, sortBy, sortOrder,
+                                                          filter1, filter2, filterNum)">&laquo; 25</a>
+                        </li>
+                    } else {
+                        <li class="disabled">
+                            <a>&laquo; 25</a>
+                        </li>
+                    }
+                }
+                <!-- Can move down by 10 pages if at least 10 pages (200 rows) exist -->
+                @if(pageCount > 10) {
+                    @if(page - 10 >= 0) {
+                        <li class="prev">
+                            <a href="@Application.getLink(pageType.intValue(), page - 10, sortBy, sortOrder,
+                                                          filter1, filter2, filterNum)">&laquo; 10</a>
+                        </li>
+                    } else {
+                        <li class="disabled">
+                            <a>&laquo; 10</a>
+                        </li>
+                    }
+                }
+                @if(hasPrev.booleanValue()) {
+                    <li class="prev">
+                        <a href="@Application.getLink(pageType.intValue(), page - 1, sortBy, sortOrder,
+                                                      filter1, filter2, filterNum)">&laquo; Previous</a>
+                    </li>
+                } else {
+                    <li class="prev disabled"><a>&laquo; Previous</a></li>
+                }
+                <!-- Shows a view of up to 10 links over the list of pages and activates the current page            -->
+                <!-- Only shows page links if they exist (note the page index starts at 0, so link 1 is page 0)      -->
+                <!-- If the current page > 6, move the view and always activate the 6th link in the list of 10       -->
+                <!-- e.g. 12 pages in list   1  2  3  4  5  6  7  8  9 10 11 12 (index range: 0-11)                  -->
+                <!-- No.  1 clicked, show:   1  2  3  4  5  6  7  8  9 10 (activate  1, the 1st link)                -->
+                <!-- No.  2 clicked, show:   1  2  3  4  5  6  7  8  9 10 (activate  2, the 2nd link)                -->
+                <!-- No.  6 clicked, show:   1  2  3  4  5  6  7  8  9 10 (activate  6, the 6th link)                -->
+                <!-- No.  7 clicked, show:   2  3  4  5  6  7  8  9 10 11 (activate  7, the 6th link)                -->
+                <!-- No. 11 clicked, show:   6  7  8  9 10 11 12          (activate 11, the 6th link, only 7 links)  -->
+                <!-- No. 12 clicked, show:   7  8  9 10 11 12             (activate 12, the 6th link, only 6 links)  -->
+
+                <!-- Activate one of the first 6 links (current page is between 0 and 5) -->
+                @if(page<6) {
+                    <!-- Show 10 links (can't loop with a list of primitives, so get a list of integers) -->
+                    @for(idx <- Utils.getIntegers(0, 9)){
+                        <!-- Only show pages if there are any -->
+                        @if(pageCount>idx.intValue()) {
+                            <!-- Activate the current page (increment the page number) -->
+                            @if(page==idx.intValue()) {
+                                <li class="active">
+                                    <a>@(idx.intValue()+1)</a>
+                                </li>
+                            } else {
+                                <li>
+                                    <a href="@Application.getLink(pageType.intValue(), idx.intValue(), sortBy, sortOrder,
+                                                                  filter1, filter2, filterNum)">@(idx.intValue()+1)</a>
+                                </li>
+                            }
+                        }
+                    }
+                <!-- Activate the 6th link -->
+                } else {
+                     <!-- Show 10 links (can't loop with a list of primitives, so get a list of integers) -->
+                    @for(idx <- Utils.getIntegers(0, 9)){
+                        <!-- Only display the 7th to 10th links if they exist -->
+                        @if(pageCount > page-5+idx) {
+                            <!-- The 6th link is active -->
+                            @if(idx.intValue()==5) {
+                                <li class="active">
+                                    <!-- Increment the page number -->
+                                    <a>@(page-5+idx+1)</a>
+                                </li>
+                            } else {
+                                <li>
+                                    <!-- Increment the page number -->
+                                    <a href="@Application.getLink(pageType.intValue(), page-5+idx, sortBy, sortOrder,
+                                                                  filter1, filter2, filterNum)">@(page-5+idx+1)</a>
+                                </li>
+                            }
+                        }
+                    }
+                }
+                <!-- Enables the Next 10/25/50 page links if enough pages exist -->
+                @if(hasNext.booleanValue()) {
+                    <li class="next">
+                        <a href="@Application.getLink(pageType.intValue(), page + 1, sortBy, sortOrder,
+                                                      filter1, filter2, filterNum)">&raquo; Next</a>
+                    </li>
+                } else {
+                    <li class="disabled"><a>&raquo; Next</a></li>
+                }
+                <!-- Can move up by 10 pages if at least 10 pages (200 rows) exist -->
+                @if(pageCount > 10) {
+                    @if(pageCount - page > 10) {
+                        <li class="next">
+                            <a href="@Application.getLink(pageType.intValue(), page + 10, sortBy, sortOrder,
+                                                          filter1, filter2, filterNum)">&raquo; 10</a>
+                        </li>
+                    } else {
+                        <li class="disabled">
+                            <a>&raquo; 10</a>
+                        </li>
+                    }
+                }
+                <!-- Can move up by 25 pages if at least 25 pages (500 rows) exist -->
+                @if(pageCount > 25) {
+                    @if(pageCount - page > 25) {
+                        <li class="next">
+                            <a href="@Application.getLink(pageType.intValue(), page + 25, sortBy, sortOrder,
+                                                          filter1, filter2, filterNum)">&raquo; 25</a>
+                        </li>
+                    } else {
+                        <li class="disabled">
+                            <a>&raquo; 25</a>
+                        </li>
+                    }
+                }
+                <!-- Can move up by 50 pages if at least 50 pages (1000 rows) exist -->
+                @if(pageCount > 50) {
+                    @if(pageCount - page > 50) {
+                        <li class="next">
+                            <a href="@Application.getLink(pageType.intValue(), page + 50, sortBy, sortOrder,
+                                                          filter1, filter2, filterNum)">&raquo; 50</a>
+                        </li>
+                    } else {
+                        <li class="disabled">
+                            <a>&raquo; 50</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</div>
