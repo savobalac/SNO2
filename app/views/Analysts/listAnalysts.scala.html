@@ -14,7 +14,8 @@
     currentSortBy:      String,
     currentOrder:       String,
     currentFilter:      String,
-    currentSearch:      String
+    currentSearch:      String,
+    user:               Users
 )
 
 @****************************************
@@ -53,7 +54,7 @@
 }
 
 
-@main("Analysts") {
+@main("Analysts", user) {
 
     <h1 id="homeTitle">Analysts (@currentPage.getTotalRowCount)</h1>
 

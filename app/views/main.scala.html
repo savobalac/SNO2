@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, user: Users)(content: Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +25,15 @@
                 <a href="@routes.Application.index()">Home</a>
                 <a href="/analysts">Analysts</a>
             </h1>
+        </header>
+
+        <header>
+            <dl id="user">
+                <dt>@user.username <span>(@user.email)</span></dt>
+                <dd>
+                    <a href="@routes.Application.logout()">Logout</a>
+                </dd>
+            </dl>
         </header>
 
         <section id="main">

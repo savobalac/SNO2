@@ -1,14 +1,18 @@
 package controllers;
 
+import models.Users;
 import play.*;
 import play.api.mvc.*;
 import play.api.mvc.Call;
 import play.mvc.*;
 import play.mvc.Controller;
+import play.mvc.Security;
 
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.*;
+import play.data.*;
+import static play.data.Form.*;
 
 public class Application extends Controller {
 
@@ -18,12 +22,35 @@ public class Application extends Controller {
     // Add a constant here when creating a new list page
     public static final int PAGE_TYPE_ANALYSTS =  1;
 
+    @Security.Authenticated(Secured.class)
     public static Result index() {
-        return ok(index.render("SNO2"));
+        return ok(index.render("SNO2", Users.find.where().eq("username", request().username()).findUnique() ));
     }
 
+    @Security.Authenticated(Secured.class)
     public static Result test() {
-        return ok(index.render("Test SNO2"));
+        return ok(index.render("Test SNO2", Users.find.where().eq("username", request().username()).findUnique() ));
+    }
+
+    public static Result login() {
+        return ok(login.render(form(Login.class)));
+    }
+
+    public static Result authenticate() {
+        Form<Login> loginForm = form(Login.class).bindFromRequest();
+        if (loginForm.hasErrors()) {
+            return badRequest(login.render(loginForm));
+        } else {
+            session().clear();
+            session("username", loginForm.get().username);
+            return redirect(controllers.routes.Application.index());
+        }
+    }
+
+    public static Result logout() {
+        session().clear();
+        flash("success", "You've been logged out");
+        return redirect(controllers.routes.Application.login());
     }
 
     /**
@@ -49,4 +76,18 @@ public class Application extends Controller {
         }
 
     }
+
+    public static class Login {
+
+        public String username;
+        public String password;
+
+        public String validate() {
+            if (Users.authenticate(username, password) == null) {
+                return "Invalid username or password";
+            }
+            return null;
+        }
+    }
+
 }

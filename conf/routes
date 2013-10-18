@@ -4,6 +4,9 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET     /login                      controllers.Application.login()
+POST    /login                      controllers.Application.authenticate()
+GET     /logout                     controllers.Application.logout()
 
 # Analysts
 GET     /analysts                   controllers.Analysts.list(p:Int ?= 0, s ?= "lastname", o ?= "asc", f ?= "", t ?= "")

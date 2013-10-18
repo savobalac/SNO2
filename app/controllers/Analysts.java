@@ -2,6 +2,7 @@ package controllers;
 
 import com.avaje.ebean.Page;
 import models.Analyst;
+import models.Users;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -16,6 +17,7 @@ import views.html.Analysts.*;
  * Time: 13:35
  * To change this template use File | Settings | File Templates.
  */
+@Security.Authenticated(Secured.class)
 public class Analysts extends Controller {
 
     /**
@@ -31,7 +33,8 @@ public class Analysts extends Controller {
     public static Result list(int page, String sortBy, String order, String filter, String search) {
         Page<Analyst> pageSongs = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
         //return ok("Test list analysts page");
-        return ok(listAnalysts.render(pageSongs, sortBy, order, filter, search));
+        Users user = Users.find.where().eq("username", request().username()).findUnique();
+        return ok(listAnalysts.render(pageSongs, sortBy, order, filter, search, user));
     }
 
     /**
@@ -58,7 +61,8 @@ public class Analysts extends Controller {
             //analystForm.fill(Analyst.find.byId(id));
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
-        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm));
+        Users user = Users.find.where().eq("username", request().username()).findUnique();
+        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, user));
     }
 
     /**
