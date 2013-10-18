@@ -36,9 +36,8 @@
 
 <!-- Views with many rows of data need pagination -->
 <div class="row">
-    <div class="span11">
-        <div class="pagination pagination-centered">
-            <ul>
+    <div class="text-center">
+            <ul class="pagination">
                 <!-- Enables the Previous 50/25/10 page links if enough pages exist   -->
                 <!-- Can move down by 50 pages if at least 50 pages (1000 rows) exist -->
                 @if(pageCount > 50) {
@@ -188,6 +187,5 @@
                     }
                 }
             </ul>
-        </div>
     </div>
 </div>
