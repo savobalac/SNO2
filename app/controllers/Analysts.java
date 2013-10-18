@@ -9,6 +9,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.mvc.With;
 import views.html.Analysts.*;
+import utils.Utils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -71,6 +72,26 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
+        /*Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
+        Users user = Users.find.where().eq("username", request().username()).findUnique();
+        String msg;
+        try {
+            if(analystForm.hasErrors()) {
+                return badRequest(editAnalyst.render(id, analystForm, user));
+            } else {
+                Analyst a = analystForm.get();
+                // Checkboxes if unchecked return null
+                a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
+                a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
+                a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
+                return ok("No update function yet");
+            }
+        } catch (Exception e) {
+            Utils.eHandler("Admin.updateFeature(" + id.toString() + ")", e);
+            msg = String.format("Changes NOT SAVED. Error encountered ( %s ).", e.getMessage());
+            flash(Utils.FLASH_KEY_ERROR, msg);
+            return badRequest(editAnalyst.render(id, analystForm, user));
+        }*/
         return ok("No update function yet");
     }
 

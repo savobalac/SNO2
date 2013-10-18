@@ -58,15 +58,16 @@ public class Analyst extends Model {
     public Timestamp                createOn;
 
     public String                   skype;
+
     @Lob @Column(name="profile_image", length= Utils.MYSQL_TEXT_BYTES)
-
     public String                   profileImage;
+
     @Lob @Column(name="cv_document", length= Utils.MYSQL_TEXT_BYTES)
-
     public String                   cvDocument;
-    @Lob @Column(name="expertise", length= Utils.MYSQL_TEXT_BYTES)
 
+    @Lob @Column(name="expertise", length= Utils.MYSQL_TEXT_BYTES)
     public String                   expertise;
+
     public int                      primaryDesk;
 
 

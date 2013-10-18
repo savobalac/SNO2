@@ -34,15 +34,27 @@
 
         <fieldset>
             <input type="Hidden" id="id" name="id" value="@id" />
-            @inputText(analystForm("salutation"), 'style -> "width: 50%", '_label -> "Title:")
+            @select(
+                analystForm("salutation"),
+                options(utils.Utils.optionsTitle),
+                '_label -> "Salutation:"
+            )
             <hr>
             @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
             <hr>
             @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
             <hr>
-            @inputText(analystForm("statusId"), 'style -> "width: 50%", '_label -> "Status:")
+            @select(
+                analystForm("statusId"),
+                options(models.Status.options),
+                '_label -> "Status:"
+            )
             <hr>
-            @inputText(analystForm("rank"), 'style -> "width: 50%", '_label -> "Rank:")
+            @select(
+                analystForm("rank"),
+                options(models.Rank.options),
+                '_label -> "Rank:"
+            )
             <hr>
             @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
             <hr>
@@ -68,15 +80,15 @@
             <hr>
             @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
             <hr>
-            @inputText(analystForm("emailverified"), 'style -> "width: 50%", '_label -> "emailverified:")
+            @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
             <hr>
-            @inputText(analystForm("phoneVerified"), 'style -> "width: 50%", '_label -> "phoneVerified:")
+            @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
             <hr>
             @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
             <hr>
             @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
             <hr>
-            @inputText(analystForm("contractSigned"), 'style -> "width: 50%", '_label -> "contractSigned:")
+            @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
             <hr>
             @textarea(analystForm("position_description"), 'style -> "width: 100%", '_label -> "Position:")
             <hr>
@@ -96,7 +108,11 @@
             <hr>
             @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
             <hr>
-            @inputText(analystForm("primaryDesk"), 'style -> "width: 100%", '_label -> "Primary Desk:")
+            @select(
+                analystForm("primaryDesk"),
+                options(models.Desk.options),
+                '_label -> "Primary Desk:"
+            )
             <hr>
         </fieldset>
 
