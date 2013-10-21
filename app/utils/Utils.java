@@ -1,5 +1,7 @@
 package utils;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -103,4 +105,15 @@ public class Utils {
         return options;
     }
 
+    /**
+     * Returns a friendly "Created on <date> at <time>" string
+     * @param datetime Timestamp
+     * @return String
+     */
+    public static String formatCreatedTimestamp(Timestamp datetime) {
+        String result = "Created on " +
+                        "" + new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
+                        "" + new SimpleDateFormat("HH:mm").format(datetime);
+        return result;
+    }
 }

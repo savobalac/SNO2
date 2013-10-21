@@ -16,7 +16,7 @@
 @import helper.twitterBootstrap._
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
 
-@main(if(analystForm.get().analystId==null){"New Analyst"} else {analystForm.get().firstname+analystForm.get().lastname}, user) {
+@main(if(analystForm.get().getAnalystId()==null){"New Analyst"} else {analystForm.get().getFirstname()+analystForm.get().getLastname()}, user) {
 
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
@@ -98,11 +98,7 @@
             <hr>
             @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
             <hr>
-            @inputText(analystForm("createOn"), 'style -> "width: 50%", '_label -> "Created on:")
-            <hr>
             @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
-            <hr>
-            @textarea(analystForm("profileImage"), 'style -> "width: 100%", '_label -> "Profile image:")
             <hr>
             @textarea(analystForm("cvDocument"), 'style -> "width: 100%", '_label -> "CV:")
             <hr>
@@ -114,6 +110,9 @@
                 '_label -> "Primary Desk:"
             )
             <hr>
+            <div id="divEditImage">
+                @textarea(analystForm("profileImage"), 'style -> "width: 100%", '_label -> "Profile image:")
+            </div>
         </fieldset>
 
         <hr>
@@ -126,6 +125,13 @@
         <hr>
 
     }
+
+    <!-- Display the create_on field if it exists -->
+    <span class="muted">
+        @if(analystForm.field("createOn").value()!=null) {
+            @utils.Utils.formatCreatedTimestamp( analystForm.get().getCreateOn() )
+        }
+    </span>
 
     @if(!(id==null || id==0)) {
         @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
