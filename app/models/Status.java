@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Sav
+ * User: Sav Balac
  * Date: 18/10/13
  * Time: 14:32
  * Description: Model class that maps to DB table status.
@@ -38,7 +38,7 @@ public class Status extends Model {
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        List<Status> statuses = Status.find.where().orderBy("status_name").findList();
+        List<Status> statuses = Status.find.where().orderBy("sortorder").findList();
         for(Status status : statuses) {
             options.put(status.statusId.toString(), status.statusName);
         }
