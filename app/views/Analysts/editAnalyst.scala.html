@@ -16,7 +16,7 @@
 @import helper.twitterBootstrap._
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
 
-@main(if(analystForm.get().getAnalystId()==null){"New Analyst"} else {analystForm.get().getFirstname()+analystForm.get().getLastname()}, user) {
+@main(if(id==0){"New Analyst"} else {analystForm.get().firstname+analystForm.get().lastname}, user) {
 
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
@@ -110,8 +110,9 @@
                 '_label -> "Primary Desk:"
             )
             <hr>
-            <div id="divEditImage">
-                @textarea(analystForm("profileImage"), 'style -> "width: 100%", '_label -> "Profile image:")
+            <div class="col-4" id="divProfileImage">
+                Profile image:
+                @tagAnalystImage(analystForm.get())
             </div>
         </fieldset>
 
@@ -129,7 +130,7 @@
     <!-- Display the create_on field if it exists -->
     <span class="muted">
         @if(analystForm.field("createOn").value()!=null) {
-            @utils.Utils.formatCreatedTimestamp( analystForm.get().getCreateOn() )
+            @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn )
         }
     </span>
 
@@ -145,6 +146,37 @@
         $(".disable").click(function(event){
             event.preventDefault();
         });
+
+        // After document has loaded, display the profile image
+        $(document).ready(function(){
+            alert("Document ready");
+            getProfileImage();
+        }
+
+        // Get tagVenueImage page (and prevent caching in IE)
+        function getProfileImage() {
+            var url = "/analysts/@id/profileImage";
+            var updateRegion = "#divProfileImage";
+
+            alert("about to call AJAX url: " + url);
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    replaceRegionContents(updateRegion, returnedData);
+                }
+            });
+        }
+
+        // Replace the inner content of the submitted region (identified by its id)...
+        function replaceRegionContents(regionId, newContent) {
+            $(regionId).empty();                // Clear
+            $(newContent).appendTo(regionId);   // Repopulate
+        }
 
     </script>
 

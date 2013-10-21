@@ -14,6 +14,7 @@ GET     /analysts/new               controllers.Analysts.create()
 GET     /analysts/:id               controllers.Analysts.edit(id:Long)
 POST    /analysts/:id               controllers.Analysts.update(id:Long)
 POST    /analysts/:id/delete        controllers.Analysts.delete(id:Long)
+GET     /analysts/:id/profileImage  controllers.Analysts.editProfileImage(id:Long)
 
 # Test URLs
 GET     /test                       controllers.Application.test()

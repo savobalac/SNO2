@@ -106,4 +106,16 @@ public class Analysts extends Controller {
         return ok("No delete function yet");
     }
 
+
+    /**
+     * Display a (usually embedded) form to display and upload a profile image
+     * @param id Id of the analyst
+     * @return Result
+     */
+    public static Result editProfileImage(Long id) {
+        Analyst analyst = Analyst.find.byId(id);
+        return ok(tagAnalystImage.render(analyst));
+    }
+
+
 }
