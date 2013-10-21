@@ -1,12 +1,11 @@
 package models;
 
-import play.db.ebean.Model;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import play.db.ebean.Model;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +18,7 @@ import java.util.Map;
 @Entity
 public class Status extends Model {
 
-    // Instance variables
+    // Instance variables (Play! generates getters and setters)
     @Id public Long                 statusId;
     public Long                     parent;
     public Long                     sortorder;
@@ -27,7 +26,7 @@ public class Status extends Model {
 
 
     /**
-     * Generic query helper for entity analyst with id Long
+     * Generic query helper for entity status with id Long
      */
     public static Finder<Long, Status> find = new Finder<Long, Status>(Long.class, Status.class);
 

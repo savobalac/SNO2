@@ -2,6 +2,7 @@ package models;
 
 import com.avaje.ebean.Page;
 import java.sql.Timestamp;
+import java.util.List;
 import javax.persistence.*;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
@@ -73,6 +74,15 @@ public class Analyst extends Model {
 
     @Constraints.Required
     public int                      primaryDesk;
+
+    @OneToMany
+    public List<File>               files;
+
+    @OneToMany
+    public List<Note>               usernotes;
+
+    @ManyToMany (mappedBy="analysts")
+    public List<Desk>               desks;
 
 
     /**

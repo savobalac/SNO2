@@ -26,7 +26,7 @@ public class Rank extends Model {
 
 
     /**
-     * Generic query helper for entity analyst with id Long
+     * Generic query helper for entity rank with id Long
      */
     public static Finder<Long, Rank> find = new Finder<Long, Rank>(Long.class, Rank.class);
 

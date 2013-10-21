@@ -1,16 +1,16 @@
 package models;
 
-import play.db.ebean.Model;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.*;
+
+import play.data.validation.Constraints;
+import play.db.ebean.Model;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Sav
+ * User: Sav Balac
  * Date: 18/10/13
  * Time: 14:42
  * Description: Model class that maps to DB table desk.
@@ -19,14 +19,24 @@ import java.util.Map;
 @Entity
 public class Desk extends Model {
 
-    // Instance variables
+    // Instance variables (Play! generates getters and setters)
     @Id public Long                 deskId;
+
+    @Constraints.Required
     public String                   name;
+
+    @Constraints.Required
     public Boolean                  coordinator;
+
+    @ManyToMany
+    @JoinTable(name="desk_analyst",
+               joinColumns={@JoinColumn(name="desk_id", referencedColumnName="desk_id")},
+               inverseJoinColumns={@JoinColumn(name="analyst_id", referencedColumnName="analyst_id")}
+    ) public List<Analyst>          analysts;
 
 
     /**
-     * Generic query helper for entity analyst with id Long
+     * Generic query helper for entity desk with id Long
      */
     public static Finder<Long, Desk> find = new Finder<Long, Desk>(Long.class, Desk.class);
 

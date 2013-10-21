@@ -1,6 +1,7 @@
 package models;
 
 import com.avaje.ebean.Page;
+import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import utils.Utils;
 
@@ -23,15 +24,22 @@ public class Users extends Model {
 
     // Instance variables
     @Id public Long                 id;
+
+    @Constraints.Required
     public String                   username;
+
+    @Constraints.Required
     public String                   password;
+
+    @Constraints.Required
     public String                   email;
+
     public String                   fullname;
     public Timestamp                lastlogin;
 
 
     /**
-     * Generic query helper for entity analyst with id Long
+     * Generic query helper for entity users with id Long
      */
     public static Finder<Long, Users> find = new Finder<Long, Users>(Long.class, Users.class);
 
