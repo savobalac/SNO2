@@ -4,6 +4,7 @@ import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Users;
 import play.data.Form;
+import static play.data.Form.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;

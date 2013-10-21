@@ -90,7 +90,7 @@
             <hr>
             @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
             <hr>
-            @textarea(analystForm("position_description"), 'style -> "width: 100%", '_label -> "Position:")
+            @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
             <hr>
             @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
             <hr>
@@ -102,9 +102,9 @@
             <hr>
             @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
             <hr>
-            @textarea(analystForm("profile_image"), 'style -> "width: 100%", '_label -> "Profile image:")
+            @textarea(analystForm("profileImage"), 'style -> "width: 100%", '_label -> "Profile image:")
             <hr>
-            @textarea(analystForm("cv_document"), 'style -> "width: 100%", '_label -> "CV:")
+            @textarea(analystForm("cvDocument"), 'style -> "width: 100%", '_label -> "CV:")
             <hr>
             @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
             <hr>
@@ -129,7 +129,7 @@
 
     @if(!(id==null || id==0)) {
         @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
-            <input type="submit" value="DELETE" class="btn btn-danger btn-mini">
+            <input type="submit" value="DELETE" class="btn btn-danger btn-xs">
         }
     }
 
