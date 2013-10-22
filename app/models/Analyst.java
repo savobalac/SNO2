@@ -76,9 +76,6 @@ public class Analyst extends Model {
     public int                      primaryDesk;
 
     @OneToMany
-    public List<File>               files;
-
-    @OneToMany
     public List<Note>               usernotes;
 
     @ManyToMany (mappedBy="analysts")
