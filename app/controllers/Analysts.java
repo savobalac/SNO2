@@ -118,4 +118,25 @@ public class Analysts extends Controller {
     }
 
 
+    /**
+     * Uploads the profile image.
+     * @param id Id of the analyst
+     * @return Result
+     */
+    public static Result uploadProfileImage(Long id) {
+        return ok("OK"); // For now
+        //return uploadFile(id, "imgFile");
+    }
+
+
+    /**
+     * Uploads the CV document.
+     * @param id Id of the analyst
+     * @return Result
+     */
+    public static Result uploadCvDocument(Long id) {
+        return ok("OK"); // For now
+        //return uploadFile(id, "cvFile");
+    }
+
 }

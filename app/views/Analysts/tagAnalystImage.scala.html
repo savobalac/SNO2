@@ -2,7 +2,7 @@
 * Page:        tagAnalystImage                               *
 * Author:      Sav Balac                                     *
 * Date:        21/10/13                                      *
-* Description: shows the profile image with upload form      *
+* Description: Shows the profile image with upload form      *
 *                                                            *
 * @param analyst   The Analyst reference                     *
 *************************************************************@
@@ -19,36 +19,22 @@
 
 } else {
 
-    <table class="table table-striped table-bordered table-condensed">
-        <tr>
-            <td class="span4" style="vertical-align: baseline">
-                <table>
-                    <tr>
-                        <td style="vertical-align: top">
-                            @*******************************************
-                            * Don't show the image file if none exists *
-                            ********************************************@
-                            @if(analyst.profileImage!=null) {
-                                <div style="height:100px; width:100px;">
-                                    <img src="@routes.Assets.at(analyst.profileImage)" align="left"
-                                         style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="vertical-align: baseline">
-                            <br>
-                                <label class="btn btn-success filebutton">
-                                    <i class="icon-upload icon-white"></i> Upload an image
-                                    <span><input type="file" id="imgFile" name="imgFile" onchange="submitImageUpload()"></span>
-                                </label>
-                            <br>&nbsp;
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+    @*******************************************
+    * Don't show the image file if none exists *
+    ********************************************@
+    @if(analyst.profileImage!=null) {
+        <div style="height:100px; width:100px;">
+            <img src="@routes.Assets.at(analyst.profileImage)" align="left"
+                 style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
+        </div>
+    }
+    <br>
+    @form(routes.Analysts.uploadProfileImage(analyst.analystId), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
+        <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
+        <label class="btn btn-success filebutton">
+            <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
+            <span><input type="file" id="imgFile" name="imgFile" onchange="uploadProfileImage()"></span>
+        </label>
+    }
 
 }

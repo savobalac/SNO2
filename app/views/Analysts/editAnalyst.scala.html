@@ -18,6 +18,8 @@
 
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname+analystForm.get().lastname}, user) {
 
+    <script src="//code.jquery.com/jquery.js"></script>
+
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
         <h1>New Analyst</h1>
@@ -31,7 +33,6 @@
     <hr>
 
     @form(routes.Analysts.update(id)) {
-
         <fieldset>
             <input type="Hidden" id="id" name="id" value="@id" />
             @select(
@@ -100,8 +101,6 @@
             <hr>
             @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
             <hr>
-            @textarea(analystForm("cvDocument"), 'style -> "width: 100%", '_label -> "CV:")
-            <hr>
             @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
             <hr>
             @select(
@@ -109,21 +108,25 @@
                 options(models.Desk.options),
                 '_label -> "Primary Desk:"
             )
-            <hr>
-            <div class="col-4" id="divProfileImage">
-                Profile image:
-                @tagAnalystImage(analystForm.get())
-            </div>
         </fieldset>
 
         <hr>
 
         <div class="actions">
-            <input type="submit" value="Save" class="btn btn-primary" onclick="return confirmCancelChanges()">
-            <a href="@routes.Analysts.list()" class="btn btn-warning" onclick="return confirmCancelChanges()">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-primary">
+            <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
         </div>
 
         <hr>
+
+        <div class="col-4" id="divProfileImage">
+            <strong>Profile image:</strong>
+            @tagAnalystImage(analystForm.get())
+        </div>
+        <div class="col-4" id="divCvDocument">
+            <strong>CV:</strong>
+            @tagAnalystCV(analystForm.get())
+        </div>
 
     }
 
@@ -141,6 +144,8 @@
     }
 
     <script type="text/javascript">
+
+        alert("Test javascript");
 
         // Disables all fields by preventing the default action when the field attribute class="disable"
         $(".disable").click(function(event){
@@ -170,6 +175,28 @@
                     replaceRegionContents(updateRegion, returnedData);
                 }
             });
+        }
+
+        // Upload the profile image
+        function submitImageUpload() {
+            if(@id==0) {
+                alert("The Analyst needs to be saved before uploading a profile image.");
+            } else {
+                var url = '/analysts/' + @id + '/uploadProfileImage';
+                $("#formUpload").ajaxSubmit({
+                    url:    url,
+                    type:   'post',
+                    dataType: "text",
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            window.location.reload();
+                            $("#imgFile").val("");
+                        } else {
+                            alert(returnedData);
+                        }
+                    }
+                });
+            }
         }
 
         // Replace the inner content of the submitted region (identified by its id)...

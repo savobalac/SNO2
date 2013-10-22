@@ -3,21 +3,23 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
-GET     /login                      controllers.Application.login()
-POST    /login                      controllers.Application.authenticate()
-GET     /logout                     controllers.Application.logout()
+GET     /                                   controllers.Application.index()
+GET     /login                              controllers.Application.login()
+POST    /login                              controllers.Application.authenticate()
+GET     /logout                             controllers.Application.logout()
 
 # Analysts
-GET     /analysts                   controllers.Analysts.list(p:Int ?= 0, s ?= "lastname", o ?= "asc", f ?= "", t ?= "")
-GET     /analysts/new               controllers.Analysts.create()
-GET     /analysts/:id               controllers.Analysts.edit(id:Long)
-POST    /analysts/:id               controllers.Analysts.update(id:Long)
-POST    /analysts/:id/delete        controllers.Analysts.delete(id:Long)
-GET     /analysts/:id/profileImage  controllers.Analysts.editProfileImage(id:Long)
+GET     /analysts                           controllers.Analysts.list(p:Int ?= 0, s ?= "lastname", o ?= "asc", f ?= "", t ?= "")
+GET     /analysts/new                       controllers.Analysts.create()
+GET     /analysts/:id                       controllers.Analysts.edit(id:Long)
+POST    /analysts/:id                       controllers.Analysts.update(id:Long)
+POST    /analysts/:id/delete                controllers.Analysts.delete(id:Long)
+GET     /analysts/:id/profileImage          controllers.Analysts.editProfileImage(id:Long)
+POST    /analysts/:id/uploadProfileImage    controllers.Analysts.uploadProfileImage(id:Long)
+POST    /analysts/:id/uploadCvDocument      controllers.Analysts.uploadCvDocument(id:Long)
 
 # Test URLs
-GET     /test                       controllers.Application.test()
+GET     /test                               controllers.Application.test()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)
