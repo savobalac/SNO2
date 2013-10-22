@@ -29,9 +29,9 @@
                             * Don't show the image file if none exists *
                             ********************************************@
                             @if(analyst.profileImage!=null) {
-                                <div style="width:600px;">
+                                <div style="height:100px; width:100px;">
                                     <img src="@routes.Assets.at(analyst.profileImage)" align="left"
-                                         style="vertical-align: top; border: 0px">
+                                         style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
                                 </div>
                             }
                         </td>
