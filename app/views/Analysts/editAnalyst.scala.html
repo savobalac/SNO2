@@ -118,18 +118,19 @@
             <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
         </div>
 
-        <hr>
-
-        <div class="col-4" id="divProfileImage">
-            <strong>Profile image:</strong>
-            @tagAnalystImage(analystForm.get())
-        </div>
-        <div class="col-4" id="divCvDocument">
-            <strong>CV:</strong>
-            @tagAnalystCV(analystForm.get())
-        </div>
-
     }
+
+    <hr>
+
+    <div class="col-4" id="divProfileImage">
+        <strong>Profile image:</strong>
+        @tagAnalystImage(analystForm.get())
+    </div>
+    <div class="col-4" id="divCvDocument">
+        <strong>CV:</strong>
+        @tagAnalystCV(analystForm.get())
+    </div>
+
 
     <!-- Display the create_on field if it exists -->
     <span class="muted">

@@ -81,11 +81,11 @@ public class Analysts extends Controller {
                 throw new Exception(analystForm.errorsAsJson().toString());
             } else {
                 Analyst a = analystForm.get();
+
                 // Checkboxes if unchecked return null
                 a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
                 a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
                 a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
-                //return ok("No update function yet");
 
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;

@@ -40,6 +40,23 @@
             </dl>
         </header>
 
+        <!-- Show any flash messages above the main content -->
+        @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
+            <div class="alert alert-error">
+                <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
+            </div>
+        }
+        @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
+            <div class="alert alert-info">
+                @flash.get(utils.Utils.FLASH_KEY_INFO)
+            </div>
+        }
+        @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
+            <div class="alert alert-success">
+                @flash.get(utils.Utils.FLASH_KEY_SUCCESS)
+            </div>
+        }
+
         <section id="main">
             @content
         </section>
