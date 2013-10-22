@@ -73,27 +73,38 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
-        /*Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
+        Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
         Users user = Users.find.where().eq("username", request().username()).findUnique();
         String msg;
         try {
             if(analystForm.hasErrors()) {
-                return badRequest(editAnalyst.render(id, analystForm, user));
+                throw new Exception(analystForm.errorsAsJson().toString());
             } else {
                 Analyst a = analystForm.get();
                 // Checkboxes if unchecked return null
                 a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
                 a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
                 a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
-                return ok("No update function yet");
+                //return ok("No update function yet");
+
+                a.saveOrUpdate();
+                String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
+                if (id==null || id==0) {
+                    msg = "Analyst " + fullName + " has been created";
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                } else {
+                    msg = "Analyst " + fullName + " successfully updated";
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                }
+                // Redirect to remove analyst from query string
+                return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
             }
         } catch (Exception e) {
-            Utils.eHandler("Admin.updateFeature(" + id.toString() + ")", e);
+            Utils.eHandler("Analysts.update(" + id.toString() + ")", e);
             msg = String.format("Changes NOT SAVED. Error encountered ( %s ).", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
             return badRequest(editAnalyst.render(id, analystForm, user));
-        }*/
-        return ok("No update function yet");
+        }
     }
 
 
@@ -103,7 +114,20 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result delete(Long id) {
-        return ok("No delete function yet");
+        String msg;
+        try {
+            Analyst analyst = Analyst.find.byId(id);
+            analyst.delete();
+            msg = "Analyst deleted.";
+            flash(Utils.FLASH_KEY_SUCCESS, msg);
+        } catch (Exception e) {
+            Utils.eHandler("Analysts.delete(" + id.toString() + ")", e);
+            msg = String.format("Error encountered (%s).", e.getMessage());
+            flash(Utils.FLASH_KEY_ERROR, msg);
+        } finally {
+            // Redirect to remove analyst from query string
+            return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+        }
     }
 
 

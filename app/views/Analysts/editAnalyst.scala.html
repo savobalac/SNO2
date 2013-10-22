@@ -34,7 +34,8 @@
 
     @form(routes.Analysts.update(id)) {
         <fieldset>
-            <input type="Hidden" id="id" name="id" value="@id" />
+            <!-- analystId needs to be set, otherwise it will be null on update -->
+            <input type="Hidden" id="analystId" name="analystId" value="@id" />
             @select(
                 analystForm("salutation"),
                 options(utils.Utils.optionsTitle),

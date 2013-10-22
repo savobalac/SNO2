@@ -126,4 +126,20 @@ public class Analyst extends Model {
         return p;
     }
 
+
+    /**
+     * Saves or updates the analyst.
+     */
+    public void saveOrUpdate() throws Exception {
+        System.out.println("analystId = " + analystId);
+        if (analystId==null || analystId<=0) {
+            System.out.println("Analyst.saveOrUpdate() - about to save");
+            save();
+        } else {
+            System.out.println("Analyst.saveOrUpdate() - about to update");
+            update();
+        }
+    }
+
 }
+
