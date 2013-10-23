@@ -31,9 +31,11 @@ public class Analyst extends Model {
     public String                   lastname;
 
     @OneToOne @JoinColumn(name="status_id")
-    public Status                   status;
+    public Status                   status; // "status_id" is the name of the column in table analyst
 
-    public int                      rank;
+    @OneToOne @JoinColumn(name="rank")
+    public Rank                     rank; // "rank" is the name of the column in table analyst
+
     public String                   email;
     public String                   emailAlternate;
     public String                   paypalAccountEmail;
@@ -78,7 +80,8 @@ public class Analyst extends Model {
     public String                   expertise;
 
     @Constraints.Required
-    public int                      primaryDesk;
+    @OneToOne @JoinColumn(name="primary_desk")
+    public Desk                     primaryDesk; // "primary_desk" is the name of the column in table analyst
 
     @OneToMany
     public List<Note>               usernotes;
@@ -106,20 +109,18 @@ public class Analyst extends Model {
      */
     public static Page<Analyst> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
 
-        // Search on lastname, otherwise filter on lastname (note .fetch() is required to populate related models)
+        // Search on lastname, otherwise filter on lastname
         Page p = null;
         if (search.isEmpty()) {
             if (filter.isEmpty()) { // Get all records
                 p = find.where()
                         .orderBy(sortBy + " " + order)
-                        .fetch("status")
                         .findPagingList(pageSize)
                         .getPage(page);
             } else { // Filter
                 p = find.where()
                         .ilike("lastname", "%" + filter + "%")
                         .orderBy(sortBy + " " + order)
-                        .fetch("status")
                         .findPagingList(pageSize)
                         .getPage(page);
             }
@@ -127,7 +128,6 @@ public class Analyst extends Model {
             p = find.where()
                     .ilike("lastname", "%" + search + "%")
                     .orderBy(sortBy + " " + order)
-                    .fetch("status")
                     .findPagingList(pageSize)
                     .getPage(page);
         }

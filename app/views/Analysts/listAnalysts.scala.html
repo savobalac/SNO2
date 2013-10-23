@@ -72,8 +72,9 @@
 
             <thead>
                 <tr>
-                    @header("firstname", "Forename")
-                    @header("lastname", "Surname")
+                    @header("lastname", "Name")
+                    @header("primaryDesk.name", "Primary Desk")
+                    @header("rank.name", "Rank")
                     @header("status.statusName", "Status")
                 </tr>
             </thead>
@@ -82,10 +83,13 @@
                 @for(Analyst <- currentPage.getList) {
                     <tr>
                         <td>
-                            @Analyst.firstname
+                            <a href="@routes.Analysts.edit(Analyst.analystId)">@Analyst.firstname @Analyst.lastname</a>
                         </td>
                         <td>
-                            <a href="@routes.Analysts.edit(Analyst.analystId)">@Analyst.lastname</a>
+                            @Analyst.primaryDesk.name
+                        </td>
+                        <td>
+                            @Analyst.rank.name
                         </td>
                         <td>
                             @Analyst.status.statusName
