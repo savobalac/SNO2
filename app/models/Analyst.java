@@ -24,7 +24,7 @@ public class Analyst extends Model {
     @Id public Long                 analystId;
     public String                   salutation;
     @Constraints.Required
-    public String                   firstname;
+    public String                   firstname; // A required constraint will ensure form fields are entered
     @Constraints.Required
     public String                   lastname;
     public int                      statusId;
@@ -104,7 +104,7 @@ public class Analyst extends Model {
         // Search on lastname, otherwise filter on lastname
         Page p = null;
         if (search.isEmpty()) {
-            if (filter.isEmpty()) { // Get all
+            if (filter.isEmpty()) { // Get all records
                 p = find.where()
                         .orderBy(sortBy + " " + order)
                         .findPagingList(pageSize)
@@ -131,15 +131,14 @@ public class Analyst extends Model {
      * Saves or updates the analyst.
      */
     public void saveOrUpdate() throws Exception {
-        System.out.println("analystId = " + analystId);
+        // The analyst id should be 0 for a new record
         if (analystId==null || analystId<=0) {
-            System.out.println("Analyst.saveOrUpdate() - about to save");
             save();
         } else {
-            System.out.println("Analyst.saveOrUpdate() - about to update");
             update();
         }
     }
+
 
 }
 

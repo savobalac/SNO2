@@ -19,8 +19,9 @@ import utils.Utils;
  * Time: 13:35
  * To change this template use File | Settings | File Templates.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Analysts extends Controller {
+
 
     /**
      * Displays a paginated list of analysts.
@@ -33,39 +34,40 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
-        Page<Analyst> pageSongs = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        //return ok("Test list analysts page");
+        // Get a page of analysts and render the list page
+        Page<Analyst> pageAnalysts = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
         Users user = Users.find.where().eq("username", request().username()).findUnique();
-        return ok(listAnalysts.render(pageSongs, sortBy, order, filter, search, user));
+        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, user));
     }
 
+
     /**
-     * Create a new Song.
+     * Create a new analyst.
      * @return Result
      */
     public static Result create() {
         return edit(new Long(0));
-        //return ok("No create function yet");
     }
+
 
     /**
      * Display a form to create a new or edit an existing analyst.
-     * @param id    Id of the analyst to edit. 0 == Create New.
+     * @param id    Id of the analyst to edit.
      * @return Result
      */
     public static Result edit(Long id) {
         Form<Analyst> analystForm;
+        // New analysts have id = 0
         if (id <= 0L) {
-            //analystForm.fill(new Analyst());
             analystForm = Form.form(Analyst.class).fill(new Analyst());
         }
         else {
-            //analystForm.fill(Analyst.find.byId(id));
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
         Users user = Users.find.where().eq("username", request().username()).findUnique();
         return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, user));
     }
+
 
     /**
      * Update the analyst from the form.
@@ -73,14 +75,15 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
+        // Get the analyst form and user
         Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
         Users user = Users.find.where().eq("username", request().username()).findUnique();
         String msg;
         try {
-            if(analystForm.hasErrors()) { // Return to the editAnalyst page
+            if (analystForm.hasErrors()) { // Return to the editAnalyst page
                 return badRequest(editAnalyst.render(id, analystForm, user));
             } else {
-                Analyst a = analystForm.get();
+                Analyst a = analystForm.get(); // Get the analyst data
 
                 // Checkboxes if unchecked return null
                 a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);

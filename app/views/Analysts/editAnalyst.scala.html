@@ -14,9 +14,10 @@
 
 @import helper._
 @import helper.twitterBootstrap._
-@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
+@* Need to comment the next line out as field don't get a red background when they fail validation *@
+@* @implicitField = @{ FieldConstructor(twitterBootstrapInput.render) } *@
 
-@main(if(id==0){"New Analyst"} else {analystForm.get().firstname+analystForm.get().lastname}, user) {
+@main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
 
@@ -41,73 +42,47 @@
                 options(utils.Utils.optionsTitle),
                 '_label -> "Salutation:"
             )
-            <hr>
             @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
-            <hr>
             @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
-            <hr>
             @select(
                 analystForm("statusId"),
                 options(models.Status.options),
                 '_label -> "Status:"
             )
-            <hr>
             @select(
                 analystForm("rank"),
                 options(models.Rank.options),
                 '_label -> "Rank:"
             )
-            <hr>
             @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
-            <hr>
             @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
-            <hr>
             @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
-            <hr>
             @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
-            <hr>
             @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
-            <hr>
             @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
-            <hr>
             @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
-            <hr>
             @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
-            <hr>
             @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
-            <hr>
             @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
-            <hr>
             @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
-            <hr>
             @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
-            <hr>
             @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
-            <hr>
             @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
-            <hr>
             @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
-            <hr>
             @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
-            <hr>
             @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
-            <hr>
             @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
-            <hr>
             @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
-            <hr>
             @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
-            <hr>
             @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
-            <hr>
             @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
-            <hr>
             @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
-            <hr>
+            @* Setting showConstraints to false will prevent "Required" from being displayed *@
             @select(
                 analystForm("primaryDesk"),
                 options(models.Desk.options),
-                '_label -> "Primary Desk:"
+                '_label -> "Primary Desk:",
+                '_showConstraints -> false
             )
         </fieldset>
 
@@ -124,11 +99,11 @@
 
     <div class="col-4" id="divProfileImage">
         <strong>Profile image:</strong>
-        @tagAnalystImage(analystForm.get())
+        @* @tagAnalystImage(analystForm.get()) *@
     </div>
     <div class="col-4" id="divCvDocument">
         <strong>CV:</strong>
-        @tagAnalystCV(analystForm.get())
+        @* @tagAnalystCV(analystForm.get()) *@
     </div>
 
 
