@@ -17,17 +17,22 @@ import utils.Utils;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name="Analyst")
+@Table(name="analyst")
 public class Analyst extends Model {
 
     // Instance variables (Play! generates getters and setters)
     @Id public Long                 analystId;
     public String                   salutation;
+
     @Constraints.Required
     public String                   firstname; // A required constraint will ensure form fields are entered
+
     @Constraints.Required
     public String                   lastname;
-    public int                      statusId;
+
+    @OneToOne @JoinColumn(name="status_id")
+    public Status                   status;
+
     public int                      rank;
     public String                   email;
     public String                   emailAlternate;
@@ -101,18 +106,20 @@ public class Analyst extends Model {
      */
     public static Page<Analyst> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
 
-        // Search on lastname, otherwise filter on lastname
+        // Search on lastname, otherwise filter on lastname (note .fetch() is required to populate related models)
         Page p = null;
         if (search.isEmpty()) {
             if (filter.isEmpty()) { // Get all records
                 p = find.where()
                         .orderBy(sortBy + " " + order)
+                        .fetch("status")
                         .findPagingList(pageSize)
                         .getPage(page);
             } else { // Filter
                 p = find.where()
                         .ilike("lastname", "%" + filter + "%")
                         .orderBy(sortBy + " " + order)
+                        .fetch("status")
                         .findPagingList(pageSize)
                         .getPage(page);
             }
@@ -120,6 +127,7 @@ public class Analyst extends Model {
             p = find.where()
                     .ilike("lastname", "%" + search + "%")
                     .orderBy(sortBy + " " + order)
+                    .fetch("status")
                     .findPagingList(pageSize)
                     .getPage(page);
         }

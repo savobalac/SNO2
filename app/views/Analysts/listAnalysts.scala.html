@@ -74,6 +74,7 @@
                 <tr>
                     @header("firstname", "Forename")
                     @header("lastname", "Surname")
+                    @header("status.statusName", "Status")
                 </tr>
             </thead>
 
@@ -85,6 +86,9 @@
                         </td>
                         <td>
                             <a href="@routes.Analysts.edit(Analyst.analystId)">@Analyst.lastname</a>
+                        </td>
+                        <td>
+                            @Analyst.status.statusName
                         </td>
                     </tr>
                 }

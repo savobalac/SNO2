@@ -14,7 +14,7 @@
 
 @import helper._
 @import helper.twitterBootstrap._
-@* Need to comment the next line out as field don't get a red background when they fail validation *@
+@* Need to comment out the next line as fields don't get a red background when they fail validation *@
 @* @implicitField = @{ FieldConstructor(twitterBootstrapInput.render) } *@
 
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
