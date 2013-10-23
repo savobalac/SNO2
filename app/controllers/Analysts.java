@@ -77,8 +77,8 @@ public class Analysts extends Controller {
         Users user = Users.find.where().eq("username", request().username()).findUnique();
         String msg;
         try {
-            if(analystForm.hasErrors()) {
-                throw new Exception(analystForm.errorsAsJson().toString());
+            if(analystForm.hasErrors()) { // Return to the editAnalyst page
+                return badRequest(editAnalyst.render(id, analystForm, user));
             } else {
                 Analyst a = analystForm.get();
 
@@ -87,21 +87,23 @@ public class Analysts extends Controller {
                 a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
                 a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
 
+                // Save if a new analyst, otherwise update and show a message
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
                 if (id==null || id==0) {
-                    msg = "Analyst " + fullName + " has been created";
+                    msg = "Analyst " + fullName + " has been created.";
                     flash(Utils.FLASH_KEY_SUCCESS, msg);
                 } else {
-                    msg = "Analyst " + fullName + " successfully updated";
+                    msg = "Analyst " + fullName + " successfully updated.";
                     flash(Utils.FLASH_KEY_SUCCESS, msg);
                 }
                 // Redirect to remove analyst from query string
                 return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
             }
         } catch (Exception e) {
+            // Log an error, show a message and return to the editAnalyst page
             Utils.eHandler("Analysts.update(" + id.toString() + ")", e);
-            msg = String.format("Changes NOT SAVED. Error encountered ( %s ).", e.getMessage());
+            msg = String.format("Changes not saved. Error encountered ( %s ).", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
             return badRequest(editAnalyst.render(id, analystForm, user));
         }
@@ -116,11 +118,13 @@ public class Analysts extends Controller {
     public static Result delete(Long id) {
         String msg;
         try {
+            // Find the analyst record, delete it and show a message
             Analyst analyst = Analyst.find.byId(id);
             analyst.delete();
             msg = "Analyst deleted.";
             flash(Utils.FLASH_KEY_SUCCESS, msg);
         } catch (Exception e) {
+            // Log an error and show a message
             Utils.eHandler("Analysts.delete(" + id.toString() + ")", e);
             msg = String.format("Error encountered (%s).", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
