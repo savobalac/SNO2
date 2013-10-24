@@ -2,7 +2,7 @@
 * Page:        tagAnalystImage                               *
 * Author:      Sav Balac                                     *
 * Date:        21/10/13                                      *
-* Description: Shows the profile image with upload form      *
+* Description: Shows the profile image (via Ajax)            *
 *                                                            *
 * @param analyst   The Analyst reference                     *
 *************************************************************@
@@ -27,14 +27,6 @@
             <img src="@routes.Assets.at(analyst.profileImage)" align="left"
                  style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
         </div>
-    }
-    <br>
-    @form(routes.Analysts.uploadProfileImage(analyst.analystId), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
-        <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
-        <label class="btn btn-success filebutton">
-            <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
-            <span><input type="file" id="imgFile" name="imgFile" onchange="uploadProfileImage()"></span>
-        </label>
     }
 
 }

@@ -17,6 +17,7 @@ POST    /analysts/:id/delete                controllers.Analysts.delete(id:Long)
 GET     /analysts/:id/profileImage          controllers.Analysts.editProfileImage(id:Long)
 POST    /analysts/:id/uploadProfileImage    controllers.Analysts.uploadProfileImage(id:Long)
 POST    /analysts/:id/uploadCvDocument      controllers.Analysts.uploadCvDocument(id:Long)
+POST    /analysts/:id/addDesk               controllers.Analysts.addDesk(id:Long)
 
 # Test URLs
 GET     /test                               controllers.Application.test()

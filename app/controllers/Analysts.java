@@ -205,4 +205,16 @@ public class Analysts extends Controller {
         //return uploadFile(id, "cvFile");
     }
 
+
+    /**
+     * Assigns the analyst to a desk.
+     * @param id Id of the analyst
+     * @return Result
+     */
+    public static Result addDesk(Long id) {
+        return ok("OK"); // For now
+        //return uploadFile(id, "cvFile");
+    }
+
+
 }

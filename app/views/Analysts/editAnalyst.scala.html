@@ -85,10 +85,6 @@
                 '_showConstraints -> false
             )
 
-            <label for="divEditDeskAnalyst">Assigned desks:</label>
-            <div id="divEditDeskAnalyst" class="col-4">
-                @tagListDeskAnalysts(analystForm.get())
-            </div>
             <br>
 
         </fieldset>
@@ -104,26 +100,54 @@
 
     <hr>
 
-    <div class="col-4" id="divProfileImage">
-        <strong>Profile image:</strong>
-        @* @tagAnalystImage(analystForm.get()) *@
+    @* Display the profile image and a form to upload one *@
+    <label for="divProfileImage">Profile image:</label>
+    <div id="divProfileImage" class="col-4" >
+        @tagAnalystImage(analystForm.get())
+        @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") {
+            <input type="Hidden" id="id" name="id" value="@id" />
+            <label class="btn btn-success btn-xs filebutton">
+                <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
+                <span><input type="file" id="imgFile" name="imgFile" onchange="uploadProfileImage()"></span>
+            </label>
+        }
     </div>
-    <div class="col-4" id="divCvDocument">
-        <strong>CV:</strong>
-        @* @tagAnalystCV(analystForm.get()) *@
-    </div>
+    <br>
 
-    @* Display a list of un-assigned desks *@
+    @* Display the CV document and a form to upload one *@
+    <label for="divCvDocument">CV:</label>
+    <div id="divCvDocument" class="col-4" >
+        @tagAnalystCV(analystForm.get())
+        @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") {
+            <input type="Hidden" id="id" name="id" value="@id" />
+            <label class="btn btn-success btn-xs filebutton">
+                <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
+                <span><input type="file" id="cvFile" name="cvFile" onchange="uploadCvDocument()"></span>
+            </label>
+        }
+    </div>
+    <br>
+
+    @* Display the list of assigned desks and a form to add one *@
+    <label for="divEditDeskAnalyst">Assigned desks:</label>
+    <div id="divEditDeskAnalyst" class="col-4">
+        @tagListDeskAnalysts(analystForm.get())
+    </div>
     <label for="divAddDesk">Add Desk:</label>
     <div id="divAddDesk" class="col-4">
-        <select id="newDesk" name="newDesk">
-            @for(desk <- Desk.getAll()) {
-                @if(!analystForm.get.hasDesk(desk.deskId)) {
-                    <option value="@desk.deskId">@desk.name</option>
+        @form(routes.Analysts.addDesk(id)) {
+            <input type="Hidden" id="id" name="id" value="@id" />
+            <select id="newDesk" name="newDesk">
+                @for(desk <- Desk.getAll()) {
+                    @if(!analystForm.get.hasDesk(desk.deskId)) {
+                        <option value="@desk.deskId">@desk.name</option>
+                    }
                 }
-            }
-        </select>
+            </select>
+            <input type="submit" value="Add desk" class="btn btn-primary btn-xs">
+        }
     </div>
+    <br>
 
     <!-- Display the create_on field if it exists -->
     <span class="muted">

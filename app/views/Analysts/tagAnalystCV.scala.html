@@ -2,7 +2,7 @@
 * Page:        tagAnalystCV                                  *
 * Author:      Sav Balac                                     *
 * Date:        21/10/13                                      *
-* Description: Shows the CV document with upload form        *
+* Description: Shows the CV document (via Ajax)              *
 *                                                            *
 * @param analyst   The Analyst reference                     *
 *************************************************************@
@@ -24,16 +24,8 @@
     ********************************************@
     @if(analyst.cvDocument!=null) {
         <div>
-            <a href="@routes.Assets.at(analyst.cvDocument)" target="_blank">CV</a>
+            <a href="@routes.Assets.at(analyst.cvDocument)" target="_blank">@analyst.getCVDocumentFilename()</a>
         </div>
-    }
-    <br>
-    @form(routes.Analysts.uploadCvDocument(analyst.analystId), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
-        <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
-        <label class="btn btn-success filebutton">
-            <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
-            <span><input type="file" id="imgFile" name="imgFile" onchange="uploadCvDocument()"></span>
-        </label>
     }
 
 }

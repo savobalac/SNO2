@@ -186,5 +186,20 @@ public class Analyst extends Model {
     }
 
 
+    /**
+     * Returns the filename of the CV document.
+     * @return      String
+     */
+    public String getCVDocumentFilename() {
+        // Find the last "/" and return the string after that
+        int lastSlashPos = cvDocument.lastIndexOf('/');
+        if (lastSlashPos >= 0) {
+            return cvDocument.substring(lastSlashPos+1);
+        } else {
+            return cvDocument;
+        }
+    }
+
+
 }
 
