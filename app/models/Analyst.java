@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.*;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
+import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
 import utils.Utils;
 
 /**
@@ -79,7 +80,7 @@ public class Analyst extends Model {
     @Lob @Column(name="expertise", length = Utils.MYSQL_TEXT_BYTES)
     public String                   expertise;
 
-    @Constraints.Required
+    //@Constraints.Required
     @OneToOne @JoinColumn(name="primary_desk")
     public Desk                     primaryDesk; // "primary_desk" is the name of the column in table analyst
 
@@ -145,6 +146,43 @@ public class Analyst extends Model {
         } else {
             update();
         }
+        // Delete exising desks before saving them (un-checked desks aren't removed automatically when saving m-m)
+        List<DeskAnalyst> deskAnalysts = DeskAnalyst.find.where().eq("analyst_id", analystId).findList();
+        for (DeskAnalyst deskAnalyst : deskAnalysts) {
+            deskAnalyst.delete();
+        }
+        saveManyToManyAssociations("desks");
+    }
+
+
+    /**
+     * Returns the number of desks an analyst is assigned to (desks could be null).
+     * @return      int
+     */
+    public int getNumDesks() {
+        if (desks!=null) {
+            return desks.size();
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * Returns whether the analyst is assigned to a desk.
+     *
+     * @param id    Id of the desk
+     * @return      boolean
+     */
+    public boolean hasDesk(Long id) {
+        boolean result = false;
+        Desk desk = Desk.find.byId(id);
+        if (desk != null) {
+            if (this.desks.contains(desk)) {
+                result = true;
+            }
+        }
+        return result;
     }
 
 

@@ -2,7 +2,9 @@ package controllers;
 
 import com.avaje.ebean.Page;
 import models.Analyst;
+import models.Desk;
 import models.Users;
+import play.api.data.validation.ValidationError;
 import play.data.Form;
 import static play.data.Form.*;
 import play.mvc.Controller;
@@ -11,6 +13,10 @@ import play.mvc.Security;
 import play.mvc.With;
 import views.html.Analysts.*;
 import utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -79,16 +85,45 @@ public class Analysts extends Controller {
         Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
         Users user = Users.find.where().eq("username", request().username()).findUnique();
         String msg;
+
+        System.out.println("*** update() - before hasErrors() check ");
+
         try {
             if (analystForm.hasErrors()) { // Return to the editAnalyst page
+
+                System.out.println("*** update() - form has errors");
+                //Map<String,List<play.api.data.ValidationError>> errors = analystForm.errors();
+                System.out.println("errors: " + analystForm.errors());
+
                 return badRequest(editAnalyst.render(id, analystForm, user));
             } else {
+
+                System.out.println("*** update() - form OK");
+
                 Analyst a = analystForm.get(); // Get the analyst data
 
                 // Checkboxes if unchecked return null
                 a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
                 a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
                 a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
+
+                // Get the list of desks from the form (there's an unknown quantity so get a Map from the request)
+                List<Desk> desks = new ArrayList<Desk>(0);
+                String key = "desks"; // The name of the checkboxes in editAnalyst
+                Map<String, String[]> valuePairs = request().body().asFormUrlEncoded();
+
+                // If there are desks in the request, check their ids exist before adding them to the analyst's list
+                if (valuePairs.containsKey(key)) {
+                    String[] deskIds = valuePairs.get(key);
+                    for (String deskIdStr : deskIds) {
+                        Long deskId = Long.parseLong(deskIdStr);
+                        Desk desk = Desk.find.byId(deskId);
+                        if (desk != null) {
+                            desks.add(desk);
+                        }
+                    }
+                }
+                a.desks = desks; // Set the analyst's list of desks
 
                 // Save if a new analyst, otherwise update and show a message
                 a.saveOrUpdate();

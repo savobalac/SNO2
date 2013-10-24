@@ -84,6 +84,13 @@
                 '_label -> "Primary Desk:",
                 '_showConstraints -> false
             )
+
+            <label for="divEditDeskAnalyst">Assigned desks:</label>
+            <div id="divEditDeskAnalyst" class="col-4">
+                @tagListDeskAnalysts(analystForm.get())
+            </div>
+            <br>
+
         </fieldset>
 
         <hr>
@@ -106,6 +113,17 @@
         @* @tagAnalystCV(analystForm.get()) *@
     </div>
 
+    @* Display a list of un-assigned desks *@
+    <label for="divAddDesk">Add Desk:</label>
+    <div id="divAddDesk" class="col-4">
+        <select id="newDesk" name="newDesk">
+            @for(desk <- Desk.getAll()) {
+                @if(!analystForm.get.hasDesk(desk.deskId)) {
+                    <option value="@desk.deskId">@desk.name</option>
+                }
+            }
+        </select>
+    </div>
 
     <!-- Display the create_on field if it exists -->
     <span class="muted">
