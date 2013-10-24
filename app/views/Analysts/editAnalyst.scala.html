@@ -17,7 +17,8 @@
 @* Need to comment out the next line as fields don't get a red background when they fail validation *@
 @* @implicitField = @{ FieldConstructor(twitterBootstrapInput.render) } *@
 
-@main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
+@* @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) { *@
+@main("Debug", user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
 
@@ -37,6 +38,7 @@
         <fieldset>
             <!-- analystId needs to be set, otherwise it will be null on update -->
             <input type="Hidden" id="analystId" name="analystId" value="@id" />
+
             @select(
                 analystForm("salutation"),
                 options(utils.Utils.optionsTitle),
@@ -102,7 +104,7 @@
     @* Display the profile image and a form to upload one *@
     <label for="divProfileImage">Profile image:</label>
     <div id="divProfileImage" class="col-4" >
-        @tagAnalystImage(analystForm.get())
+        @* @tagAnalystImage(analystForm.get()) *@
         @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") {
             <input type="Hidden" id="id" name="id" value="@id" />
             <label class="btn btn-success btn-xs filebutton">
@@ -116,7 +118,7 @@
     @* Display the CV document and a form to upload one *@
     <label for="divCvDocument">CV:</label>
     <div id="divCvDocument" class="col-4" >
-        @tagAnalystCV(analystForm.get())
+        @* @tagAnalystCV(analystForm.get()) *@
         @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") {
             <input type="Hidden" id="id" name="id" value="@id" />
             <label class="btn btn-success btn-xs filebutton">
@@ -130,7 +132,7 @@
     @* Display the list of assigned desks and a form to add one *@
     <label for="divEditDeskAnalyst">Assigned desks:</label>
     <div id="divEditDeskAnalyst" class="col-4">
-        @tagListDeskAnalysts(analystForm.get())
+        @* @tagListDeskAnalysts(analystForm.get()) *@
     </div>
     <label for="divAddDesk">Add Desk:</label>
     <div id="divAddDesk" class="col-4">
@@ -138,9 +140,9 @@
             <input type="Hidden" id="id" name="id" value="@id" />
             <select id="newDesk" name="newDesk">
                 @for(desk <- Desk.getAll()) {
-                    @if(!analystForm.get.hasDesk(desk.deskId)) {
+                    @* @if(!analystForm.get().hasDesk(desk.deskId)) { *@
                         <option value="@desk.deskId">@desk.name</option>
-                    }
+                    @* } *@
                 }
             </select>
             <input type="submit" value="Add desk" class="btn btn-primary btn-xs">
@@ -151,7 +153,7 @@
     <!-- Display the create_on field if it exists -->
     <span class="muted">
         @if(analystForm.field("createOn").value()!=null) {
-            @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn )
+            @* @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn ) *@
         }
     </span>
 
