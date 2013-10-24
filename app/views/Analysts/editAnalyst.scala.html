@@ -77,6 +77,7 @@
             @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
             @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
             @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
+
             @* Setting showConstraints to false will prevent "Required" from being displayed *@
             @select(
                 analystForm("primaryDesk"),
@@ -84,9 +85,7 @@
                 '_label -> "Primary Desk:",
                 '_showConstraints -> false
             )
-
             <br>
-
         </fieldset>
 
         <hr>

@@ -60,6 +60,30 @@
 
     <hr>
 
+    <div id="actions">
+        <form name="frmFilter" class="form-inline" role="form" well form-searchaction='@link(0, "name")' method="GET">
+            <div class="form-group">
+                <label class="sr-only" for="searchbox">Search by surname</label>
+                <input type="search" class="form-control" placeholder="Search by surname" id="searchbox" name="t" value="@currentSearch">
+            </div>
+            <div class="form-group">
+                <a class="btn btn-default" href="JAVASCRIPT:frmFilter.submit()" rel="tooltip" title="Search by surname">
+                    <i class="glyphicon glyphicon-search"></i>
+                </a>
+            </div>
+
+            &nbsp;
+            <label for="f">Primary Desk:</label>
+            <select id="f" name="f" onchange="setPrimaryDesk(); this.form.submit();">
+                <option value="" selected>ALL</option>
+                @for(desk <- Desk.getAll()) {
+                    <option value="@desk.name" @if(desk.name==currentFilter){ selected }>@desk.name</option>
+                }
+            </select>
+        </form>
+        <br>
+    </div>
+
     @if(currentPage.getTotalRowCount == 0) {
 
         <div class="well">
@@ -112,5 +136,12 @@
     <a class="btn btn-success" id="add" href="@routes.Analysts.create()">New Analyst</a>
 
     <hr>
+
+    <script type="text/javascript">
+        function setPrimaryDesk() {
+            var selectedDesk = $("#f option:selected").val();
+            $("#primaryDesk").val(selectedDesk);
+        }
+    </script>
 
 }

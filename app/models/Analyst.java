@@ -104,13 +104,13 @@ public class Analyst extends Model {
      * @param pageSize      Number of analysts per page
      * @param sortBy        Analyst property used for sorting
      * @param order         Sort order (either or asc or desc)
-     * @param filter        Filter applied on lastname
+     * @param filter        Filter applied on primary desk
      * @param search        Search applied on lastname
      * @return Page<Analyst>
      */
     public static Page<Analyst> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
 
-        // Search on lastname, otherwise filter on lastname
+        // Search on lastname, otherwise filter on primary desk
         Page p = null;
         if (search.isEmpty()) {
             if (filter.isEmpty()) { // Get all records
@@ -120,7 +120,7 @@ public class Analyst extends Model {
                         .getPage(page);
             } else { // Filter
                 p = find.where()
-                        .ilike("lastname", "%" + filter + "%")
+                        .ilike("primaryDesk.name", "%" + filter + "%")
                         .orderBy(sortBy + " " + order)
                         .findPagingList(pageSize)
                         .getPage(page);

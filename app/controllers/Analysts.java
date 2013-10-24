@@ -3,6 +3,7 @@ package controllers;
 import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Desk;
+import models.DeskAnalyst;
 import models.Users;
 import play.api.data.validation.ValidationError;
 import play.data.Form;
@@ -213,7 +214,6 @@ public class Analysts extends Controller {
      */
     public static Result addDesk(Long id) {
         return ok("OK"); // For now
-        //return uploadFile(id, "cvFile");
     }
 
 
