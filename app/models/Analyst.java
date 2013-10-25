@@ -194,8 +194,8 @@ public class Analyst extends Model {
      */
     public void addDesk(Desk desk) throws Exception {
         try {
-            // Add the desk if it hasn't been already, set the instance variables and update
-            if (!desks.contains(desk)) {
+            // Add the desk if it hasn't been already (and not the primary desk), set the instance variables and update
+            if (!(desks.contains(desk) || desk.equals(primaryDesk))) {
                 desks.add(desk);
                 saveManyToManyAssociations("desks"); // Update the database
                 update();
