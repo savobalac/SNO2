@@ -69,9 +69,14 @@ public class Analysts extends Controller {
             analystForm = Form.form(Analyst.class).fill(new Analyst());
         }
         else {
+            Analyst analyst = Analyst.find.byId(id);
+            System.out.println("edit() analyst.status.statusName = " + analyst.status.statusName); // New User
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
         Users user = Users.find.where().eq("username", request().username()).findUnique();
+        System.out.println("edit() statusId field value = " + analystForm.field("statusId").value()); // Null
+        System.out.println("edit() rank field value = " + analystForm.field("rank").value());
+        System.out.println("edit() primaryDesk field value = " + analystForm.field("primaryDesk").value());
         return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, user));
     }
 
@@ -86,45 +91,16 @@ public class Analysts extends Controller {
         Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
         Users user = Users.find.where().eq("username", request().username()).findUnique();
         String msg;
-
-        System.out.println("*** update() - before hasErrors() check ");
-
         try {
             if (analystForm.hasErrors()) { // Return to the editAnalyst page
-
-                System.out.println("*** update() - form has errors");
-                //Map<String,List<play.api.data.ValidationError>> errors = analystForm.errors();
-                System.out.println("errors: " + analystForm.errors());
-
                 return badRequest(editAnalyst.render(id, analystForm, user));
             } else {
-
-                System.out.println("*** update() - form OK");
-
                 Analyst a = analystForm.get(); // Get the analyst data
 
                 // Checkboxes if unchecked return null
                 a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
                 a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
                 a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
-
-                // Get the list of desks from the form (there's an unknown quantity so get a Map from the request)
-                List<Desk> desks = new ArrayList<Desk>(0);
-                String key = "desks"; // The name of the checkboxes in editAnalyst
-                Map<String, String[]> valuePairs = request().body().asFormUrlEncoded();
-
-                // If there are desks in the request, check their ids exist before adding them to the analyst's list
-                if (valuePairs.containsKey(key)) {
-                    String[] deskIds = valuePairs.get(key);
-                    for (String deskIdStr : deskIds) {
-                        Long deskId = Long.parseLong(deskIdStr);
-                        Desk desk = Desk.find.byId(deskId);
-                        if (desk != null) {
-                            desks.add(desk);
-                        }
-                    }
-                }
-                a.desks = desks; // Set the analyst's list of desks
 
                 // Save if a new analyst, otherwise update and show a message
                 a.saveOrUpdate();
@@ -208,12 +184,65 @@ public class Analysts extends Controller {
 
 
     /**
-     * Assigns the analyst to a desk.
+     * Display a (usually embedded) form to display the desks an analyst is assigned to
      * @param id Id of the analyst
      * @return Result
      */
-    public static Result addDesk(Long id) {
-        return ok("OK"); // For now
+    public static Result editDesks(Long id) {
+        Analyst analyst = Analyst.find.byId(id);
+        return ok(tagListDeskAnalysts.render(analyst));
+    }
+
+
+    /**
+     * Assigns the analyst to a desk.
+     * @param id Id of the analyst
+     * @param deskId Id of the desk
+     * @return Result
+     */
+    public static Result addDesk(Long id, Long deskId) {
+        Analyst analyst = Analyst.find.byId(id);
+        Desk desk = Desk.find.byId(deskId);
+        try {
+            if(analyst == null) {
+                return ok("Error: Analyst not found.");
+            }
+            else {
+                analyst.addDesk(desk);
+                return ok("OK"); // "OK" is used by the calling Ajax function
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analysts.addDesk()", e);
+            return ok(e.getMessage());
+        }
+    }
+
+
+    /**
+     * Deletes a desk from the analyst.
+     * @param id Id of the analyst
+     * @param deskId Id of the desk
+     * @return Result
+     */
+    public static Result delDesk(Long id, Long deskId) {
+        Analyst analyst = Analyst.find.byId(id);
+        Desk desk = Desk.find.byId(deskId);
+        try {
+            if (analyst == null) {
+                return ok("Error: Analyst not found.");
+            }
+            if (desk == null) {
+                return ok("Error: Desk not found.");
+            } else {
+                analyst.delDesk(desk);
+                return ok("OK"); // "OK" is used by the calling Ajax function
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analysts.delDesk()", e);
+            return ok(e.getMessage());
+        }
     }
 
 

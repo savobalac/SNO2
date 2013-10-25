@@ -30,7 +30,7 @@
                 @for(desk <- analyst.desks) {
                     <tr>
                         <td width="16">
-                            <a href="#" rel="tooltip" title="Remove desk @desk.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delDeskAnalyst(@desk.deskId);">
+                            <a href="#" rel="tooltip" title="Remove desk @desk.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delDesk(@desk.deskId);">
                                 <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
                             </a>
                         </td>

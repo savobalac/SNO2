@@ -21,7 +21,7 @@ public class DeskAnalyst extends Model {
     public Long         deskId;
     @Id
     public Long         analystId;
-    //public byte[]       coordinator;
+    public byte[]       coordinator;
 
 
     /**

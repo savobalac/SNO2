@@ -147,11 +147,11 @@ public class Analyst extends Model {
             update();
         }
         // Delete exising desks before saving them (un-checked desks aren't removed automatically when saving m-m)
-        List<DeskAnalyst> deskAnalysts = DeskAnalyst.find.where().eq("analyst_id", analystId).findList();
+        /*List<DeskAnalyst> deskAnalysts = DeskAnalyst.find.where().eq("analyst_id", analystId).findList();
         for (DeskAnalyst deskAnalyst : deskAnalysts) {
             deskAnalyst.delete();
         }
-        saveManyToManyAssociations("desks");
+        saveManyToManyAssociations("desks");*/
     }
 
 
@@ -183,6 +183,50 @@ public class Analyst extends Model {
             }
         }
         return result;
+    }
+
+
+    /**
+     * Assigns a desk to the analyst.
+     *
+     * @param desk  The desk to be added
+     * @return      boolean
+     */
+    public void addDesk(Desk desk) throws Exception {
+        try {
+            // Set the instance variables and update
+            desks.add(desk);
+            saveManyToManyAssociations("desks"); // Update the database
+            update();
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.addDesk()", e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * Deletes a desk from the analyst.
+     *
+     * @param desk  The desk to be deleted
+     * @return      boolean
+     */
+    public void delDesk(Desk desk) throws Exception {
+        try {
+            // Remove the desk if it exists, set the instance variables and update
+            if (desks.contains(desk)) {
+                desks.remove(desk);
+                saveManyToManyAssociations("desks"); // Update the database
+                update();
+            } else {
+                throw new Exception("Error: Desk " + desk.deskId + ", " + desk.name + " not assigned to the analyst.");
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.delDesk()", e);
+            throw e;
+        }
     }
 
 

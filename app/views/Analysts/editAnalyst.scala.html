@@ -17,8 +17,7 @@
 @* Need to comment out the next line as fields don't get a red background when they fail validation *@
 @* @implicitField = @{ FieldConstructor(twitterBootstrapInput.render) } *@
 
-@* @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) { *@
-@main("Debug", user) {
+@main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
 
@@ -46,13 +45,14 @@
             )
             @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
             @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
+            @* selects need the identifier of the referenced table, e.g. status.statusId *@
             @select(
-                analystForm("statusId"),
+                analystForm("status.statusId"),
                 options(models.Status.options),
                 '_label -> "Status:"
             )
             @select(
-                analystForm("rank"),
+                analystForm("rank.id"),
                 options(models.Rank.options),
                 '_label -> "Rank:"
             )
@@ -82,11 +82,33 @@
 
             @* Setting showConstraints to false will prevent "Required" from being displayed *@
             @select(
-                analystForm("primaryDesk"),
+                analystForm("primaryDesk.deskId"),
                 options(models.Desk.options),
                 '_label -> "Primary Desk:",
                 '_showConstraints -> false
             )
+            <br>
+
+            @* Display the list of assigned desks and a form to add one *@
+            <label for="divEditDeskAnalyst">Assigned desks:</label>
+            <div id="divEditDeskAnalyst" class="col-4">
+                @* The desks are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+            </div>
+            <label for="divAddDesk">Add Desk:</label>
+            <div id="divAddDesk" class="col-4">
+                <input type="Hidden" id="id" name="id" value="@id" />
+                <select id="newDesk" name="newDesk">
+                    @for(desk <- Desk.getAll()) {
+                        @if(!analystForm.get().hasDesk(desk.deskId)) {
+                            <option value="@desk.deskId">@desk.name</option>
+                        }
+                    }
+                </select>
+                <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
+                    <i class="glyphicon glyphicon-plus icon-white"></i> Add
+                </a>
+                <input type="submit" value="Add desk" class="btn btn-primary btn-xs" onsubmit="addDesk()">
+            </div>
             <br>
         </fieldset>
 
@@ -129,26 +151,6 @@
     </div>
     <br>
 
-    @* Display the list of assigned desks and a form to add one *@
-    <label for="divEditDeskAnalyst">Assigned desks:</label>
-    <div id="divEditDeskAnalyst" class="col-4">
-        @* @tagListDeskAnalysts(analystForm.get()) *@
-    </div>
-    <label for="divAddDesk">Add Desk:</label>
-    <div id="divAddDesk" class="col-4">
-        @form(routes.Analysts.addDesk(id)) {
-            <input type="Hidden" id="id" name="id" value="@id" />
-            <select id="newDesk" name="newDesk">
-                @for(desk <- Desk.getAll()) {
-                    @* @if(!analystForm.get().hasDesk(desk.deskId)) { *@
-                        <option value="@desk.deskId">@desk.name</option>
-                    @* } *@
-                }
-            </select>
-            <input type="submit" value="Add desk" class="btn btn-primary btn-xs">
-        }
-    </div>
-    <br>
 
     <!-- Display the create_on field if it exists -->
     <span class="muted">
@@ -165,26 +167,15 @@
 
     <script type="text/javascript">
 
-        alert("Test javascript");
-
-        // Disables all fields by preventing the default action when the field attribute class="disable"
-        $(".disable").click(function(event){
-            event.preventDefault();
+        // Get embedded html via Ajax after the document has loaded
+        $(document).ready(function(){
+            getDesks();
         });
 
-        // After document has loaded, display the profile image
-        $(document).ready(function(){
-            alert("Document ready");
-            getProfileImage();
-        }
-
-        // Get tagVenueImage page (and prevent caching in IE)
-        function getProfileImage() {
-            var url = "/analysts/@id/profileImage";
-            var updateRegion = "#divProfileImage";
-
-            alert("about to call AJAX url: " + url);
-
+        // Get the list of desks assigned to the analysts (and prevent caching in IE)
+        function getDesks() {
+            var url = "/analysts/@id/desks";
+            var updateRegion = "#divEditDeskAnalyst";
             $.ajax({
                 type: "GET",
                 url: url,
@@ -197,29 +188,43 @@
             });
         }
 
-        // Upload the profile image
-        function submitImageUpload() {
-            if(@id==0) {
-                alert("The Analyst needs to be saved before uploading a profile image.");
-            } else {
-                var url = '/analysts/' + @id + '/uploadProfileImage';
-                $("#formUpload").ajaxSubmit({
-                    url:    url,
-                    type:   'post',
-                    dataType: "text",
-                    success: function (returnedData) {
-                        if(returnedData=='OK') {
-                            window.location.reload();
-                            $("#imgFile").val("");
-                        } else {
-                            alert(returnedData);
-                        }
+        // Add a desk to the analyst
+        function addDesk() {
+            var url = "/analysts/@id/addDesk/" + $("#newDesk").val();
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    if(returnedData=='OK') {
+                        getDesks();
+                    } else {
+                        alert(returnedData);
                     }
-                });
-            }
+                }
+            });
         }
 
-        // Replace the inner content of the submitted region (identified by its id)...
+        // Delete a desk from the analyst
+        function delDesk(deskId) {
+            var url = "/analysts/@id/delDesk/" + deskId;
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    if(returnedData=='OK') {
+                        getDesks();
+                    } else {
+                        alert(returnedData);
+                    }
+                }
+            });
+        }
+
+        // Replace the inner content of the submitted region (this function needs to be below any calls to it)
         function replaceRegionContents(regionId, newContent) {
             $(regionId).empty();                // Clear
             $(newContent).appendTo(regionId);   // Repopulate
