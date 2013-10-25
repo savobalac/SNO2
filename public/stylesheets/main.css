@@ -62,6 +62,37 @@ table.computers .header a {
     color: #666;
 }
 
+/* Shows a loading animation.
+   Sets display:none to make it hidden.
+   Positions in relation to the window with position:fixed.
+   The dark red colour matches the gif.
+   Background set to 80% white with animation centered (50% 50%), and no repeating. */
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        81%;
+    left:       65%;
+    width:      100px;
+    height:     100px;
+    border:     0;
+    color:      #A13030;
+    background: rgba( 255, 255, 255, 0.8 )
+                url('/assets/images/loading animation.gif')
+                50% 50%
+                no-repeat;
+}
+
+/* When the body has the loading class, turn the scroll bar off (overflow:hidden). */
+body.loading {
+    overflow: hidden;
+}
+
+/* When the body has the loading class, the modal element will be visible. */
+body.loading .modal {
+    display: block;
+}
+
 label.filebutton {
     overflow:hidden;
     position:relative;
