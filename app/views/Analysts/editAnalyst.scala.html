@@ -99,15 +99,12 @@
                 <input type="Hidden" id="id" name="id" value="@id" />
                 <select id="newDesk" name="newDesk">
                     @for(desk <- Desk.getAll()) {
-                        @if(!analystForm.get().hasDesk(desk.deskId)) {
-                            <option value="@desk.deskId">@desk.name</option>
-                        }
+                        <option value="@desk.deskId">@desk.name</option>
                     }
                 </select>
                 <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
                     <i class="glyphicon glyphicon-plus icon-white"></i> Add
                 </a>
-                <input type="submit" value="Add desk" class="btn btn-primary btn-xs" onsubmit="addDesk()">
             </div>
             <br>
         </fieldset>
@@ -190,20 +187,24 @@
 
         // Add a desk to the analyst
         function addDesk() {
-            var url = "/analysts/@id/addDesk/" + $("#newDesk").val();
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    if(returnedData=='OK') {
-                        getDesks();
-                    } else {
-                        alert(returnedData);
+            if(@id==0) {
+                alert("The analyst needs to be saved before adding a desk.");
+            } else {
+                var url = "/analysts/@id/addDesk/" + $("#newDesk").val();
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: 'html',
+                    traditional: true,
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            getDesks();
+                        } else {
+                            alert(returnedData);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         // Delete a desk from the analyst

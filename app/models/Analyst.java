@@ -194,10 +194,12 @@ public class Analyst extends Model {
      */
     public void addDesk(Desk desk) throws Exception {
         try {
-            // Set the instance variables and update
-            desks.add(desk);
-            saveManyToManyAssociations("desks"); // Update the database
-            update();
+            // Add the desk if it hasn't been already, set the instance variables and update
+            if (!desks.contains(desk)) {
+                desks.add(desk);
+                saveManyToManyAssociations("desks"); // Update the database
+                update();
+            }
         }
         catch (Exception e) {
             Utils.eHandler("Analyst.addDesk()", e);
