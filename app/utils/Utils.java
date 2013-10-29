@@ -11,6 +11,7 @@ import java.util.*;
  * User: Sav
  * Date: 16/10/13
  * Time: 13:23
+ * Description: Contains utility methods and constants.
  * To change this template use File | Settings | File Templates.
  */
 public class Utils {

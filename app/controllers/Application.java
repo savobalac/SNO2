@@ -1,41 +1,56 @@
 package controllers;
 
 import models.Users;
-import play.*;
-import play.api.mvc.*;
+import java.security.NoSuchAlgorithmException;
 import play.api.mvc.Call;
-import play.mvc.*;
 import play.mvc.Controller;
 import play.mvc.Security;
 
-import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.*;
 import play.data.*;
 import static play.data.Form.*;
+import views.html.*;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: Sav Balac
+ * Date: 16/10/13
+ * Time: 12:59
+ * Description: Application controller that renders pages and logs the user in and out.
+ * To change this template use File | Settings | File Templates.
+ */
 public class Application extends Controller {
 
     // Constants
-    public static final int     RECORDS_PER_PAGE = 20;
+    public static final int RECORDS_PER_PAGE = 20;
 
     // Add a constant here when creating a new list page
     public static final int PAGE_TYPE_ANALYSTS =  1;
 
+
+    /**
+     * Returns the index page.
+     * @return Result
+     */
     @Security.Authenticated(Secured.class)
     public static Result index() {
         return ok(index.render("SNO2", Users.find.where().eq("username", request().username()).findUnique() ));
     }
 
-    @Security.Authenticated(Secured.class)
-    public static Result test() {
-        return ok(index.render("Test SNO2", Users.find.where().eq("username", request().username()).findUnique() ));
-    }
 
+    /**
+     * Returns the login page.
+     * @return Result
+     */
     public static Result login() {
         return ok(login.render(form(Login.class)));
     }
 
+
+    /**
+     * Authenticates the user and goes the index page.
+     * @return Result
+     */
     public static Result authenticate() {
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if (loginForm.hasErrors()) {
@@ -47,11 +62,17 @@ public class Application extends Controller {
         }
     }
 
+
+    /**
+     * Logs the user out and goes to the login page.
+     * @return Result
+     */
     public static Result logout() {
         session().clear();
         flash("success", "You've been logged out");
         return redirect(controllers.routes.Application.login());
     }
+
 
     /**
      * When a (pagination) link is clicked, return the required list page
@@ -77,17 +98,27 @@ public class Application extends Controller {
 
     }
 
+
+    /**
+     * Inner class that hold the username and password and validates the user.
+     */
     public static class Login {
 
         public String username;
         public String password;
 
-        public String validate() {
+        /**
+         * Calls a method to authenticate the user.
+         * @return String    An error message if not authenticated
+         */
+        public String validate() throws NoSuchAlgorithmException {
             if (Users.authenticate(username, password) == null) {
                 return "Invalid username or password";
             }
             return null;
         }
+
     }
+
 
 }

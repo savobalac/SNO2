@@ -133,8 +133,18 @@ public class Analysts extends Controller {
     public static Result delete(Long id) {
         String msg;
         try {
-            // Find the analyst record, delete it and show a message
+            // Find the analyst record
             Analyst analyst = Analyst.find.byId(id);
+
+            // Delete desks
+            analyst.delAllDesks(); // Many-many
+
+            // Delete associated files
+            deleteDirectory("./public/uploads/analyst/" + id.toString() + "/profile");
+            deleteDirectory("./public/uploads/analyst/" + id.toString() + "/document");
+            deleteDirectory("./public/uploads/analyst/" + id.toString());
+
+            // Delete the analyst
             analyst.delete();
             msg = "Analyst deleted.";
             flash(Utils.FLASH_KEY_SUCCESS, msg);
@@ -325,6 +335,37 @@ public class Analysts extends Controller {
         }
         fileSys = null;
         return isDeleted;
+    }
+
+
+    /**
+     * Deletes a directory and all files in it from the file system
+     * @param path File path
+     * @return boolean
+     */
+    private static boolean deleteDirectory(String path) {
+
+        // If the directory exists, delete files and then the directory
+        boolean isDeleted = false;
+        File dir = new File(path);
+        if (dir.exists()) {
+            // If the directory is empty, delete it
+            if (dir.list().length==0) {
+                isDeleted = dir.delete();
+            } else {
+                // Delete all files, then the directory
+                String files[] = dir.list();
+                for (String f : files) {
+                    File fileDelete = new File(dir, f);
+                    isDeleted = fileDelete.delete();
+                }
+                // The directory should be empty, so delete it
+                if (dir.list().length==0) {
+                    isDeleted = dir.delete();
+                }
+            }
+        }
+        return isDeleted; // Should be true if everything was deleted
     }
 
 

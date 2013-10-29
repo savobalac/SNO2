@@ -22,8 +22,5 @@ GET     /analysts/:id/desks                 controllers.Analysts.editDesks(id:Lo
 POST    /analysts/:id/addDesk/:deskId       controllers.Analysts.addDesk(id:Long, deskId:Long)
 POST    /analysts/:id/delDesk/:deskId       controllers.Analysts.delDesk(id:Long, deskId:Long)
 
-# Test URLs
-GET     /test                               controllers.Application.test()
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

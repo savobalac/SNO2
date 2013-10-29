@@ -1,19 +1,17 @@
 package models;
 
-import com.avaje.ebean.Page;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import utils.Utils;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Sav
+ * User: Sav Balac
  * Date: 16/10/13
  * Time: 12:59
  * Description: Model class that maps to DB table analyst.
@@ -43,9 +41,17 @@ public class Users extends Model {
      */
     public static Finder<Long, Users> find = new Finder<Long, Users>(Long.class, Users.class);
 
-    public static Users authenticate(String username, String password) {
+
+    /**
+     * Authenticates the user. The hashed password is 64 characters long.
+     * @param username Username
+     * @param password Password to be hashed before checking
+     * @return Result
+     */
+    public static Users authenticate(String username, String password) throws NoSuchAlgorithmException {
         return find.where().eq("username", username)
-                           .eq("password", password).findUnique();
+                           .eq("password", Utils.hashString(password)).findUnique();
     }
+
 
 }

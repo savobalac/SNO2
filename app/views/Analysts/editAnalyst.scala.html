@@ -105,7 +105,7 @@
             </span>
         </div>
 
-        @* Display the list of assigned desks and a form to add one *@
+        @* Display the list of assigned desks and a means to add one *@
         <div class="tab-pane active" id="tabDesks">
             <label for="divDesks">Assigned desks:</label>
             <div id="divDesks" class="col-4">
@@ -116,7 +116,7 @@
                 <input type="Hidden" id="id" name="id" value="@id" />
                 <select id="newDesk" name="newDesk">
                     @for(desk <- Desk.getAll()) {
-                    <option value="@desk.deskId">@desk.name</option>
+                        <option value="@desk.deskId">@desk.name</option>
                     }
                 </select>
                 <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
@@ -134,13 +134,10 @@
             </div>
             <div id="divUploadProfileImage" class="col-4">
                 <br>
-                @* @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") { *@
-                <!--<input type="Hidden" id="id" name="id" value="@id" /> -->
                 <label class="btn btn-success btn-xs filebutton">
                     <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
                     <span><input type="file" id="profile" name="profile" onchange="uploadProfileImage()"></span>
                 </label>
-                @* } *@
             </div>
             <br>
         </div>
@@ -153,13 +150,10 @@
             </div>
             <div id="divUploadCvDocument" class="col-4">
                 <br>
-                @* @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") { *@
-                <!--<input type="Hidden" id="id" name="id" value="@id" /> -->
                 <label class="btn btn-success btn-xs filebutton">
                     <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
                     <span><input type="file" id="document" name="document" onchange="uploadCvDocument()"></span>
                 </label>
-                @* } *@
             </div>
             <br>
         </div>

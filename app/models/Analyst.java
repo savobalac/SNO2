@@ -197,7 +197,6 @@ public class Analyst extends Model {
      * Deletes a desk from the analyst.
      *
      * @param desk  The desk to be deleted
-     * @return      boolean
      */
     public void delDesk(Desk desk) throws Exception {
         try {
@@ -212,6 +211,23 @@ public class Analyst extends Model {
         }
         catch (Exception e) {
             Utils.eHandler("Analyst.delDesk()", e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * Deletes all desks from the analyst.
+     */
+    public void delAllDesks() throws Exception {
+        try {
+            // Set the instance variable and update
+            desks = null;
+            saveManyToManyAssociations("desks"); // Update the database
+            update();
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.delAllDesks()", e);
             throw e;
         }
     }
