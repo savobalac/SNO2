@@ -18,7 +18,7 @@ public class Utils {
     // Constants
     public static final int MYSQL_TEXT_BYTES = 65535; // A text column is 2^16 bytes
 
-    // Maximum upload file size of 10 Mb approximated from the MySQL max_allowed_packet, which is currently set to 25 Mb
+    // Maximum upload file size of 10 Mb
     public static final int    MAX_FILE_SIZE = 10485760; // In bytes
     public static final String MAX_FILE_SIZE_STRING = MAX_FILE_SIZE / 1048576 + "Mb";
 
@@ -125,7 +125,7 @@ public class Utils {
 
 
     /**
-     * Hashes a string using the SHA-256 hashing algorithm.
+     * Hashes a string using the SHA-256 hashing algorithm. This doesn't generate unique values.
      * @param input Input string
      * @return String
      */
@@ -140,22 +140,9 @@ public class Utils {
         for (int i = 0; i < byteData.length; i++) {
             sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
         }
-
-        System.out.println("Hex format : " + sb.toString());
-
-        // Convert the byte to hex format method 2
-        StringBuffer hexString = new StringBuffer();
-        for (int i=0; i < byteData.length; i++) {
-            String hex = Integer.toHexString(0xff & byteData[i]);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-
-        System.out.println("Hex format : " + hexString.toString());
-        return hexString.toString();
+        return sb.toString();
 
     }
+
 
 }
