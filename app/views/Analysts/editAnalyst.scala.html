@@ -20,8 +20,6 @@
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
-    <script src="//malsup.github.com/jquery.form.js"></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/sno.js")'></script>
 
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
@@ -35,63 +33,93 @@
 
     <hr>
 
-    @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
+    <div class="tabbable">
+        <ul class="nav nav-tabs" id="tabList">
+            <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
+            <li id="tabDesksLink"><a href="#tabDesks" data-toggle="tab">Desks</a></li>
+            <li id="tabProfileLink"><a href="#tabProfile" data-toggle="tab">Profile</a></li>
+            <li id="tabCvLink"><a href="#tabCv" data-toggle="tab">CV</a></li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+
+        @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
         <fieldset>
             <!-- analystId needs to be set, otherwise it will be null on update -->
             <input type="Hidden" id="analystId" name="analystId" value="@id" />
 
-            @select(
-                analystForm("salutation"),
-                options(utils.Utils.optionsTitle),
-                '_label -> "Salutation:"
-            )
-            @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
-            @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
-            @* selects need the identifier of the referenced table, e.g. status.statusId *@
-            @select(
-                analystForm("status.statusId"),
-                options(models.Status.options),
-                '_label -> "Status:"
-            )
-            @select(
-                analystForm("rank.id"),
-                options(models.Rank.options),
-                '_label -> "Rank:"
-            )
-            @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
-            @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
-            @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
-            @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
-            @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
-            @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
-            @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
-            @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
-            @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
-            @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
-            @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
-            @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
-            @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
-            @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
-            @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
-            @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
-            @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
-            @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
-            @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
-            @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
-            @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
-            @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
-            @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
 
-            @* Setting showConstraints to false will prevent "Required" from being displayed *@
-            @select(
-                analystForm("primaryDesk.deskId"),
-                options(models.Desk.options),
-                '_label -> "Primary Desk:",
-                '_showConstraints -> false
-            )
-            <br>
+            <div class="tab-pane active" id="tabDetails">
+                @select(
+                    analystForm("salutation"),
+                    options(utils.Utils.optionsTitle),
+                    '_label -> "Salutation:"
+                )
+                @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
+                @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
+                @* selects need the identifier of the referenced table, e.g. status.statusId *@
+                @select(
+                    analystForm("status.statusId"),
+                    options(models.Status.options),
+                    '_label -> "Status:"
+                )
+                @select(
+                    analystForm("rank.id"),
+                    options(models.Rank.options),
+                    '_label -> "Rank:"
+                )
+                @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
+                @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
+                @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
+                @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
+                @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
+                @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
+                @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
+                @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
+                @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
+                @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
+                @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
+                @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
+                @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
+                @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
+                @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
+                @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
+                @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
+                @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
+                @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
+                @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
+                @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
+                @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
+                @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
 
-            @* Display the list of assigned desks and a form to add one *@
+                @* Setting showConstraints to false will prevent "Required" from being displayed *@
+                @select(
+                    analystForm("primaryDesk.deskId"),
+                    options(models.Desk.options),
+                    '_label -> "Primary Desk:",
+                    '_showConstraints -> false
+                )
+            </div>
+            <hr>
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Save" class="btn btn-primary">
+            <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
+        </div>
+        }
+
+        <!-- Display the create_on field if it exists -->
+        <span class="muted">
+            @if(analystForm.field("createOn").value()!=null) {
+                @* @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn ) *@
+            }
+        </span>
+
+
+        @* Display the list of assigned desks and a form to add one *@
+        <div class="tab-pane active" id="tabDesks">
             <label for="divDesks">Assigned desks:</label>
             <div id="divDesks" class="col-4">
                 @* The desks are retrieved after the document has loaded via Ajax (see JavaScript below) *@
@@ -109,62 +137,50 @@
                 </a>
             </div>
             <br>
-
-        </fieldset>
+        </div>
 
         <hr>
 
-        <div class="actions">
-            <input type="submit" value="Save" class="btn btn-primary">
-            <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
+        @* Display the profile image and a form to upload one *@
+        <div class="tab-pane active" id="tabProfile">
+            <label for="divProfileImage">Profile image:</label>
+            <div id="divProfileImage" class="col-4" >
+                @* The profile image is retrieved after the document has loaded via Ajax (see JavaScript below) *@
+            </div>
+            <div id="divUploadProfileImage" class="col-4">
+                <br>
+                @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") {
+                    <input type="Hidden" id="id" name="id" value="@id" />
+                    <label class="btn btn-success btn-xs filebutton">
+                        <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
+                        <span><input type="file" id="profile" name="profile" onchange="uploadProfileImage()"></span>
+                    </label>
+                    <input type="submit" value="submitProfileImage" class="btn btn-success btn-xs">
+                }
+            </div>
+            <br>
         </div>
 
-    }
-
-    <hr>
-
-    @* Display the profile image and a form to upload one *@
-    <label for="divProfileImage">Profile image:</label>
-    <div id="divProfileImage" class="col-4" >
-        @* The profile image is retrieved after the document has loaded via Ajax (see JavaScript below) *@
+        @* Display the CV document and a form to upload one *@
+        <div class="tab-pane active" id="tabCv">
+            <label for="divCvDocument">CV:</label>
+            <div id="divCvDocument" class="col-4" >
+                @* The CV document is retrieved after the document has loaded via Ajax (see JavaScript below) *@
+            </div>
+            <div id="divUploadCvDocument" class="col-4">
+                <br>
+                @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") {
+                <input type="Hidden" id="id" name="id" value="@id" />
+                <label class="btn btn-success btn-xs filebutton">
+                    <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
+                    <span><input type="file" id="document" name="document" onchange=""></span>
+                </label>
+                <input type="submit" value="submitCvDocument" class="btn btn-success btn-xs">
+                }
+            </div>
+            <br>
+        </div>
     </div>
-    <div id="divUploadProfileImage" class="col-4">
-        <br>
-        @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") {
-            <input type="Hidden" id="id" name="id" value="@id" />
-            <label class="btn btn-success btn-xs filebutton">
-                <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
-                <span><input type="file" id="profile" name="profile" onchange=""></span>
-            </label>
-            <input type="submit" value="submitProfileImage" class="btn btn-success btn-xs">
-        }
-    </div>
-    <br>
-
-    @* Display the CV document and a form to upload one *@
-    <label for="divCvDocument">CV:</label>
-    <div id="divCvDocument" class="col-4" >
-        @* The CV document is retrieved after the document has loaded via Ajax (see JavaScript below) *@
-    </div>
-    <div id="divUploadCvDocument" class="col-4">
-        <br>
-        @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") {
-            <input type="Hidden" id="id" name="id" value="@id" />
-            <label class="btn btn-success btn-xs filebutton">
-                <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
-                <span><input type="file" id="document" name="document" onchange=""></span>
-            </label>
-            <input type="submit" value="submitCvDocument" class="btn btn-success btn-xs">
-        }
-    </div>
-    <br>
-
-    <!-- Display the create_on field if it exists -->
-    <span class="muted">
-        @if(analystForm.field("createOn").value()!=null) {
-            @* @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn ) *@
-        }
-    </span>
 
     @if(!(id==null || id==0)) {
         @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
@@ -242,6 +258,32 @@
             });
         }
 
+        // Upload a profile image
+        function uploadProfileImage() {
+            if(@id==0) {
+                alert("The analyst needs to be saved before uploading an image.");
+            } else {
+                var url = '/analysts/' + @id + '/uploadProfileImage';
+                alert("JS uploadProfileImage(), url = " + url);
+                $("#profileImage")
+                .ajaxSubmit({
+                    url:    url,
+                    type:   "post",
+                    dataType: "text",
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            alert("JS uploadProfileImage - returnedData OK");
+                            getProfileImage();
+                            $("#profile").val("");
+                        } else {
+                            alert(returnedData);
+                        }
+                    }
+                });
+                alert("JS uploadProfileImage - after .ajaxSubmit");
+            }
+        }
+
         // Get the profile image (and prevent caching in IE)
         function getProfileImage() {
             var url = "/analysts/@id/profileImage";
@@ -272,31 +314,6 @@
                     replaceRegionContents(updateRegion, returnedData);
                 }
             });
-        }
-
-        // Upload a profile image
-        function uploadProfileImage() {
-            if(@id==0) {
-                alert("The analyst needs to be saved before uploading an image.");
-            } else {
-                var url = '/analysts/' + @id + '/uploadProfileImage';
-                alert("JS uploadProfileImage(), url = " + url);
-                $.ajax({
-                    url:    url,
-                    type:   "post",
-                    dataType: "text",
-                    success: function (returnedData) {
-                        if(returnedData=='OK') {
-                            alert("JS uploadProfileImage - returnedData OK");
-                            getProfileImage();
-                            $("#imageFile").val("");
-                        } else {
-                            alert(returnedData);
-                        }
-                    }
-                });
-                alert("JS uploadProfileImage - after .ajaxSubmit");
-            }
         }
 
         // Replace the inner content of the submitted region (this function needs to be below any calls to it)
