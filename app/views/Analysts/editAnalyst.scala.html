@@ -33,86 +33,77 @@
 
     <hr>
 
-    <ul class="nav nav-tabs" id="tabList">
-        <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
-        <li id="tabDesksLink"><a href="#tabDesks" data-toggle="tab">Desks</a></li>
-        <li id="tabProfileLink"><a href="#tabProfile" data-toggle="tab">Profile</a></li>
-        <li id="tabCvLink"><a href="#tabCv" data-toggle="tab">CV</a></li>
-    </ul>
+    @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
+    <fieldset>
+        <!-- analystId needs to be set, otherwise it will be null on update -->
+        <input type="Hidden" id="analystId" name="analystId" value="@id" />
 
-    <div class="tab-pane active" id="tabDetails">
-        @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
-        <fieldset>
-            <!-- analystId needs to be set, otherwise it will be null on update -->
-            <input type="Hidden" id="analystId" name="analystId" value="@id" />
+        <ul class="nav nav-tabs" id="tabList">
+            <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
+            <li id="tabDesksLink"><a href="#tabDesks" data-toggle="tab">Desks</a></li>
+            <li id="tabProfileLink"><a href="#tabProfile" data-toggle="tab">Profile</a></li>
+            <li id="tabCvLink"><a href="#tabCv" data-toggle="tab">CV</a></li>
+        </ul>
 
+        <div class="tab-pane active" id="tabDetails">
+            @select(
+                analystForm("salutation"),
+                options(utils.Utils.optionsTitle),
+                '_label -> "Salutation:"
+            )
+            @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
+            @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
+            @* selects need the identifier of the referenced table, e.g. status.statusId *@
+            @select(
+                analystForm("status.statusId"),
+                options(models.Status.options),
+                '_label -> "Status:"
+            )
+            @select(
+                analystForm("rank.id"),
+                options(models.Rank.options),
+                '_label -> "Rank:"
+            )
+            @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
+            @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
+            @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
+            @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
+            @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
+            @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
+            @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
+            @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
+            @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
+            @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
+            @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
+            @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
+            @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
+            @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
+            @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
+            @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
+            @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
+            @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
+            @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
+            @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
+            @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
+            @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
+            @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
 
-                @select(
-                    analystForm("salutation"),
-                    options(utils.Utils.optionsTitle),
-                    '_label -> "Salutation:"
-                )
-                @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
-                @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
-                @* selects need the identifier of the referenced table, e.g. status.statusId *@
-                @select(
-                    analystForm("status.statusId"),
-                    options(models.Status.options),
-                    '_label -> "Status:"
-                )
-                @select(
-                    analystForm("rank.id"),
-                    options(models.Rank.options),
-                    '_label -> "Rank:"
-                )
-                @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
-                @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
-                @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
-                @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
-                @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
-                @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
-                @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
-                @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
-                @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
-                @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
-                @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
-                @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
-                @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
-                @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
-                @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
-                @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
-                @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
-                @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
-                @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
-                @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
-                @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
-                @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
-                @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
-
-                @* Setting showConstraints to false will prevent "Required" from being displayed *@
-                @select(
-                    analystForm("primaryDesk.deskId"),
-                    options(models.Desk.options),
-                    '_label -> "Primary Desk:",
-                    '_showConstraints -> false
-                )
+            @* Setting showConstraints to false will prevent "Required" from being displayed *@
+            @select(
+                analystForm("primaryDesk.deskId"),
+                options(models.Desk.options),
+                '_label -> "Primary Desk:",
+                '_showConstraints -> false
+            )
             <hr>
-        </fieldset>
 
-        <div class="actions">
-            <input type="submit" value="Save" class="btn btn-primary">
-            <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
+            <!-- Display the create_on field if it exists -->
+            <span class="muted">
+                @if(analystForm.field("createOn").value()!=null) {
+                    @* @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn ) *@
+                }
+            </span>
         </div>
-        }
-
-        <!-- Display the create_on field if it exists -->
-        <span class="muted">
-            @if(analystForm.field("createOn").value()!=null) {
-                @* @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn ) *@
-            }
-        </span>
-    </div>
-
 
         @* Display the list of assigned desks and a form to add one *@
         <div class="tab-pane active" id="tabDesks">
@@ -125,7 +116,7 @@
                 <input type="Hidden" id="id" name="id" value="@id" />
                 <select id="newDesk" name="newDesk">
                     @for(desk <- Desk.getAll()) {
-                        <option value="@desk.deskId">@desk.name</option>
+                    <option value="@desk.deskId">@desk.name</option>
                     }
                 </select>
                 <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
@@ -135,8 +126,6 @@
             <br>
         </div>
 
-        <hr>
-
         @* Display the profile image and a form to upload one *@
         <div class="tab-pane active" id="tabProfile">
             <label for="divProfileImage">Profile image:</label>
@@ -145,13 +134,13 @@
             </div>
             <div id="divUploadProfileImage" class="col-4">
                 <br>
-                @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") {
-                    <input type="Hidden" id="id" name="id" value="@id" />
-                    <label class="btn btn-success btn-xs filebutton">
-                        <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
-                        <span><input type="file" id="profile" name="profile" onchange="uploadProfileImage()"></span>
-                    </label>
-                }
+                @* @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") { *@
+                <!--<input type="Hidden" id="id" name="id" value="@id" /> -->
+                <label class="btn btn-success btn-xs filebutton">
+                    <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
+                    <span><input type="file" id="profile" name="profile" onchange="uploadProfileImage()"></span>
+                </label>
+                @* } *@
             </div>
             <br>
         </div>
@@ -164,16 +153,24 @@
             </div>
             <div id="divUploadCvDocument" class="col-4">
                 <br>
-                @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") {
-                    <!--<input type="Hidden" id="id" name="id" value="@id" /> -->
-                    <label class="btn btn-success btn-xs filebutton">
-                        <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
-                        <span><input type="file" id="document" name="document" onchange="uploadCvDocument()"></span>
-                    </label>
-                }
+                @* @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") { *@
+                <!--<input type="Hidden" id="id" name="id" value="@id" /> -->
+                <label class="btn btn-success btn-xs filebutton">
+                    <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
+                    <span><input type="file" id="document" name="document" onchange="uploadCvDocument()"></span>
+                </label>
+                @* } *@
             </div>
             <br>
         </div>
+    </fieldset>
+    <hr>
+
+    <div class="actions">
+        <input type="submit" value="Save" class="btn btn-primary">
+        <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
+    </div>
+    }
 
     @if(!(id==null || id==0)) {
         @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
@@ -257,7 +254,7 @@
                 alert("The analyst needs to be saved before uploading an image.");
             } else {
                 var url = '/analysts/' + @id + '/uploadProfileImage';
-                $("#profileImage")
+                $("#formUpload")
                 .ajaxSubmit({
                     url:    url,
                     type:   "post",
@@ -296,7 +293,7 @@
                 alert("The analyst needs to be saved before uploading a CV.");
             } else {
                 var url = '/analysts/' + @id + '/uploadCvDocument';
-                $("#cvDocument")
+                $("#formUpload")
                 .ajaxSubmit({
                     url:    url,
                     type:   "post",
