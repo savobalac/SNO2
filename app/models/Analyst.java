@@ -146,12 +146,6 @@ public class Analyst extends Model {
         } else {
             update();
         }
-        // Delete exising desks before saving them (un-checked desks aren't removed automatically when saving m-m)
-        /*List<DeskAnalyst> deskAnalysts = DeskAnalyst.find.where().eq("analyst_id", analystId).findList();
-        for (DeskAnalyst deskAnalyst : deskAnalysts) {
-            deskAnalyst.delete();
-        }
-        saveManyToManyAssociations("desks");*/
     }
 
 
@@ -174,24 +168,6 @@ public class Analyst extends Model {
         } else {
             return 0;
         }
-    }
-
-
-    /**
-     * Returns whether the analyst is assigned to a desk.
-     *
-     * @param id    Id of the desk
-     * @return      boolean
-     */
-    public boolean hasDesk(Long id) {
-        boolean result = false;
-        Desk desk = Desk.find.byId(id);
-        if (desk != null) {
-            if (this.desks.contains(desk)) {
-                result = true;
-            }
-        }
-        return result;
     }
 
 
@@ -245,7 +221,7 @@ public class Analyst extends Model {
      * Returns the filename of the CV document.
      * @return      String
      */
-    public String getCVDocumentFilename() {
+    public String getCvDocumentFilename() {
         // Find the last "/" and return the string after that
         int lastSlashPos = cvDocument.lastIndexOf('/');
         if (lastSlashPos >= 0) {

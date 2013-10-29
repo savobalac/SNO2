@@ -188,7 +188,6 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result uploadCvDocument(Long id) {
-        System.out.println("Analysts.uploadCvDocument() called OK.");
         return uploadFile(id, "document");
     }
 
@@ -201,8 +200,8 @@ public class Analysts extends Controller {
     public static Result uploadFile(Long id, String fileType) {
         String fileName = "";
         byte[] fileData = null;
-        FileOutputStream fos = null;
         File file = null;
+        FileOutputStream fos = null;
         String msg = "";
 
         // Get the analyst record
