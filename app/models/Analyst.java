@@ -222,7 +222,7 @@ public class Analyst extends Model {
     public void delAllDesks() throws Exception {
         try {
             // Set the instance variable and update
-            desks = null;
+            desks.clear();
             saveManyToManyAssociations("desks"); // Update the database
             update();
         }
