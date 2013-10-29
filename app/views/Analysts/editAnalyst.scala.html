@@ -40,15 +40,13 @@
         <li id="tabCvLink"><a href="#tabCv" data-toggle="tab">CV</a></li>
     </ul>
 
-    <div class="tab-content">
-
+    <div class="tab-pane active" id="tabDetails">
         @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
         <fieldset>
             <!-- analystId needs to be set, otherwise it will be null on update -->
             <input type="Hidden" id="analystId" name="analystId" value="@id" />
 
 
-            <div class="tab-pane active" id="tabDetails">
                 @select(
                     analystForm("salutation"),
                     options(utils.Utils.optionsTitle),
@@ -98,7 +96,6 @@
                     '_label -> "Primary Desk:",
                     '_showConstraints -> false
                 )
-            </div>
             <hr>
         </fieldset>
 
@@ -114,6 +111,7 @@
                 @* @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn ) *@
             }
         </span>
+    </div>
 
 
         @* Display the list of assigned desks and a form to add one *@
@@ -153,7 +151,6 @@
                         <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
                         <span><input type="file" id="profile" name="profile" onchange="uploadProfileImage()"></span>
                     </label>
-                    <input type="submit" value="submitProfileImage" class="btn btn-success btn-xs">
                 }
             </div>
             <br>
@@ -173,12 +170,10 @@
                         <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
                         <span><input type="file" id="document" name="document" onchange="uploadCvDocument()"></span>
                     </label>
-                    <input type="submit" value="submitCvDocument" class="btn btn-success btn-xs">
                 }
             </div>
             <br>
         </div>
-    </div>
 
     @if(!(id==null || id==0)) {
         @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
