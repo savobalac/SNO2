@@ -1,5 +1,7 @@
 package utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -120,4 +122,40 @@ public class Utils {
                         "" + new SimpleDateFormat("HH:mm").format(datetime);
         return result;
     }
+
+
+    /**
+     * Hashes a string using the SHA-256 hashing algorithm.
+     * @param input Input string
+     * @return String
+     */
+    public static String hashString(String input) throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(input.getBytes());
+        byte byteData[] = md.digest();
+
+        // Convert the bytes to hex format method 1
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        System.out.println("Hex format : " + sb.toString());
+
+        // Convert the byte to hex format method 2
+        StringBuffer hexString = new StringBuffer();
+        for (int i=0; i < byteData.length; i++) {
+            String hex = Integer.toHexString(0xff & byteData[i]);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+
+        System.out.println("Hex format : " + hexString.toString());
+        return hexString.toString();
+
+    }
+
 }

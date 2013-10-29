@@ -77,9 +77,6 @@ public class Analysts extends Controller {
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
         Users user = Users.find.where().eq("username", request().username()).findUnique();
-        System.out.println("edit() statusId field value = " + analystForm.field("statusId").value()); // Null
-        System.out.println("edit() rank field value = " + analystForm.field("rank").value());
-        System.out.println("edit() primaryDesk field value = " + analystForm.field("primaryDesk").value());
         return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, user));
     }
 
@@ -213,18 +210,14 @@ public class Analysts extends Controller {
             }
 
             // Get the file part from the form
-            //file = request().body().asRaw().asFile();
-
             Http.MultipartFormData body = request().body().asMultipartFormData();
             Http.MultipartFormData.FilePart filePart = body.getFile(imageOrCV);
 
             // Check the file exists
             if (filePart != null) {
                 fileName = filePart.getFilename();
-                //fileName = file.getName();
-                System.out.println("uploaded fileName = " + fileName);
 
-                // If uploading an image, check if it is an image
+                // If uploading an image, check it is an image
                 String contentType = filePart.getContentType();
                 if (!contentType.startsWith("image/")) {
                     msg = "File " + fileName + " is not an image. File not saved.";
@@ -239,10 +232,8 @@ public class Analysts extends Controller {
                 filePart = null;
 
 
-                // The file is stored as a mediumblob in the DB which maps to an array of bytes
+                // Get the file data
                 fileData = Files.readAllBytes(file.toPath());
-                System.out.println("fileData bytes = " + fileData.length);
-
 
                 // Check if the analyst already has a file and delete it
                 if (imageOrCV.equals("imageFile")) {
@@ -250,26 +241,17 @@ public class Analysts extends Controller {
                     // Delete the existing file from the file system if it exists
                     if (analyst.profileImage != null) {
                         if (!analyst.profileImage.isEmpty()) {
-                            System.out.println("The analyst has an existing profileImage in the DB");
-                            File fileSys = new File("./public/" + analyst.profileImage); // All static assets are in /public
+                            File fileSys = new File("./public/" + analyst.profileImage); // Static assets are in /public
                             if (fileSys.exists()) {
-                                System.out.println("The existing profile image file exists on the file server");
-                                boolean deleted = fileSys.delete();
-                                if (deleted) {
-                                    System.out.println("Existing file deleted");
-                                } else {
-                                    System.out.println("Existing file wasn't deleted");
-                                }
+                                fileSys.delete();
                             }
                             fileSys = null;
                         }
                     }
 
-                    // Create the directory and file if required
-                    File dir = new File("./public/uploads/analyst/profile");
-                    System.out.println("dir path = " + dir.getAbsolutePath());
+                    // Create the directory if required
+                    File dir = new File("./public/uploads/analyst/" + id + "/profile");
                     if (!dir.exists()) {
-                        System.out.println("dir doesn't exists - about to create");
                         dir.mkdirs();
                     }
 
@@ -279,13 +261,12 @@ public class Analysts extends Controller {
                     fos.write(fileData);
                     fos.flush();
                 }
-
-                // Set the analyst field
-                analyst.profileImage = "uploads/analyst/profile/" + fileName;
                 fileData = null;
 
-                // Finally, save the analyst
+                // Set the analyst field and save
+                analyst.profileImage = "uploads/analyst/" + id + "/profile/" + fileName;
                 analyst.saveOrUpdate();
+
                 msg = "File " + fileName + " successfully uploaded to analyst " + analyst.getFullName();
                 flash(Utils.FLASH_KEY_SUCCESS, msg);
                 msg = "OK"; // The AJAX call from editAnalyst tests for "OK"
