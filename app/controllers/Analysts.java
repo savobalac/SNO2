@@ -8,13 +8,16 @@ import models.Users;
 import play.api.data.validation.ValidationError;
 import play.data.Form;
 import static play.data.Form.*;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.Security;
-import play.mvc.With;
+
+import play.mvc.*;
 import views.html.Analysts.*;
 import utils.Utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -167,8 +170,8 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result uploadProfileImage(Long id) {
-        return ok("OK"); // For now
-        //return uploadFile(id, "imgFile");
+        System.out.println("Analysts.uploadProfileImage() called OK.");
+        return uploadFile(id, "imageFile");
     }
 
 
@@ -178,8 +181,139 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result uploadCvDocument(Long id) {
-        return ok("OK"); // For now
-        //return uploadFile(id, "cvFile");
+        System.out.println("Analysts.uploadCvDocument() called OK.");
+        return uploadFile(id, "cvFile");
+    }
+
+    
+    /**
+     * Uploads a file to the file server and sets the analyst field value.
+     * @param id Id of the analyst
+     * @return Result
+     */
+    public static Result uploadFile(Long id, String imageOrCV) {
+        String fileName = "";
+        byte[] fileData = null;
+        FileOutputStream fos = null;
+        File file = null;
+        String msg = "";
+
+        // Get the analyst and form data
+        Analyst analyst = Analyst.find.byId(id);
+        Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
+        try {
+            // This should be prevented by the view, but test anyway
+            if(id == 0) {
+                msg = "Analyst must be saved before uploading files.";
+                return ok(msg);
+            }
+            if(analyst == null) {
+                msg = "Analyst not found.";
+                return ok(msg);
+            }
+
+            // Get the file part from the form
+            //file = request().body().asRaw().asFile();
+
+            Http.MultipartFormData body = request().body().asMultipartFormData();
+            Http.MultipartFormData.FilePart filePart = body.getFile(imageOrCV);
+
+            // Check the file exists
+            if (filePart != null) {
+                fileName = filePart.getFilename();
+                //fileName = file.getName();
+                System.out.println("uploaded fileName = " + fileName);
+
+                // If uploading an image, check if it is an image
+                String contentType = filePart.getContentType();
+                if (!contentType.startsWith("image/")) {
+                    msg = "File " + fileName + " is not an image. File not saved.";
+                    return ok(msg);
+                }
+
+                // Check if the file exceeds the maximum allowable size
+                file = filePart.getFile();
+                if (Files.size(file.toPath()) > Utils.MAX_FILE_SIZE) {
+                    return ok("File " + fileName + " exceeds the maximum size allowed of " + Utils.MAX_FILE_SIZE_STRING + ".");
+                }
+                filePart = null;
+
+
+                // The file is stored as a mediumblob in the DB which maps to an array of bytes
+                fileData = Files.readAllBytes(file.toPath());
+                System.out.println("fileData bytes = " + fileData.length);
+
+
+                // Check if the analyst already has a file and delete it
+                if (imageOrCV.equals("imageFile")) {
+
+                    // Delete the existing file from the file system if it exists
+                    if (analyst.profileImage != null) {
+                        if (!analyst.profileImage.isEmpty()) {
+                            System.out.println("The analyst has an existing profileImage in the DB");
+                            File fileSys = new File("./public/" + analyst.profileImage); // All static assets are in /public
+                            if (fileSys.exists()) {
+                                System.out.println("The existing profile image file exists on the file server");
+                                boolean deleted = fileSys.delete();
+                                if (deleted) {
+                                    System.out.println("Existing file deleted");
+                                } else {
+                                    System.out.println("Existing file wasn't deleted");
+                                }
+                            }
+                            fileSys = null;
+                        }
+                    }
+
+                    // Create the directory and file if required
+                    File dir = new File("./public/uploads/analyst/profile");
+                    System.out.println("dir path = " + dir.getAbsolutePath());
+                    if (!dir.exists()) {
+                        System.out.println("dir doesn't exists - about to create");
+                        dir.mkdirs();
+                    }
+
+                    // Save the new file to the file system
+                    File newFile = new File(dir, fileName);
+                    fos = new FileOutputStream(newFile);
+                    fos.write(fileData);
+                    fos.flush();
+                }
+
+                // Set the analyst field
+                analyst.profileImage = "uploads/analyst/profile/" + fileName;
+                fileData = null;
+
+                // Finally, save the analyst
+                analyst.saveOrUpdate();
+                msg = "File " + fileName + " successfully uploaded to analyst " + analyst.getFullName();
+                flash(Utils.FLASH_KEY_SUCCESS, msg);
+                msg = "OK"; // The AJAX call from editAnalyst tests for "OK"
+                return ok(msg);
+            } else { // File not found
+                msg = "Please select a file.";
+                return ok(msg);
+            }
+        } catch (Exception e) {
+            Utils.eHandler("Analysts.uploadFile()", e);
+            msg = String.format("Error encountered, changes not saved (%s).", e.getMessage());
+            return ok(msg);
+        } finally {
+            // Free up resources
+            try {
+                if (fos!=null) {
+                    fos.close();
+                    fos = null;
+                }
+                if (file!=null) {
+                    file = null;
+                }
+                System.gc();
+            } catch (IOException ioe) {
+                Utils.eHandler("Analysts.uploadFile()", ioe);
+                ioe.printStackTrace();
+            }
+        }
     }
 
 

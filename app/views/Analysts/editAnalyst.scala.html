@@ -20,6 +20,7 @@
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
+    <script src="//malsup.github.com/jquery.form.js"></script>
     <script type="text/javascript" src='@routes.Assets.at("javascripts/sno.js")'></script>
 
     @* The id should be zero if creating an Analyst, but also test for null *@
@@ -34,7 +35,7 @@
 
     <hr>
 
-    @form(routes.Analysts.update(id)) {
+    @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
         <fieldset>
             <!-- analystId needs to be set, otherwise it will be null on update -->
             <input type="Hidden" id="analystId" name="analystId" value="@id" />
@@ -91,8 +92,8 @@
             <br>
 
             @* Display the list of assigned desks and a form to add one *@
-            <label for="divEditDeskAnalyst">Assigned desks:</label>
-            <div id="divEditDeskAnalyst" class="col-4">
+            <label for="divDesks">Assigned desks:</label>
+            <div id="divDesks" class="col-4">
                 @* The desks are retrieved after the document has loaded via Ajax (see JavaScript below) *@
             </div>
             <label for="divAddDesk">Add Desk:</label>
@@ -108,6 +109,7 @@
                 </a>
             </div>
             <br>
+
         </fieldset>
 
         <hr>
@@ -124,13 +126,17 @@
     @* Display the profile image and a form to upload one *@
     <label for="divProfileImage">Profile image:</label>
     <div id="divProfileImage" class="col-4" >
-        @* @tagAnalystImage(analystForm.get()) *@
+        @* The profile image is retrieved after the document has loaded via Ajax (see JavaScript below) *@
+    </div>
+    <div id="divUploadProfileImage" class="col-4">
+        <br>
         @form(routes.Analysts.uploadProfileImage(id), 'id -> "profileImage", 'enctype -> "multipart/form-data") {
-            <input type="Hidden" id="id" name="id" value="@id" />
-            <label class="btn btn-success btn-xs filebutton">
-                <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
-                <span><input type="file" id="imgFile" name="imgFile" onchange="uploadProfileImage()"></span>
-            </label>
+        <input type="Hidden" id="id" name="id" value="@id" />
+        <label class="btn btn-success btn-xs filebutton">
+            <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
+            <span><input type="file" id="imageFile" name="imageFile" onchange=""></span>
+        </label>
+        <input type="submit" value="submitProfileImage" class="btn btn-success btn-xs">
         }
     </div>
     <br>
@@ -139,6 +145,7 @@
     <label for="divCvDocument">CV:</label>
     <div id="divCvDocument" class="col-4" >
         @* @tagAnalystCV(analystForm.get()) *@
+        <br>
         @form(routes.Analysts.uploadCvDocument(id), 'id -> "cvDocument", 'enctype -> "multipart/form-data") {
             <input type="Hidden" id="id" name="id" value="@id" />
             <label class="btn btn-success btn-xs filebutton">
@@ -148,7 +155,6 @@
         }
     </div>
     <br>
-
 
     <!-- Display the create_on field if it exists -->
     <span class="muted">
@@ -172,13 +178,14 @@
 
         // Get embedded html via Ajax after the document has loaded
         $(document).ready(function(){
+            getProfileImage();
             getDesks();
         });
 
         // Get the list of desks assigned to the analysts (and prevent caching in IE)
         function getDesks() {
             var url = "/analysts/@id/desks";
-            var updateRegion = "#divEditDeskAnalyst";
+            var updateRegion = "#divDesks";
             $.ajax({
                 type: "GET",
                 url: url,
@@ -229,6 +236,47 @@
                     }
                 }
             });
+        }
+
+        // Get the profile image (and prevent caching in IE)
+        function getProfileImage() {
+            var url = "/analysts/@id/profileImage";
+            var updateRegion = "#divProfileImage";
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    replaceRegionContents(updateRegion, returnedData);
+                }
+            });
+        }
+
+        // Upload a profile image
+        function uploadProfileImage() {
+            if(@id==0) {
+                alert("The analyst needs to be saved before uploading an image.");
+            } else {
+                var url = '/analysts/' + @id + '/uploadProfileImage';
+                alert("JS uploadProfileImage(), url = " + url);
+                $.ajax({
+                    url:    url,
+                    type:   "post",
+                    dataType: "text",
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            alert("JS uploadProfileImage - returnedData OK");
+                            getProfileImage();
+                            $("#imageFile").val("");
+                        } else {
+                            alert(returnedData);
+                        }
+                    }
+                });
+                alert("JS uploadProfileImage - after .ajaxSubmit");
+            }
         }
 
         // Replace the inner content of the submitted region (this function needs to be below any calls to it)

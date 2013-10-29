@@ -14,7 +14,11 @@ import java.util.*;
 public class Utils {
 
     // Constants
-    public static final int MYSQL_TEXT_BYTES = 65535; // 2^16
+    public static final int MYSQL_TEXT_BYTES = 65535; // A text column is 2^16 bytes
+
+    // Maximum upload file size of 10 Mb approximated from the MySQL max_allowed_packet, which is currently set to 25 Mb
+    public static final int    MAX_FILE_SIZE = 10485760; // In bytes
+    public static final String MAX_FILE_SIZE_STRING = MAX_FILE_SIZE / 1048576 + "Mb";
 
     public static final int LOG_LEVEL_NORMAL = 0;
     public static final int LOG_LEVEL_DEBUG = 1;

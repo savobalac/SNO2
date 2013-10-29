@@ -156,6 +156,15 @@ public class Analyst extends Model {
 
 
     /**
+     * Returns the full name of the analyst.
+     * @return      String
+     */
+    public String getFullName() {
+        return firstname + " " + lastname; // Both fields are not null in the DB and are required in the form
+    }
+
+
+    /**
      * Returns the number of desks an analyst is assigned to (desks could be null).
      * @return      int
      */
