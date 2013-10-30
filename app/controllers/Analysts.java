@@ -73,7 +73,6 @@ public class Analysts extends Controller {
         }
         else {
             Analyst analyst = Analyst.find.byId(id);
-            System.out.println("edit() analyst.status.statusName = " + analyst.status.statusName); // New User
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
         Users user = Users.find.where().eq("username", request().username()).findUnique();
