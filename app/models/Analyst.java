@@ -71,12 +71,6 @@ public class Analyst extends Model {
 
     public String                   skype;
 
-    //@Lob @Column(name="profile_image", length = Utils.MYSQL_TEXT_BYTES)
-    //public String                   profileImage;
-
-    //@Lob @Column(name="cv_document", length = Utils.MYSQL_TEXT_BYTES)
-    //public String                   cvDocument;
-
     @Lob @Column(name="expertise", length = Utils.MYSQL_TEXT_BYTES)
     public String                   expertise;
 
@@ -235,22 +229,6 @@ public class Analyst extends Model {
             Utils.eHandler("Analyst.delAllDesks()", e);
             throw e;
         }
-    }
-
-
-    /**
-     * Returns the filename of the CV document.
-     * @return      String
-     */
-    public String getCvDocumentFilename() {
-        // Find the last "/" and return the string after that
-        /*int lastSlashPos = cvDocument.lastIndexOf('/');
-        if (lastSlashPos >= 0) {
-            return cvDocument.substring(lastSlashPos+1);
-        } else {
-            return cvDocument;
-        }*/
-        return cvDocument.name; // s3file
     }
 
 

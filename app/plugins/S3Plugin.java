@@ -55,4 +55,5 @@ public class S3Plugin extends Plugin {
                 application.configuration().keys().contains(AWS_S3_BUCKET));
     }
 
+
 }

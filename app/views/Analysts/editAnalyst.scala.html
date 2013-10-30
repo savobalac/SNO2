@@ -126,7 +126,7 @@
             <br>
         </div>
 
-        @* Display the profile image and a form to upload one *@
+        @* Display the profile image and a means to upload one *@
         <div class="tab-pane active" id="tabProfile">
             <label for="divProfileImage">Profile image:</label>
             <div id="divProfileImage" class="col-4" >
@@ -142,7 +142,7 @@
             <br>
         </div>
 
-        @* Display the CV document and a form to upload one *@
+        @* Display the CV document and a means to upload one *@
         <div class="tab-pane active" id="tabCv">
             <label for="divCvDocument">CV:</label>
             <div id="divCvDocument" class="col-4" >
@@ -171,14 +171,6 @@
             <input type="submit" value="DELETE" class="btn btn-danger btn-xs">
         }
     }
-
-
-    <!-- S3 test -->
-    @form(routes.Analysts.upload(id), 'enctype -> "multipart/form-data") {
-        <input type="file" name="upload">
-        <input type="submit">
-    }
-
 
     <!-- This div displays a loading animation using class "modal" (in main.css) -->
     <div class="modal">
@@ -255,9 +247,6 @@
             if(@id==0) {
                 alert("The analyst needs to be saved before uploading an image.");
             } else {
-
-                //alert("JS uploadProfileImage() - start");
-
                 var url = '/analysts/' + @id + '/uploadProfileImage';
                 $("#formUpload")
                 .ajaxSubmit({
@@ -266,9 +255,6 @@
                     dataType: "text",
                     success: function (returnedData) {
                         if(returnedData=='OK') {
-
-                            alert("JS uploadProfileImage() - returnedData OK");
-
                             getProfileImage();
                             $("#profile").val("");
                         } else {
@@ -300,9 +286,6 @@
             if(@id==0) {
                 alert("The analyst needs to be saved before uploading a CV.");
             } else {
-
-                //alert("JS uploadCvDocument() - start");
-
                 var url = '/analysts/' + @id + '/uploadCvDocument';
                 $("#formUpload")
                 .ajaxSubmit({
@@ -311,9 +294,6 @@
                     dataType: "text",
                     success: function (returnedData) {
                         if(returnedData=='OK') {
-
-                            alert("JS uploadCvDocument() - returnedData OK");
-
                             getCvDocument();
                             $("#document").val("");
                         } else {

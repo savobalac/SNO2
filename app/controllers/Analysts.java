@@ -3,26 +3,16 @@ package controllers;
 import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Desk;
-import models.DeskAnalyst;
 import models.Users;
 import models.S3File;
-import play.api.data.validation.ValidationError;
 import play.data.Form;
-import static play.data.Form.*;
 
 import play.mvc.*;
 import views.html.Analysts.*;
 import utils.Utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -140,11 +130,6 @@ public class Analysts extends Controller {
             // Delete desks
             analyst.delAllDesks(); // Many-many
 
-            // Delete associated files
-            deleteDirectory("./public/uploads/analyst/" + id.toString() + "/profile");
-            deleteDirectory("./public/uploads/analyst/" + id.toString() + "/document");
-            deleteDirectory("./public/uploads/analyst/" + id.toString());
-
             // Delete the analyst
             analyst.delete();
             msg = "Analyst deleted.";
@@ -209,14 +194,8 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result uploadFile(Long id, String fileType) {
-
-        /*
-        System.out.println("***** Analysts.uploadFile(), id: " + id + ", fileType: " + fileType + ". ***** ");
-
         String fileName = "";
-        byte[] fileData = null;
         File file = null;
-        FileOutputStream fos = null;
         String msg = "";
 
         // Get the analyst record
@@ -252,97 +231,35 @@ public class Analysts extends Controller {
                 // Check if the file exceeds the maximum allowable size
                 file = filePart.getFile();
                 if (Files.size(file.toPath()) > Utils.MAX_FILE_SIZE) {
-                    return ok("File " + fileName + " exceeds the maximum size allowed of " + Utils.MAX_FILE_SIZE_STRING + ".");
+                    return ok("File " + fileName +
+                              " exceeds the maximum size allowed of " + Utils.MAX_FILE_SIZE_STRING + ".");
                 }
-                filePart = null;
-
-                // Get the file data
-                fileData = Files.readAllBytes(file.toPath());
 
                 // Check if the analyst already has a file and delete it
                 if (fileType.equals("profile")) {
                     if (analyst.profileImage != null) {
-                        if (!analyst.profileImage.isEmpty()) {
-                            deleteFile("./public/" + analyst.profileImage); // Static assets are in /public
-                        }
+                        S3File profileImage = S3File.find.byId(analyst.profileImage.id);
+                        profileImage.delete();
                     }
                 } else {
                     if (analyst.cvDocument != null) {
-                        if (!analyst.cvDocument.isEmpty()) {
-                            deleteFile("./public/" + analyst.cvDocument); // Static assets are in /public
-                        }
+                        S3File cvDocument = S3File.find.byId(analyst.cvDocument.id);
+                        cvDocument.delete();
                     }
                 }
 
+                // Save the new file to AWS S3
+                S3File s3File = new S3File();
+                s3File.name = filePart.getFilename();
+                s3File.file = filePart.getFile();
+                s3File.save();
+                filePart = null;
 
-                // Heroku Test
-                File dirTest = new File("./public");
-                if (dirTest.exists()) {
-                    System.out.println("***** Upload:  ./public  exists");
-                }
-                dirTest = new File("./public/uploads");
-                if (dirTest.exists()) {
-                    System.out.println("***** Upload:  ./public/uploads  exists");
-                }
-                dirTest = new File("./public/uploads/analyst");
-                if (dirTest.exists()) {
-                    System.out.println("***** Upload:  ./public/uploads/analyst  exists");
-                }
-                dirTest = new File("./public/uploads/analyst/" + id);
-                if (dirTest.exists()) {
-                    System.out.println("***** Upload:  ./public/uploads/analyst/" + id + "  exists");
-                }
-                dirTest = new File("./public/uploads/analyst/" + id + "/" + fileType);
-                if (dirTest.exists()) {
-                    System.out.println("***** Upload:  ./public/uploads/analyst/" + id + "/" + fileType + "  exists");
-                }
-
-
-                // Create the directory if required
-                File dir = new File("./public/uploads/analyst/" + id + "/" + fileType);
-                if (!dir.exists()) {
-
-
-                    // Heroku test
-                    System.out.println("***** Upload: about to create  ./public/uploads/analyst/" + id + "/" + fileType);
-
-
-                    dir.mkdirs();
-                }
-
-                // Save the new file to the file system
-                File newFile = new File(dir, fileName);
-
-
-                // Heroku test
-                if (newFile.exists()) {
-                    System.out.println("***** Upload: newFile  " + newFile + "  exists");
-                }
-
-
-                fos = new FileOutputStream(newFile);
-
-
-                // Heroku test
-                System.out.println("***** Upload: fos created");
-
-
-                fos.write(fileData);
-
-
-                // Heroku test
-                System.out.println("***** Upload: fileData written to fos");
-
-
-                fos.flush();
-                fileData = null;
-
-                // Set the analyst field and save
-                String newPath = "uploads/analyst/" + id + "/" + fileType + "/" + fileName;
+                // Save the s3File to the analyst
                 if (fileType.equals("profile")) {
-                    analyst.profileImage = newPath;
+                    analyst.profileImage = s3File;
                 } else {
-                    analyst.cvDocument = newPath;
+                    analyst.cvDocument = s3File;
                 }
                 analyst.saveOrUpdate();
 
@@ -360,97 +277,10 @@ public class Analysts extends Controller {
             return ok(msg);
         } finally {
             // Free up resources
-            try {
-                if (fos!=null) {
-                    fos.close();
-                    fos = null;
-                }
-                if (file!=null) {
-                    file = null;
-                }
-                System.gc();
-            } catch (IOException ioe) {
-                Utils.eHandler("Analysts.uploadFile()", ioe);
-                ioe.printStackTrace();
+            if (file != null) {
+                file = null;
             }
-        }*/
-        return ok("OK");
-    }
-
-
-    /**
-     * Deletes a file from the file system
-     * @param path File path
-     * @return boolean
-     */
-    private static boolean deleteFile(String path) {
-        boolean isDeleted = false;
-        File fileSys = new File(path);
-        if (fileSys.exists()) {
-            isDeleted = fileSys.delete();
-        }
-        fileSys = null;
-        return isDeleted;
-    }
-
-
-    /**
-     * Deletes a directory and all files in it from the file system
-     * @param path File path
-     * @return boolean
-     */
-    private static boolean deleteDirectory(String path) {
-
-        // If the directory exists, delete files and then the directory
-        boolean isDeleted = false;
-        File dir = new File(path);
-        if (dir.exists()) {
-            // If the directory is empty, delete it
-            if (dir.list().length==0) {
-                isDeleted = dir.delete();
-            } else {
-                // Delete all files, then the directory
-                String files[] = dir.list();
-                for (String f : files) {
-                    File fileDelete = new File(dir, f);
-                    isDeleted = fileDelete.delete();
-                }
-                // The directory should be empty, so delete it
-                if (dir.list().length==0) {
-                    isDeleted = dir.delete();
-                }
-            }
-        }
-        return isDeleted; // Should be true if everything was deleted
-    }
-
-    public static Result index() {
-        List<S3File> uploads = new S3File.Finder(UUID.class, S3File.class).all();
-        //return ok(s3uploads.render(uploads));
-        return ok(s3uploads.render());
-    }
-
-    public static Result upload(Long id) {
-
-        // Get the analyst record
-        Analyst analyst = Analyst.find.byId(id);
-
-        Http.MultipartFormData body = request().body().asMultipartFormData();
-        Http.MultipartFormData.FilePart uploadFilePart = body.getFile("upload");
-        if (uploadFilePart != null) {
-            S3File s3File = new S3File();
-            s3File.name = uploadFilePart.getFilename();
-            s3File.file = uploadFilePart.getFile();
-            s3File.save();
-
-            // Save the s3File to the analyst
-            analyst.profileImage = s3File;
-            analyst.update();
-
-            return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
-        }
-        else {
-            return badRequest("File upload error");
+            System.gc();
         }
     }
 
