@@ -275,7 +275,7 @@ public class Analysts extends Controller {
                 // Heroku Test
                 File dirTest = new File("./public");
                 if (dirTest.exists()) {
-                    System.out.println("***** Upload:  ./public exists");
+                    System.out.println("***** Upload:  ./public  exists");
                 }
                 dirTest = new File("./public/uploads");
                 if (dirTest.exists()) {
@@ -284,6 +284,14 @@ public class Analysts extends Controller {
                 dirTest = new File("./public/uploads/analyst");
                 if (dirTest.exists()) {
                     System.out.println("***** Upload:  ./public/uploads/analyst  exists");
+                }
+                dirTest = new File("./public/uploads/analyst/" + id);
+                if (dirTest.exists()) {
+                    System.out.println("***** Upload:  ./public/uploads/analyst/" + id + "  exists");
+                }
+                dirTest = new File("./public/uploads/analyst/" + id + "/" + fileType);
+                if (dirTest.exists()) {
+                    System.out.println("***** Upload:  ./public/uploads/analyst/" + id + "/" + fileType + "  exists");
                 }
 
 
