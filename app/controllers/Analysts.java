@@ -208,6 +208,9 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result uploadFile(Long id, String fileType) {
+
+        System.out.println("***** Analysts.uploadFile(), id: " + id + ", fileType: " + fileType + ". ***** ");
+
         String fileName = "";
         byte[] fileData = null;
         File file = null;
