@@ -172,6 +172,14 @@
         }
     }
 
+
+    <!-- S3 test -->
+    @form(routes.Analysts.upload(id), 'enctype -> "multipart/form-data") {
+        <input type="file" name="upload">
+        <input type="submit">
+    }
+
+
     <!-- This div displays a loading animation using class "modal" (in main.css) -->
     <div class="modal">
         <p align="center">Loading...</p>

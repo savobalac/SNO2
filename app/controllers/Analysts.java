@@ -5,6 +5,7 @@ import models.Analyst;
 import models.Desk;
 import models.DeskAnalyst;
 import models.Users;
+import models.S3File;
 import play.api.data.validation.ValidationError;
 import play.data.Form;
 import static play.data.Form.*;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -208,6 +210,7 @@ public class Analysts extends Controller {
      */
     public static Result uploadFile(Long id, String fileType) {
 
+        /*
         System.out.println("***** Analysts.uploadFile(), id: " + id + ", fileType: " + fileType + ". ***** ");
 
         String fileName = "";
@@ -370,7 +373,8 @@ public class Analysts extends Controller {
                 Utils.eHandler("Analysts.uploadFile()", ioe);
                 ioe.printStackTrace();
             }
-        }
+        }*/
+        return ok("OK");
     }
 
 
@@ -418,6 +422,36 @@ public class Analysts extends Controller {
             }
         }
         return isDeleted; // Should be true if everything was deleted
+    }
+
+    public static Result index() {
+        List<S3File> uploads = new S3File.Finder(UUID.class, S3File.class).all();
+        //return ok(s3uploads.render(uploads));
+        return ok(s3uploads.render());
+    }
+
+    public static Result upload(Long id) {
+
+        // Get the analyst record
+        Analyst analyst = Analyst.find.byId(id);
+
+        Http.MultipartFormData body = request().body().asMultipartFormData();
+        Http.MultipartFormData.FilePart uploadFilePart = body.getFile("upload");
+        if (uploadFilePart != null) {
+            S3File s3File = new S3File();
+            s3File.name = uploadFilePart.getFilename();
+            s3File.file = uploadFilePart.getFile();
+            s3File.save();
+
+            // Save the s3File to the analyst
+            analyst.profileImage = s3File;
+            analyst.update();
+
+            return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+        }
+        else {
+            return badRequest("File upload error");
+        }
     }
 
 

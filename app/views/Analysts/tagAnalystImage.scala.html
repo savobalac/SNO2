@@ -24,9 +24,11 @@
     ********************************************@
     @if(analyst.profileImage!=null) {
         <div style="height:100px; width:100px;">
-            <img src="@routes.Assets.at(analyst.profileImage)" align="left"
-                 style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
-            <img src="/public/@analyst.profileImage" align="left"
+            @* <img src="@routes.Assets.at(analyst.profileImage)" align="left" *@
+            @*     style="vertical-align: top; border: 0px; max-height:100%; max-width:100%"> *@
+            @* <img src="/public/@analyst.profileImage" align="left" *@
+            @*     style="vertical-align: top; border: 0px; max-height:100%; max-width:100%"> *@
+            <img src="@analyst.profileImage.getUrl()" align="left"
                  style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
         </div>
     }

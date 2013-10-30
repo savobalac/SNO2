@@ -24,7 +24,8 @@
     ********************************************@
     @if(analyst.cvDocument!=null) {
         <div>
-            <a href="@routes.Assets.at(analyst.cvDocument)" target="_blank">@analyst.getCvDocumentFilename()</a>
+            @* <a href="@routes.Assets.at(analyst.cvDocument)" target="_blank">@analyst.getCvDocumentFilename()</a> *@
+            <a href="@analyst.cvDocument.getUrl()" target="_blank">@analyst.cvDocument.name</a>
         </div>
     }
 
