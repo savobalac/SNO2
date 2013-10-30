@@ -271,16 +271,58 @@ public class Analysts extends Controller {
                     }
                 }
 
+
+                // Heroku Test
+                File dirTest = new File("./public");
+                if (dirTest.exists()) {
+                    System.out.println("***** Upload:  ./public exists");
+                }
+                dirTest = new File("./public/uploads");
+                if (dirTest.exists()) {
+                    System.out.println("***** Upload:  ./public/uploads  exists");
+                }
+                dirTest = new File("./public/uploads/analyst");
+                if (dirTest.exists()) {
+                    System.out.println("***** Upload:  ./public/uploads/analyst  exists");
+                }
+
+
                 // Create the directory if required
                 File dir = new File("./public/uploads/analyst/" + id + "/" + fileType);
                 if (!dir.exists()) {
+
+
+                    // Heroku test
+                    System.out.println("***** Upload: about to create  ./public/uploads/analyst/" + id + "/" + fileType);
+
+
                     dir.mkdirs();
                 }
 
                 // Save the new file to the file system
                 File newFile = new File(dir, fileName);
+
+
+                // Heroku test
+                if (newFile.exists()) {
+                    System.out.println("***** Upload: newFile  " + newFile + "  exists");
+                }
+
+
                 fos = new FileOutputStream(newFile);
+
+
+                // Heroku test
+                System.out.println("***** Upload: fos created");
+
+
                 fos.write(fileData);
+
+
+                // Heroku test
+                System.out.println("***** Upload: fileData written to fos");
+
+
                 fos.flush();
                 fileData = null;
 
