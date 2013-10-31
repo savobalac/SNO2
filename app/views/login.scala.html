@@ -1,9 +1,11 @@
 @(form: Form[Application.Login])
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SNO2</title>
+    <title>Login to SNO2</title>
 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=9" /> <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Recommended by Bootstrap 3 - remove the above line? -->
 
@@ -11,43 +13,47 @@
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/signin.css")">
     <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.9.2.css")'>
     <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.8.23.css")'>
     <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-demo-docs-theme.css")'>
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-
 </head>
 
 <body>
-    <header>
-        <a href="@routes.Application.index" id="logo"><span>SNO2</span></a>
-    </header>
+
+    <div class="container">
 
     @helper.form(routes.Application.authenticate) {
-        <h1>Sign in</h1>
+
+        <h2 class="form-signin-heading">Sign in to SNO2</h2>
 
         @if(flash.contains("success")) {
             <p class="success">
                 @flash.get("success")
             </p>
         }
-
         @if(form.hasGlobalErrors) {
             <p class="error">
                 @form.globalError.message
             </p>
         }
+        <br>
 
         <p>
-            <input type="text" name="username" placeholder="Username" value='@form("username").value'>
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" value='@form("username").value' required autofocus>
         </p>
         <p>
-            <input type="password" name="password" placeholder="Password">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
         </p>
         <p>
-            <button type="submit">Login</button>
+            <button class="btn btn-lg btn-primary" type="submit">Sign in</button>
         </p>
     }
+
+    </div> <!-- /container -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="//code.jquery.com/jquery.js"></script>

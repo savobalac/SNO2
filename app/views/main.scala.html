@@ -22,26 +22,31 @@
 
     <body>
 
-        <header class="topbar">
-            <h1 class="fill">
-                <a href="@routes.Application.index()">Home</a>
-                &nbsp;
-                <a href="/analysts">Analysts</a>
-            </h1>
-        </header>
-
-        <header>
-            <dl id="user">
-                <dt>@user.username <span>(@user.email)</span></dt>
-                <dd>
-                    <a href="@routes.Application.logout()">Logout</a>
-                </dd>
-            </dl>
-        </header>
+        <!-- Navbar -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">SNO2</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="@routes.Application.index()">Home</a></li>
+                        <li><a href="/analysts">Analysts</a></li>
+                        <li>@user.username <span>(@user.email)</span></li>
+                        <li><a href="@routes.Application.logout()">Logout</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
 
         <!-- Show any flash messages above the main content -->
         @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
-            <div class="alert alert-error">
+            <div class="alert alert-danger">
                 <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
             </div>
         }
@@ -66,6 +71,9 @@
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.js")'></script>
         <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.min.js")'></script>
+
+        <!-- Required for tabbable navs -->
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap-tab.js")'></script>
 
         <!-- This script is required to use ajaxSubmit() -->
         <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery.form.js")'></script>
