@@ -20,6 +20,25 @@
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script>
+        /*
+        When an AJAX method is started, this adds a class "loading" to the body (in main.css).
+        When the body has this class, the scroll bars are turned off and the class "modal" becomes visible.
+        The div "modal" (bottom of page) contains the text "Loading...".
+        The CSS positions, sizes and colours the div and displays an animation in the background (80% white).
+        */
+        $("body").on({
+            ajaxStart: function() {
+                alert("ajaxStart");
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                alert("ajaxStop");
+                $(this).removeClass("loading");
+            }
+        });
+    </script>
 
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
@@ -177,6 +196,11 @@
         <p align="center">Loading...</p>
     </div>
 
+
+    <div id="domMessage" style="display:none;">
+        <h1>Uploading. Please wait...</h1>
+    </div>
+
     <script type="text/javascript">
 
         // Get embedded html via Ajax after the document has loaded
@@ -247,6 +271,9 @@
             if(@id==0) {
                 alert("The analyst needs to be saved before uploading an image.");
             } else {
+                // Show a loading message
+                $.blockUI();
+
                 var url = '/analysts/' + @id + '/uploadProfileImage';
                 $("#formUpload")
                 .ajaxSubmit({
@@ -257,8 +284,10 @@
                         if(returnedData=='OK') {
                             getProfileImage();
                             $("#profile").val("");
+                            setTimeout($.unblockUI, 2000); // Remove the loading message
                         } else {
                             alert(returnedData);
+                            setTimeout($.unblockUI, 2000); // Remove the loading message
                         }
                     }
                 });
@@ -286,6 +315,9 @@
             if(@id==0) {
                 alert("The analyst needs to be saved before uploading a CV.");
             } else {
+                // Show a loading message
+                $.blockUI();
+
                 var url = '/analysts/' + @id + '/uploadCvDocument';
                 $("#formUpload")
                 .ajaxSubmit({
@@ -296,8 +328,10 @@
                         if(returnedData=='OK') {
                             getCvDocument();
                             $("#document").val("");
+                            setTimeout($.unblockUI, 2000); // Remove the loading message
                         } else {
                             alert(returnedData);
+                            setTimeout($.unblockUI, 2000); // Remove the loading message
                         }
                     }
                 });
