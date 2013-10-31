@@ -14,31 +14,11 @@
 
 @import helper._
 @import helper.twitterBootstrap._
-@* Need to comment out the next line as fields don't get a red background when they fail validation *@
-@* @implicitField = @{ FieldConstructor(twitterBootstrapInput.render) } *@
 
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-    <script>
-        /*
-        When an AJAX method is started, this adds a class "loading" to the body (in main.css).
-        When the body has this class, the scroll bars are turned off and the class "modal" becomes visible.
-        The div "modal" (bottom of page) contains the text "Loading...".
-        The CSS positions, sizes and colours the div and displays an animation in the background (80% white).
-        */
-        $("body").on({
-            ajaxStart: function() {
-                alert("ajaxStart");
-                $(this).addClass("loading");
-            },
-            ajaxStop: function() {
-                alert("ajaxStop");
-                $(this).removeClass("loading");
-            }
-        });
-    </script>
 
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
@@ -191,14 +171,9 @@
         }
     }
 
-    <!-- This div displays a loading animation using class "modal" (in main.css) -->
-    <div class="modal">
-        <p align="center">Loading...</p>
-    </div>
-
-
-    <div id="domMessage" style="display:none;">
-        <h1>Uploading. Please wait...</h1>
+    <!-- This div shows a loading message and animation used in combination with blockUI -->
+    <div id="domMessage" style="display:none">
+        <h4>Loading... &nbsp;&nbsp; <img src='@routes.Assets.at("images/loading animation.gif")'/></h4>
     </div>
 
     <script type="text/javascript">
@@ -272,7 +247,7 @@
                 alert("The analyst needs to be saved before uploading an image.");
             } else {
                 // Show a loading message
-                $.blockUI();
+                $.blockUI({ message: $('#domMessage') });
 
                 var url = '/analysts/' + @id + '/uploadProfileImage';
                 $("#formUpload")
@@ -316,7 +291,7 @@
                 alert("The analyst needs to be saved before uploading a CV.");
             } else {
                 // Show a loading message
-                $.blockUI();
+                $.blockUI({ message: $('#domMessage') });
 
                 var url = '/analysts/' + @id + '/uploadCvDocument';
                 $("#formUpload")
