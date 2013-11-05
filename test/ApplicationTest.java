@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import models.Users;
 import org.junit.*;
 
 import play.mvc.*;
@@ -30,15 +31,18 @@ public class ApplicationTest {
     @Test
     public void simpleCheck() {
         int a = 1 + 1;
-        assertThat(a).isEqualTo(2);
+        assertThat(a).isEqualTo(3);
     }
 
-    @Test
+    /*@Test
     public void renderTemplate() {
-        Content html = views.html.index.render("Your new application is ready.");
+        //Content html = views.html.index.render("Your new application is ready.");
+        Users user = Users.find.byId(3L); // User 3 has username savbalac
+        Content html = views.html.index.render("SNO2", user);
         assertThat(contentType(html)).isEqualTo("text/html");
-        assertThat(contentAsString(html)).contains("Your new application is ready.");
-    }
+        //assertThat(contentAsString(html)).contains("Your new application is ready.");
+        assertThat(contentAsString(html)).contains("savbalac");
+    }*/
 
 
 }
