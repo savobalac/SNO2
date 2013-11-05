@@ -31,7 +31,18 @@ public class ApplicationTest {
     @Test
     public void simpleCheck() {
         int a = 1 + 1;
-        assertThat(a).isEqualTo(3);
+        assertThat(a).isEqualTo(2);
+    }
+
+    @Test
+    public void findById() {
+        running(fakeApplication(), new Runnable() {
+            public void run() {
+                /*Computer macintosh = Computer.find.byId(21l);
+                assertThat(macintosh.name).isEqualTo("Macintosh");
+                assertThat(formatted(macintosh.introduced)).isEqualTo("1984-01-24");*/
+            }
+        });
     }
 
     /*@Test
