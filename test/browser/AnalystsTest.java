@@ -21,6 +21,9 @@ import static org.fluentlenium.core.filter.FilterConstructor.*;
 public class AnalystsTest extends FluentTest {
 
 
+    /**
+     * Goes to the list analyst page (via login page).
+     */
     @Before
     public void setUp() {
         // Log in first
@@ -32,7 +35,7 @@ public class AnalystsTest extends FluentTest {
 
 
     /**
-     * @verifies That the list analyst pages shows analyst Sav Balac.
+     * @verifies That the list analyst page shows analyst Sav Balac.
      */
     @Test
     public void testListAnalysts() {
@@ -43,18 +46,18 @@ public class AnalystsTest extends FluentTest {
         assertThat(find("#homeTitle").contains("Analysts")); // Check the main heading
 
         // Check that analyst Sav Balac is in the list
-        assertThat(pageSource().contains("Sav Balac")); // analyst id = 3
+        assertThat(pageSource().contains("Sav Balac"));
     }
 
 
     /**
-     * @verifies That the edit analyst page shows analyst Sav Balac and edits the notes field.
+     * @verifies That the edit analyst page shows analyst Sav Balac, edits the notes field and saves.
      */
     @Test
     public void testEditAnalyst() {
 
         // Check we are editing analyst Sav Balac
-        goTo("http://localhost:9000/analysts/3");
+        goTo("http://localhost:9000/analysts/3"); // analyst id = 3
         assertThat(title().contentEquals("Sav Balac"));
         assertThat(find("#analystName").contains("Analyst: Sav Balac")); // Check the main heading
 
@@ -83,8 +86,7 @@ public class AnalystsTest extends FluentTest {
         // Add the required fields and save
         fill("#firstname").with("New Analyst");
         fill("#lastname").with("Created by Testing");
-        //submit("#formUpload");
-
+        submit("#formUpload");
     }
 
 
@@ -96,21 +98,20 @@ public class AnalystsTest extends FluentTest {
 
         // Get the id of the newly-created analyst
         goTo("http://localhost:9000/analysts");
-        FluentList newAnalystLinks = find(".a", withText("New Analyst Created by Testing"));
+        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("New Analyst Created by Testing"));
 
-        System.out.println("newAnalystLinks.size() = " + newAnalystLinks.size());
-        System.out.println("newAnalystLinks.first() = " + newAnalystLinks.first());
-
-        FluentWebElement id = (FluentWebElement) newAnalystLinks.get(0);
-
-        System.out.println("new id = " + id);
-
-        // Delete the analyst
-        goTo("http://localhost:9000/analysts" + id);
-        click("#DELETE"); // Or submit the delete form (need to add an id)
+        String id;
+        if (newAnalystLinks.size() == 1) { // There should only be one analyst with that name
+            id = newAnalystLinks.first().getId();
+            goTo("http://localhost:9000/analysts/" + id);
+            click("#DELETE");
+        }
     }
 
 
+    /**
+     * Logs out.
+     */
     @After
     public void tearDown() {
         goTo("http://localhost:9000/logout"); // Log out
