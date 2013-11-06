@@ -112,16 +112,35 @@ public class Utils {
         return options;
     }
 
+
     /**
      * Returns a friendly "Created on <date> at <time>" string
      * @param datetime Timestamp
      * @return String
      */
     public static String formatCreatedTimestamp(Timestamp datetime) {
-        String result = "Created on " +
-                        "" + new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
-                        "" + new SimpleDateFormat("HH:mm").format(datetime);
-        return result;
+        return "Created on " + formatTimestamp(datetime);
+    }
+
+
+    /**
+     * Formats a timestamp as "<date> at <time>"
+     * @param datetime Timestamp
+     * @return String
+     */
+    public static String formatTimestamp(Timestamp datetime) {
+        return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
+                   "" + new SimpleDateFormat("HH:mm").format(datetime);
+    }
+
+
+    /**
+     * Returns the current date time as a Timestamp
+     * @return Timestamp
+     */
+    public static Timestamp getCurrentDateTime() {
+        Date date= new Date();
+        return new Timestamp(date.getTime());
     }
 
 

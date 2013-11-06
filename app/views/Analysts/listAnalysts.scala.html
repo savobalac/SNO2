@@ -107,7 +107,9 @@
                 @for(Analyst <- currentPage.getList) {
                     <tr>
                         <td>
-                            <a href="@routes.Analysts.edit(Analyst.analystId)">@Analyst.firstname @Analyst.lastname</a>
+                            <a id="@Analyst.analystId" class="id" href="@routes.Analysts.edit(Analyst.analystId)">
+                                @Analyst.firstname @Analyst.lastname
+                            </a>
                         </td>
                         <td>
                             @Analyst.primaryDesk.name

@@ -1,5 +1,4 @@
 import models.Users;
-import org.fluentlenium.adapter.FluentTest;
 import org.junit.*;
 import play.libs.WS;
 import play.mvc.*;
@@ -13,14 +12,14 @@ import static play.test.Helpers.*;
  * User: Sav Balac
  * Date: 06/11/13
  * Time: 05:47
- * Description: Tests the application controller, login and index pages.
+ * Description: Tests the Application controller, login and index pages.
  * To change this template use File | Settings | File Templates.
  */
 public class ApplicationTest {
 
 
     /**
-     * @verifies That the application has started.
+     * Starts the application.
      */
     @Before
     public void setUp() {
@@ -37,7 +36,6 @@ public class ApplicationTest {
             public void invoke(TestBrowser browser) {
                 browser.goTo("http://localhost:3333");
                 assertThat(browser.pageSource()).contains("Sign in to SNO2");
-                stop(testServer(3333, fakeApplication()));
             }
         });
     }
@@ -86,7 +84,7 @@ public class ApplicationTest {
 
 
     /**
-     * @verifies That the application has stopped.
+     * Stops the application.
      */
     @After
     public void tearDown() {

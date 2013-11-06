@@ -17,15 +17,15 @@ public class ApplicationTest extends FluentTest {
 
 
     /**
-     * @verifies That signing in sends the user to the home page (browser test).
+     * @verifies That signing in sends the user to the home page.
      */
     @Test
-    public void runInBrowser() {
+    public void testLoginToHomePage() {
         goTo("http://localhost:9000/");
         fill("#username").with("savbalac");
         fill("#password").with("h0tsp0t");
         submit("#signIn");
-        assertThat(url().contentEquals("http://localhost:9000/"));
+        assertThat(url().contentEquals("http://localhost:9000/")); // The home (index) page
         assertThat(title().contentEquals("SNO2"));
         assertThat(pageSource().contains("Donec id elit non mi porta gravida at eget metus."));
     }
