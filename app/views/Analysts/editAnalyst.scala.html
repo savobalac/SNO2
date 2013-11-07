@@ -156,8 +156,20 @@
             </div>
         </div>
     </fieldset>
-    <hr>
 
+    <!-- This div shows a warning message that the analyst must be saved first -->
+    <div class="alert alert-warning alert-dismissable" id="saveWarning">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        Please save the new analyst first.
+    </div>
+
+    <!-- This div shows an error message if there was an error with an ajax call -->
+    <div class="alert alert-danger alert-dismissable" id="ajaxError">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <span id="ajaxErrorMsg"></span>
+    </div>
+
+    <hr>
     <div class="actions">
         <input type="submit" value="Save" class="btn btn-primary">
         <a href="@routes.Analysts.list()" class="btn btn-warning">Cancel</a>
@@ -187,6 +199,8 @@
 
         // Get embedded html via Ajax after the document has loaded
         $(document).ready(function(){
+            $('#saveWarning').hide();
+            $('#ajaxError').hide();
             getProfileImage();
             getCvDocument();
             getDesks();
@@ -211,7 +225,7 @@
         // Add a desk to the analyst
         function addDesk() {
             if(@id==0) {
-                alert("The analyst needs to be saved before adding a desk.");
+                $('#saveWarning').show();
             } else {
                 var url = "/analysts/@id/addDesk/" + $("#newDesk").val();
                 $.ajax({
@@ -223,7 +237,8 @@
                         if(returnedData=='OK') {
                             getDesks();
                         } else {
-                            alert(returnedData);
+                            $("#ajaxErrorMsg").text(returnedData);
+                            $("#ajaxError").show();
                         }
                     }
                 });
@@ -242,7 +257,8 @@
                     if(returnedData=='OK') {
                         getDesks();
                     } else {
-                        alert(returnedData);
+                        $("#ajaxErrorMsg").text(returnedData);
+                        $("#ajaxError").show();
                     }
                 }
             });
@@ -251,7 +267,7 @@
         // Upload a profile image
         function uploadProfileImage() {
             if(@id==0) {
-                alert("The analyst needs to be saved before uploading an image.");
+                $('#saveWarning').show();
             } else {
                 // Show a loading message
                 $.blockUI({ message: $('#domMessage') });
@@ -268,8 +284,9 @@
                             $("#profile").val("");
                             setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
                         } else {
-                            alert(returnedData);
                             setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
+                            $("#ajaxErrorMsg").text(returnedData);
+                            $("#ajaxError").show();
                         }
                     }
                 });
@@ -295,7 +312,7 @@
         // Upload a CV document
         function uploadCvDocument() {
             if(@id==0) {
-                alert("The analyst needs to be saved before uploading a CV.");
+                $('#saveWarning').show();
             } else {
                 // Show a loading message
                 $.blockUI({ message: $('#domMessage') });
@@ -312,8 +329,9 @@
                             $("#document").val("");
                             setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
                         } else {
-                            alert(returnedData);
                             setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
+                            $("#ajaxErrorMsg").text(returnedData);
+                            $("#ajaxError").show();
                         }
                     }
                 });
