@@ -11,12 +11,14 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Tests the list and edit analyst pages using a browser (via Selenium and FluentLenium API).
+ *
  * Date: 06/11/13
  * Time: 12:21
- * Description: Tests the list and edit analyst pages using a browser (via Selenium and FluentLenium API).
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class AnalystsTest extends FluentTest {
 

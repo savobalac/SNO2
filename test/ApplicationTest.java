@@ -8,12 +8,14 @@ import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Tests the Application controller (login and index pages).
+ *
  * Date: 06/11/13
  * Time: 05:47
- * Description: Tests the Application controller, login and index pages.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class ApplicationTest {
 

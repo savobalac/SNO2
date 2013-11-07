@@ -6,12 +6,14 @@ import static org.fest.assertions.Assertions.*;
 
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Integration test that just starts the application and checks the sign in page is showing.
+ *
  * Date: 06/11/13
  * Time: 05:47
- * Description: Integration test that just starts the application and checks the sign in page is showing.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class IntegrationTest {
 

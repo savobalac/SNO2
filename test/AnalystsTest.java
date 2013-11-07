@@ -11,12 +11,14 @@ import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.fakeRequest;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Tests the Analysts controller (list page).
+ *
  * Date: 06/11/13
  * Time: 12:19
- * Description: Tests the Analysts controller, list and edit pages
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class AnalystsTest {
 

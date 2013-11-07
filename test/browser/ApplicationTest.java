@@ -6,12 +6,14 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Tests the login and index pages using a browser (via Selenium and FluentLenium API).
+ *
  * Date: 06/11/13
  * Time: 11:15
- * Description: Tests the login and index pages using a browser (via Selenium and FluentLenium API).
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class ApplicationTest extends FluentTest {
 
