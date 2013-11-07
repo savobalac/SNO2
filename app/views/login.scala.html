@@ -1,66 +1,79 @@
+@*********************************************************
+* Page:        Login                                     *
+* Author:      Sav Balac                                 *
+* Date:        17/10/13                                  *
+* Version:     1.0                                       *
+* Description: The sign in page                          *
+*                                                        *
+* @param form       The login form                       *
+*********************************************************@
+
 @(form: Form[Application.Login])
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Sign in to SNO2</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=9" /> <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Recommended by Bootstrap 3 - remove the above line? -->
+    <head>
+        <title>Sign in to SNO2</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/signin.css")">
-    <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.9.2.css")'>
-    <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.8.23.css")'>
-    <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-demo-docs-theme.css")'>
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-</head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=9" /> <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Recommended by Bootstrap 3 - remove the above line? -->
 
-<body>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/signin.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.9.2.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.8.23.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-demo-docs-theme.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    </head>
 
-    <div class="container">
+    <body>
 
-    @helper.form(routes.Application.authenticate, 'id -> "signIn") {
+        <div class="container">
 
-        <h2 class="form-signin-heading">Sign in to SNO2</h2>
+        @helper.form(routes.Application.authenticate, 'id -> "signIn") {
 
-        @if(flash.contains("success")) {
-            <p class="success">
-                @flash.get("success")
+            <h2 class="form-signin-heading">Sign in to SNO2</h2>
+
+            @if(flash.contains("success")) {
+                <p class="success">
+                    @flash.get("success")
+                </p>
+            }
+            @if(form.hasGlobalErrors) {
+                <p class="error">
+                    @form.globalError.message
+                </p>
+            }
+            <br>
+
+            <p>
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Username" value='@form("username").value' required autofocus>
+            </p>
+            <p>
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            </p>
+            <p>
+                <button class="btn btn-lg btn-primary" id="submit" type="submit">Sign in</button>
             </p>
         }
-        @if(form.hasGlobalErrors) {
-            <p class="error">
-                @form.globalError.message
-            </p>
-        }
-        <br>
 
-        <p>
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username" value='@form("username").value' required autofocus>
-        </p>
-        <p>
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-        </p>
-        <p>
-            <button class="btn btn-lg btn-primary" id="submit" type="submit">Sign in</button>
-        </p>
-    }
+        </div> <!-- /container -->
 
-    </div> <!-- /container -->
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="//code.jquery.com/jquery.js"></script>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//code.jquery.com/jquery.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.min.js")'></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.js")'></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.min.js")'></script>
+    </body>
 
-</body>
 </html>

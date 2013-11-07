@@ -10,12 +10,15 @@ import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Model class that maps to DB table desk.
+ * Contains methods to get desks.
+ *
  * Date: 18/10/13
  * Time: 14:42
- * Description: Model class that maps to DB table desk.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Entity
 public class Desk extends Model {
@@ -26,7 +29,6 @@ public class Desk extends Model {
     @Constraints.Required
     public String                   name;
 
-    //@Constraints.Required // Remove this?
     public Boolean                  coordinator;
 
     @ManyToMany @JoinTable(name="deskanalyst",
@@ -36,7 +38,7 @@ public class Desk extends Model {
 
 
     /**
-     * Generic query helper for entity desk with id Long
+     * Generic query helper for entity Desk.
      */
     public static Finder<Long, Desk> find = new Finder<Long, Desk>(Long.class, Desk.class);
 

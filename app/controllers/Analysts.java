@@ -15,11 +15,15 @@ import java.io.File;
 import java.nio.file.Files;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav
- * Date: 16/10/13
- * Time: 13:35
- * To change this template use File | Settings | File Templates.
+ * Analysts controller with methods to list, create, edit, update and delete.
+ * There are also methods to render and modify an analyst's profile, CV and desks.
+ *
+ * Date:        16/10/13
+ * Time:        13:35
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Analysts extends Controller {
@@ -44,7 +48,7 @@ public class Analysts extends Controller {
 
 
     /**
-     * Create a new analyst.
+     * Creates a new analyst.
      * @return Result
      */
     public static Result create() {
@@ -53,8 +57,8 @@ public class Analysts extends Controller {
 
 
     /**
-     * Display a form to create a new or edit an existing analyst.
-     * @param id    Id of the analyst to edit.
+     * Displays a form to create a new or edit an existing analyst.
+     * @param id Id of the analyst to edit
      * @return Result
      */
     public static Result edit(Long id) {
@@ -73,8 +77,8 @@ public class Analysts extends Controller {
 
 
     /**
-     * Update the analyst from the form.
-     * @param id Id of the analyst to edit
+     * Updates the analyst from the form.
+     * @param id Id of the analyst to update
      * @return Result
      */
     public static Result update(Long id) {
@@ -117,7 +121,7 @@ public class Analysts extends Controller {
 
 
     /**
-     * Delete the analyst.
+     * Deletes the analyst.
      * @param id Id of the analyst to delete
      * @return Result
      */
@@ -147,7 +151,7 @@ public class Analysts extends Controller {
 
 
     /**
-     * Display a (usually embedded) form to display and upload a profile image
+     * Displays a (usually embedded) form to display and upload a profile image.
      * @param id Id of the analyst
      * @return Result
      */
@@ -158,7 +162,7 @@ public class Analysts extends Controller {
 
 
     /**
-     * Display a (usually embedded) form to display and upload a CV document
+     * Displays a (usually embedded) form to display and upload a CV document.
      * @param id Id of the analyst
      * @return Result
      */
@@ -189,7 +193,7 @@ public class Analysts extends Controller {
 
     
     /**
-     * Uploads a file to the file server and sets the analyst field value.
+     * Uploads a file to AWS S3 and sets the analyst field value.
      * @param id Id of the analyst
      * @return Result
      */
@@ -286,7 +290,7 @@ public class Analysts extends Controller {
 
 
     /**
-     * Display a (usually embedded) form to display the desks an analyst is assigned to
+     * Displays a (usually embedded) form to display the desks an analyst is assigned to.
      * @param id Id of the analyst
      * @return Result
      */
@@ -298,8 +302,8 @@ public class Analysts extends Controller {
 
     /**
      * Assigns the analyst to a desk.
-     * @param id Id of the analyst
-     * @param deskId Id of the desk
+     * @param id      Id of the analyst
+     * @param deskId  Id of the desk
      * @return Result
      */
     public static Result addDesk(Long id, Long deskId) {
@@ -323,8 +327,8 @@ public class Analysts extends Controller {
 
     /**
      * Deletes a desk from the analyst.
-     * @param id Id of the analyst
-     * @param deskId Id of the desk
+     * @param id      Id of the analyst
+     * @param deskId  Id of the desk
      * @return Result
      */
     public static Result delDesk(Long id, Long deskId) {

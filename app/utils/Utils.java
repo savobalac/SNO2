@@ -7,12 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav
+ * Contains utility methods and constants.
+ *
  * Date: 16/10/13
  * Time: 13:23
- * Description: Contains utility methods and constants.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class Utils {
 
@@ -36,39 +38,43 @@ public class Utils {
 
 
     /**
-     * Handles caught Exceptions
-     * @param module
-     * @param e
+     * Logs caught exceptions.
+     * @param module The module the exception occurred in
+     * @param e      The exception thrown
      */
     public static void eHandler(String module, Exception e) {
         String msg = "ERROR in " + module + ": " + e.getMessage() + " (" + e.getClass() + ")";
         addLogMsg(LOG_LEVEL_NORMAL, LOG_TYPE_ERROR, msg);
     }
 
+
     /**
-     * Handles application errors
-     * @param module
-     * @param message
+     * Logs application errors.
+     * @param module  The module the error occurred in
+     * @param message The error message
      */
     public static void errorHandler(String module, String message) {
         String msg = "ERROR in " + module + ": " + message;
         addLogMsg(LOG_LEVEL_NORMAL, LOG_TYPE_ERROR, msg);
     }
 
+
     /**
-     * Handles application information
-     * @param module
-     * @param message
+     * Logs application information.
+     * @param module  The module the event occurred in
+     * @param message The information message
      */
     public static void logEvent(String module, String message) {
         String msg = module + ": " + message;
         addLogMsg(LOG_LEVEL_NORMAL, LOG_TYPE_GENERAL, msg);
     }
 
+
     /**
-     * Logs an event
-     * @param logLevel 0==Normal, 1==Debug, 2==Verbose
-     * @param msg Description of event
+     * Logs a message.
+     * @param logLevel  0 = Normal, 1 = Debug, 2 = Verbose
+     * @param logType  -1 = Error, 0 = General
+     * @param msg      Description of the message
      */
     public static void addLogMsg(int logLevel, int logType, String msg) {
         System.out.println("");
@@ -76,8 +82,9 @@ public class Utils {
         System.out.println("");
     }
 
+
     /**
-     * Returns a list of Integers based on start and end values
+     * Returns a list of Integers based on start and end values.
      * @param start    Start value
      * @param end      End value
      * @return List<Integer>
@@ -92,8 +99,9 @@ public class Utils {
         return list;
     }
 
+
     /**
-     * Returns titles to be typically used in a select
+     * Returns titles typically used in a select.
      * @return Map<String,String>
      */
     public static Map<String,String> optionsTitle() {
@@ -114,7 +122,7 @@ public class Utils {
 
 
     /**
-     * Returns a friendly "Created on <date> at <time>" string
+     * Returns a friendly "Created on <date> at <time>" string.
      * @param datetime Timestamp
      * @return String
      */
@@ -135,7 +143,7 @@ public class Utils {
 
 
     /**
-     * Returns the current date time as a Timestamp
+     * Returns the current date time as a Timestamp.
      * @return Timestamp
      */
     public static Timestamp getCurrentDateTime() {
@@ -148,6 +156,7 @@ public class Utils {
      * Hashes a string using the SHA-256 hashing algorithm. This doesn't generate unique values.
      * @param input Input string
      * @return String
+     * @throws NoSuchAlgorithmException  If the algorithm doesn't exist
      */
     public static String hashString(String input) throws NoSuchAlgorithmException {
 

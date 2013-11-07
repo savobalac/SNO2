@@ -14,13 +14,15 @@ import java.net.URL;
 import java.util.UUID;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Uploads files to AWS S3 and stores file metadata.
+ * Taken from https://devcenter.heroku.com/articles/using-amazon-s3-for-file-uploads-with-java-and-play-2.
+ *
  * Date: 30/10/13
  * Time: 10:38
- * Description: Uploads files to S3 and stores file metadata in a database
- * Taken from https://devcenter.heroku.com/articles/using-amazon-s3-for-file-uploads-with-java-and-play-2
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Entity
 @Table(name="s3file")
@@ -38,21 +40,34 @@ public class S3File extends Model {
 
 
     /**
-     * Generic query helper for entity S3File with id UUID
+     * Generic query helper for entity S3File.
      */
     public static Finder<UUID,S3File> find = new Finder<UUID,S3File>(UUID.class, S3File.class);
 
 
+
+    /**
+     * Gets the URL.
+     * @return URL
+     * @throws MalformedURLException
+     */
     public URL getUrl() throws MalformedURLException {
         return new URL("https://s3.amazonaws.com/" + bucket + "/" + getActualFileName());
     }
 
 
+    /**
+     * Gets the file name.
+     * @return String
+     */
     private String getActualFileName() {
         return id + "/" + name;
     }
 
 
+    /**
+     * Saves the file.
+     */
     @Override
     public void save() {
         if (S3Plugin.amazonS3 == null) {
@@ -71,6 +86,9 @@ public class S3File extends Model {
     }
 
 
+    /**
+     * Deletes the file.
+     */
     @Override
     public void delete() {
         if (S3Plugin.amazonS3 == null) {

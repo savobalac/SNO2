@@ -7,12 +7,14 @@ import utils.Utils;
 import javax.persistence.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Model class that maps to DB table note.
+ *
  * Date: 21/10/13
  * Time: 11:57
- * Description: Model class that maps to DB table note.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Entity
 public class Note extends Model {
@@ -33,8 +35,9 @@ public class Note extends Model {
     @Constraints.Required
     @OneToOne public Analyst        analyst; // The analyst is the user making the note
 
+
     /**
-     * Generic query helper for entity file with id Long
+     * Generic query helper for entity Note.
      */
     public static Finder<Long, Note> find = new Finder<Long, Note>(Long.class, Note.class);
 

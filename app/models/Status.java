@@ -8,12 +8,15 @@ import javax.persistence.Id;
 import play.db.ebean.Model;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Model class that maps to DB table status.
+ * Contains a method to get statuses.
+ *
  * Date: 18/10/13
  * Time: 14:32
- * Description: Model class that maps to DB table status.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Entity
 public class Status extends Model {
@@ -26,13 +29,13 @@ public class Status extends Model {
 
 
     /**
-     * Generic query helper for entity status with id Long
+     * Generic query helper for entity Status.
      */
     public static Finder<Long, Status> find = new Finder<Long, Status>(Long.class, Status.class);
 
 
     /**
-     * Returns a map of all statuses typically used in a select
+     * Returns a map of all statuses typically used in a select.
      * @return Map<String,String>
      */
     public static Map<String,String> options() {

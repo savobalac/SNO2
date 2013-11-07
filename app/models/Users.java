@@ -10,12 +10,15 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Model class that maps to DB table users.
+ * Contains a method to authenticate the user.
+ *
  * Date: 16/10/13
  * Time: 12:59
- * Description: Model class that maps to DB table analyst.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Entity
 public class Users extends Model {
@@ -37,7 +40,7 @@ public class Users extends Model {
 
 
     /**
-     * Generic query helper for entity users with id Long
+     * Generic query helper for entity Users.
      */
     public static Finder<Long, Users> find = new Finder<Long, Users>(Long.class, Users.class);
 
@@ -47,6 +50,7 @@ public class Users extends Model {
      * @param username Username
      * @param password Password to be hashed before checking
      * @return Result
+     * @throws NoSuchAlgorithmException    If the hashing algorithm doesn't exist
      */
     public static Users authenticate(String username, String password) throws NoSuchAlgorithmException {
         return find.where().eq("username", username)

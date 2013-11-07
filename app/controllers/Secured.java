@@ -7,20 +7,23 @@ import play.mvc.Http.*;
 import models.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Ensures pages have an authenticated user.
+ * Contains methods to get the username and redirect to the login page if the user is not authorised.
+ *
  * Date: 18/10/13
  * Time: 11:37
- * Description: Ensures pages have an authenticated user.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class Secured extends Security.Authenticator {
 
 
     /**
      * Gets the username.
-     * @param ctx    The context object
-     * @return String    The username
+     * @param ctx The context object
+     * @return String The username
      */
     @Override
     public String getUsername(Context ctx) {
@@ -30,8 +33,8 @@ public class Secured extends Security.Authenticator {
 
     /**
      * Goes to the login page if unauthorised.
-     * @param ctx    The context object
-     * @return Result    The login page
+     * @param ctx The context object
+     * @return Result The login page
      */
     @Override
     public Result onUnauthorized(Context ctx) {

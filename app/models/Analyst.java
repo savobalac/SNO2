@@ -10,12 +10,15 @@ import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows com
 import utils.Utils;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Model class that maps to DB table analyst.
+ * Contains methods to get the list, save/update and add/delete desks.
+ *
  * Date: 16/10/13
  * Time: 12:59
- * Description: Model class that maps to DB table analyst.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 @Entity
 @Table(name="analyst")
@@ -90,8 +93,9 @@ public class Analyst extends Model {
     @OneToOne @JoinColumn(name="cv_document")
     public S3File                   cvDocument;
 
+
     /**
-     * Generic query helper for entity analyst with id Long
+     * Generic query helper for entity Analyst.
      */
     public static Finder<Long,Analyst> find = new Finder<Long,Analyst>(Long.class, Analyst.class);
 
@@ -137,6 +141,7 @@ public class Analyst extends Model {
 
     /**
      * Saves or updates the analyst.
+     * @throws Exception If there was a problem updating the DB
      */
     public void saveOrUpdate() throws Exception {
         // The analyst id should be 0 for a new record
@@ -175,6 +180,7 @@ public class Analyst extends Model {
      *
      * @param desk  The desk to be added
      * @return      boolean
+     * @throws      Exception    If there was a problem updating the DB
      */
     public void addDesk(Desk desk) throws Exception {
         try {
@@ -196,6 +202,7 @@ public class Analyst extends Model {
      * Deletes a desk from the analyst.
      *
      * @param desk  The desk to be deleted
+     * @throws      Exception    If there was a problem updating the DB
      */
     public void delDesk(Desk desk) throws Exception {
         try {
@@ -217,6 +224,7 @@ public class Analyst extends Model {
 
     /**
      * Deletes all desks from the analyst.
+     * @throws Exception    If there was a problem updating the DB
      */
     public void delAllDesks() throws Exception {
         try {

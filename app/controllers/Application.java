@@ -12,12 +12,15 @@ import static play.data.Form.*;
 import views.html.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * Application controller that renders the home (index) page and logs the user in and out.
+ * Contains a method to call the correct list page when a pagination link is used and an inner class for login.
+ *
  * Date: 16/10/13
  * Time: 12:59
- * Description: Application controller that renders pages and logs the user in and out.
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 public class Application extends Controller {
 
@@ -29,7 +32,7 @@ public class Application extends Controller {
 
 
     /**
-     * Returns the index page.
+     * Renders the index page.
      * @return Result
      */
     @Security.Authenticated(Secured.class)
@@ -39,7 +42,7 @@ public class Application extends Controller {
 
 
     /**
-     * Returns the login page.
+     * Renders the login page.
      * @return Result
      */
     public static Result login() {
@@ -75,7 +78,7 @@ public class Application extends Controller {
 
 
     /**
-     * When a (pagination) link is clicked, return the required list page
+     * When a (pagination) link is clicked, return the required list page.
      * @param pageType           The type of page, e.g. Analysts
      * @param page               The current page
      * @param sortBy             The sort column
@@ -109,7 +112,8 @@ public class Application extends Controller {
 
         /**
          * Calls a method to authenticate the user.
-         * @return String    An error message if not authenticated
+         * @return String                       An error message if not authenticated
+         * @throws NoSuchAlgorithmException     If the algorithm doesn't exist
          */
         public String validate() throws NoSuchAlgorithmException {
             if (Users.authenticate(username, password) == null) {

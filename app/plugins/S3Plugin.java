@@ -9,13 +9,15 @@ import play.Logger;
 import play.Plugin;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sav Balac
+ * AWS S3 plugin for Play! 2. Contains methods to connect to Amazon S3 for file uploads.
+ * Taken from https://devcenter.heroku.com/articles/using-amazon-s3-for-file-uploads-with-java-and-play-2.
+ *
  * Date: 30/10/13
  * Time: 10:14
- * Description: S3 plugin for Play! 2
- * Taken from https://devcenter.heroku.com/articles/using-amazon-s3-for-file-uploads-with-java-and-play-2
- * To change this template use File | Settings | File Templates.
+ *
+ * @author      Sav Balac
+ * @version     %I%, %G%
+ * @since       1.0
  */
 
 public class S3Plugin extends Plugin {
@@ -28,11 +30,19 @@ public class S3Plugin extends Plugin {
     public static String s3Bucket;
 
 
+    /**
+     * Constructor.
+     * @param application The application
+     * @return Result
+     */
     public S3Plugin(Application application) {
         this.application = application;
     }
 
 
+    /*
+     * Logs into AWS and creates the S3 bucket.
+     */
     @Override
     public void onStart() {
         String accessKey = application.configuration().getString(AWS_ACCESS_KEY);
@@ -48,6 +58,9 @@ public class S3Plugin extends Plugin {
     }
 
 
+    /*
+     * Checks the application has AWS access information.
+     */
     @Override
     public boolean enabled() {
         return (application.configuration().keys().contains(AWS_ACCESS_KEY) &&
