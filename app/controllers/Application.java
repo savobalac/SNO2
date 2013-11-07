@@ -72,7 +72,7 @@ public class Application extends Controller {
      */
     public static Result logout() {
         session().clear();
-        flash("success", "You've been logged out");
+        flash("success", "You've signed out.");
         return redirect(controllers.routes.Application.login());
     }
 
@@ -117,7 +117,7 @@ public class Application extends Controller {
          */
         public String validate() throws NoSuchAlgorithmException {
             if (Users.authenticate(username, password) == null) {
-                return "Invalid username or password";
+                return "Invalid username or password.";
             }
             return null;
         }

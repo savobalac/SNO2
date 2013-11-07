@@ -40,17 +40,27 @@
 
             <h2 class="form-signin-heading">Sign in to SNO2</h2>
 
-            @if(flash.contains("success")) {
-                <p class="success">
-                    @flash.get("success")
-                </p>
+            <!-- Show any flash messages above the main content -->
+            @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
+                <div class="alert alert-danger">
+                    <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
+                </div>
+            }
+            @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
+                <div class="alert alert-info">
+                    @flash.get(utils.Utils.FLASH_KEY_INFO)
+                </div>
+            }
+            @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
+                <div class="alert alert-success">
+                    @flash.get(utils.Utils.FLASH_KEY_SUCCESS)
+                </div>
             }
             @if(form.hasGlobalErrors) {
-                <p class="error">
+                <div class="alert alert-danger">
                     @form.globalError.message
-                </p>
+                </div>
             }
-            <br>
 
             <p>
                 <label for="username">Username</label>
@@ -65,7 +75,7 @@
             </p>
         }
 
-        </div> <!-- /container -->
+        </div> <!-- container -->
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="//code.jquery.com/jquery.js"></script>

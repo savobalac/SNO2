@@ -15,7 +15,9 @@
 )
 
 @import helper._
-@import helper.twitterBootstrap._
+@implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+
 
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
@@ -58,8 +60,9 @@
                     options(utils.Utils.optionsTitle),
                     '_label -> "Salutation:"
                 )
-                @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:")
-                @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:")
+                @* Setting showConstraints to false will prevent "Required" from being displayed *@
+                @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:", '_showConstraints -> false)
+                @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:", '_showConstraints -> false)
                 @* selects need the identifier of the referenced table, e.g. status.statusId *@
                 @select(
                     analystForm("status.statusId"),
@@ -94,8 +97,6 @@
                 @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
                 @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
                 @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
-
-                @* Setting showConstraints to false will prevent "Required" from being displayed *@
                 @select(
                     analystForm("primaryDesk.deskId"),
                     options(models.Desk.options),
