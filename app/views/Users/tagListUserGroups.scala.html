@@ -1,0 +1,46 @@
+@*************************************************************
+* Page:        tagListUserGroups                             *
+* Author:      Sav Balac                                     *
+* Date:        08/11/13                                      *
+* Version:     1.0                                           *
+* Description: Lists the groups for the user (via Ajax)      *
+*                                                            *
+* @param user   The User reference                           *
+*************************************************************@
+
+@( user: User )
+
+
+@if(user==null || user.id==null || user.id==0) {
+
+    <div class="well-sm">
+        <em>New user must be saved before groups can be added</em>
+    </div>
+
+} else {
+
+    @if( (user.groups == null) || (user.getNumGroups() <= 0) ) {
+        <div class="well">
+            <em>No groups assigned</em>
+        </div>
+    } else {
+
+    <div class="row show-grid">
+        <div class="col-4">
+            <table class="table table-striped table-bordered table-condensed">
+                @for(group <- user.groups) {
+                    <tr>
+                        <td width="16">
+                            <a href="#" rel="tooltip" title="Remove group @group.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delGroup(@group.id);">
+                                <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
+                            </a>
+                        </td>
+                        <td>@group.name</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+
+    }
+}

@@ -29,7 +29,8 @@ public class Application extends Controller {
 
     // Add a constant here when creating a new list page
     public static final int PAGE_TYPE_ANALYSTS  =  1;
-    public static final int PAGE_TYPE_USERS     =  2;
+    public static final int PAGE_TYPE_GROUPS    =  2;
+    public static final int PAGE_TYPE_USERS     =  3;
 
 
     /**
@@ -96,6 +97,8 @@ public class Application extends Controller {
         switch (pageType) {
             case PAGE_TYPE_ANALYSTS:
                 return controllers.routes.Analysts.list(page, sortBy, sortOrder, filter1, filter2);
+            case PAGE_TYPE_GROUPS:
+                return controllers.routes.Groups.list(page, sortBy, sortOrder, filter1, filter2);
             case PAGE_TYPE_USERS:
                 return controllers.routes.Users.list(page, sortBy, sortOrder, filter1, filter2);
             default:

@@ -1,0 +1,191 @@
+@*********************************************************
+* Page:        Create/Edit User                          *
+* Author:      Sav Balac                                 *
+* Date:        08/11/13                                  *
+* Version:     1.0                                       *
+* Description: Allows a user to be edited                *
+*                                                        *
+* @param id            The User id (0 for new)           *
+* @param userForm      The User Form object              *
+* @param user          The logged-in user                *
+*********************************************************@
+
+@(  id:             Long,
+    userForm:       Form[models.User],
+    user:           User
+)
+
+@import helper._
+@implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main(if(id==0){"New User"} else {userForm.get().fullname}, user) {
+
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+    @* The id should be zero if creating a User, but also test for null *@
+    @if(id == null || id==0) {
+        <h1 id="newUser">New User</h1>
+    } else {
+        <h1 id="userName"><span class="ecRecType">User: </span>
+            <span class="ecRecName">@userForm.field("fullname").value()</span>
+        </h1>
+    }
+    <hr>
+
+    @form(routes.Users.update(id), 'id -> "formUpload") {
+    <fieldset>
+        <!-- id needs to be set, otherwise it will be null on update -->
+        <input type="Hidden" id="id" name="id" value="@id" />
+
+        <!-- To partition fields into their tabs, need to contain links in a div of class tabbable -->
+        <!-- All tab panes need containing in a div of class tab-content (these classes require bootstrap-tab.js) -->
+        <!-- See http://www.w3resource.com/twitter-bootstrap/nav-tabs-and-pills-tutorial.php for reference -->
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="tabList">
+                <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
+                <li id="tabGroupsLink"><a href="#tabGroups" data-toggle="tab">Groups</a></li>
+            </ul>
+        </div>
+        <br>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tabDetails">
+                @* Setting showConstraints to false will prevent "Required" from being displayed *@
+                @inputText(userForm("fullname"), 'style -> "width: 50%", '_label -> "Name:")
+                @inputText(userForm("username"), 'style -> "width: 50%", '_label -> "Username:", '_showConstraints -> false)
+                @inputText(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
+                @inputText(userForm("email"), 'style -> "width: 50%", '_label -> "Email:", '_showConstraints -> false)
+            </div>
+
+            @* Display the list of assigned groups and a means to add one *@
+            <div class="tab-pane" id="tabGroups">
+                <div id="divGroups" class="col-4">
+                    @* The groups are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                </div>
+                <br>
+                <label for="divAddGroup">Add Group:</label>
+                <div id="divAddGroup" class="col-4">
+                    <input type="Hidden" id="groupId" name="groupId" value="@id" />
+                    <select id="newGroup" name="newGroup">
+                        @for(group <- Group.getAll()) {
+                            <option value="@group.id">@group.name</option>
+                        }
+                    </select>
+                    <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
+                        <i class="glyphicon glyphicon-plus icon-white"></i> Add
+                    </a>
+                </div>
+                <br>
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- This div shows a warning message that the user must be saved first -->
+    <div class="alert alert-warning alert-dismissable" id="saveWarning">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        Please save the new user first.
+    </div>
+
+    <!-- This div shows an error message if there was an error with an ajax call -->
+    <div class="alert alert-danger alert-dismissable" id="ajaxError">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <span id="ajaxErrorMsg"></span>
+    </div>
+
+    <hr>
+    <div class="actions">
+        <input type="submit" value="Save" class="btn btn-primary">
+        <a href="@routes.Users.list()" class="btn btn-warning">Cancel</a>
+    </div>
+    }
+    <hr>
+
+    @if(!(id==null || id==0)) {
+        @form(routes.Users.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
+            <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
+        }
+    }
+
+    <!-- This div shows a loading message and animation used in combination with blockUI -->
+    <div id="domMessage" style="display:none">
+        <h4>Loading... &nbsp;&nbsp; <img src='@routes.Assets.at("images/loading animation.gif")'/></h4>
+    </div>
+
+    <script type="text/javascript">
+
+        // Get embedded html via Ajax after the document has loaded
+        $(document).ready(function(){
+            $('#saveWarning').hide();
+            $('#ajaxError').hide();
+            getGroups();
+        });
+
+        // Get the list of groups assigned to the user (and prevent caching in IE)
+        function getGroups() {
+            var url = "/users/@id/groups";
+            var updateRegion = "#divGroups";
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    replaceRegionContents(updateRegion, returnedData);
+                }
+            });
+        }
+
+        // Add a group to the user
+        function addGroup() {
+            if(@id==0) {
+                $('#saveWarning').show();
+            } else {
+                $("#ajaxError").hide();
+                var url = "/users/@id/addGroup/" + $("#newGroup").val();
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: 'html',
+                    traditional: true,
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            getGroups();
+                        } else {
+                            $("#ajaxErrorMsg").text(returnedData);
+                            $("#ajaxError").show();
+                        }
+                    }
+                });
+            }
+        }
+
+        // Delete a group from the user
+        function delGroup(deskId) {
+            $("#ajaxError").hide();
+            var url = "/users/@id/delGroup/" + deskId;
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    if(returnedData=='OK') {
+                        getGroups();
+                    } else {
+                        $("#ajaxErrorMsg").text(returnedData);
+                        $("#ajaxError").show();
+                    }
+                }
+            });
+        }
+
+        // Replace the inner content of the submitted region (this function needs to be below any calls to it)
+        function replaceRegionContents(regionId, newContent) {
+            $(regionId).empty();                // Clear
+            $(newContent).appendTo(regionId);   // Repopulate
+        }
+
+    </script>
+
+}

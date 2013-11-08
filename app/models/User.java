@@ -97,9 +97,92 @@ public class User extends Model {
     public void saveOrUpdate() throws Exception {
         // The id should be 0 for a new record
         if (id==null || id<=0) {
+            // Check for duplicate username
+            User user = User.find.where().eq("username", this.username).findUnique();
+            if (user != null) {
+                throw new Exception("Username already exists");
+            }
             save();
         } else {
             update();
+        }
+    }
+
+
+    /**
+     * Returns the number of groups a user is assigned to (groups could be null).
+     * @return      int
+     */
+    public int getNumGroups() {
+        if (groups!=null) {
+            return groups.size();
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * Assigns a group to the user.
+     *
+     * @param group  The group to be added
+     * @return       boolean
+     * @throws       Exception    If there was a problem updating the DB
+     */
+    public void addGroup(Group group) throws Exception {
+        try {
+            // Add the group if it hasn't been already, set the instance variables and update
+            if (!(groups.contains(group))) {
+                groups.add(group);
+                saveManyToManyAssociations("groups"); // Update the database
+                update();
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.addGroup()", e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * Deletes a group from the user.
+     *
+     * @param group  The group to be deleted
+     * @throws       Exception    If there was a problem updating the DB
+     */
+    public void delGroup(Group group) throws Exception {
+        try {
+            // Remove the group if it exists, set the instance variables and update
+            if (groups.contains(group)) {
+                groups.remove(group);
+                saveManyToManyAssociations("groups"); // Update the database
+                update();
+            } else {
+                throw new Exception("Error: Group " + group.id + ", " + group.name + " not assigned to the user.");
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.delGroup()", e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * Deletes all groups from the user.
+     * @throws Exception    If there was a problem updating the DB
+     */
+    public void delAllGroups() throws Exception {
+        try {
+            // Set the instance variable and update
+            groups.clear();
+            saveManyToManyAssociations("groups"); // Update the database
+            update();
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.delAllGroups()", e);
+            throw e;
         }
     }
 

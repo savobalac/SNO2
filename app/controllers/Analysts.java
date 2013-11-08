@@ -97,7 +97,7 @@ public class Analysts extends Controller {
                 a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
                 a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
 
-                // Save if a new analyst, otherwise update and show a message
+                // Save if a new analyst, otherwise update, and show a message
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
                 if (id==null || id==0) {
