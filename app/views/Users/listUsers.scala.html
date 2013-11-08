@@ -1,11 +1,11 @@
 @****************************************************************
-* Page:        List Analysts                                    *
+* Page:        List Users                                       *
 * Author:      Sav                                              *
-* Date:        17/10/13                                         *
+* Date:        08/11/13                                         *
 * Version:     1.0                                              *
-* Description: Lists the analysts                               *
+* Description: Lists the users                                  *
 *                                                               *
-* @param currentPage        The page of Analyst objects         *
+* @param currentPage        The page of User objects            *
 * @param currentSortBy      The sort column                     *
 * @param currentOrder       Ascending or descending             *
 * @param currentFilter      The search filter                   *
@@ -13,7 +13,7 @@
 * @param user               The logged-in user                  *
 ****************************************************************@
 
-@(  currentPage:        com.avaje.ebean.Page[models.Analyst],
+@(  currentPage:        com.avaje.ebean.Page[models.User],
     currentSortBy:      String,
     currentOrder:       String,
     currentFilter:      String,
@@ -43,7 +43,7 @@
     }
 
     // Generate the link
-    routes.Analysts.list(newPage, sortBy, order, currentFilter, currentSearch)
+    routes.Users.list(newPage, sortBy, order, currentFilter, currentSearch)
 
 }
 
@@ -57,30 +57,30 @@
 }
 
 
-@main("Analysts", user) {
+@main("Users", user) {
 
-    <h1 id="homeTitle">Analysts (@currentPage.getTotalRowCount)</h1>
+    <h1 id="homeTitle">Users (@currentPage.getTotalRowCount)</h1>
 
     <hr>
 
     <div id="actions">
         <form name="frmFilter" class="form-inline" role="form" well form-searchaction='@link(0, "name")' method="GET">
             <div class="form-group">
-                <label class="sr-only" for="searchbox">Search by surname</label>
-                <input type="search" class="form-control" placeholder="Search by surname" id="searchbox" name="t" value="@currentSearch">
+                <label class="sr-only" for="searchbox">Search by full name</label>
+                <input type="search" class="form-control" placeholder="Search by full name" id="searchbox" name="t" value="@currentSearch">
             </div>
             <div class="form-group">
-                <a class="btn btn-default" href="JAVASCRIPT:frmFilter.submit()" rel="tooltip" title="Search by surname">
+                <a class="btn btn-default" href="JAVASCRIPT:frmFilter.submit()" rel="tooltip" title="Search by full name">
                     <i class="glyphicon glyphicon-search"></i>
                 </a>
             </div>
 
             &nbsp;
-            <label for="f">Primary Desk:</label>
-            <select id="f" name="f" onchange="setPrimaryDesk(); this.form.submit();">
+            <label for="f">Groups:</label>
+            <select id="f" name="f" onchange="setGroup(); this.form.submit();">
                 <option value="" selected>ALL</option>
-                @for(desk <- Desk.getAll()) {
-                    <option value="@desk.name" @if(desk.name==currentFilter){ selected }>@desk.name</option>
+                @for(group <- Group.getAll()) {
+                    <option value="@group.name" @if(group.name==currentFilter){ selected }>@group.name</option>
                 }
             </select>
         </form>
@@ -99,29 +99,35 @@
 
             <thead>
                 <tr>
-                    @header("lastname", "Name")
-                    @header("primaryDesk.name", "Primary Desk")
-                    @header("rank.name", "Rank")
-                    @header("status.statusName", "Status")
+                    @header("fullname", "Name")
+                    @header("username", "Username")
+                    @header("email", "Email Address")
+                    @header("groups", "Groups")
                 </tr>
             </thead>
 
             <tbody>
-                @for(Analyst <- currentPage.getList) {
+                @for(user <- currentPage.getList) {
                     <tr>
                         <td>
-                            <a id="@Analyst.analystId" class="analystId" href="@routes.Analysts.edit(Analyst.analystId)">
-                                @Analyst.firstname @Analyst.lastname
+                            <a id="@user.id" class="id" href="@routes.Users.edit(user.id)">
+                                @user.fullname
                             </a>
                         </td>
                         <td>
-                            @Analyst.primaryDesk.name
+                            @user.username
                         </td>
                         <td>
-                            @Analyst.rank.name
+                            @user.email
                         </td>
                         <td>
-                            @Analyst.status.statusName
+                            @***************************************************************************************
+                            * List the groups separated by commas (no comma for the last group, index starts at 0) *
+                            ***************************************************************************************@
+                            @for(group <- user.groups) {
+                            @group
+                                @if(!(user.groups.indexOf(group)==user.groups.size()-1)) {, }
+                            }
                         </td>
                     </tr>
                 }
@@ -130,7 +136,7 @@
         </table>
 
         <!-- Show pagination links -->
-        @tags.pagination(new Integer(Application.PAGE_TYPE_ANALYSTS), currentPage.getTotalPageCount,
+        @tags.pagination(new Integer(Application.PAGE_TYPE_USERS), currentPage.getTotalPageCount,
                          currentPage.getPageIndex, new Boolean(currentPage.hasPrev), new Boolean(currentPage.hasNext),
                          currentSortBy, currentOrder, currentFilter, currentSearch, new Long(0))
 
@@ -138,14 +144,14 @@
 
     }
 
-    <a class="btn btn-success" id="add" href="@routes.Analysts.create()">New Analyst</a>
+    <a class="btn btn-success" id="add" href="@routes.Users.create()">New User</a>
 
     <hr>
 
     <script type="text/javascript">
-        function setPrimaryDesk() {
-            var selectedDesk = $("#f option:selected").val();
-            $("#primaryDesk").val(selectedDesk);
+        function setGroup() {
+            var selectedGroup = $("#f option:selected").val();
+            $("#group").val(selectedDesk);
         }
     </script>
 

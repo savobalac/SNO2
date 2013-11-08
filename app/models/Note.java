@@ -23,7 +23,7 @@ public class Note extends Model {
     @Id public Long                 noteId;
 
     @Constraints.Required
-    @ManyToOne public Users         user;
+    @ManyToOne public User          user;
 
     @Constraints.Required
     public String                   title;

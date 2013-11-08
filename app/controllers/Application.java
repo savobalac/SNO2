@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Users;
+import models.User;
 import java.security.NoSuchAlgorithmException;
 import play.api.mvc.Call;
 import play.mvc.Controller;
@@ -28,7 +28,8 @@ public class Application extends Controller {
     public static final int RECORDS_PER_PAGE = 20;
 
     // Add a constant here when creating a new list page
-    public static final int PAGE_TYPE_ANALYSTS =  1;
+    public static final int PAGE_TYPE_ANALYSTS  =  1;
+    public static final int PAGE_TYPE_USERS     =  2;
 
 
     /**
@@ -37,7 +38,7 @@ public class Application extends Controller {
      */
     @Security.Authenticated(Secured.class)
     public static Result index() {
-        return ok(index.render("SNO2", Users.find.where().eq("username", request().username()).findUnique() ));
+        return ok(index.render("SNO2", User.find.where().eq("username", request().username()).findUnique() ));
     }
 
 
@@ -95,6 +96,8 @@ public class Application extends Controller {
         switch (pageType) {
             case PAGE_TYPE_ANALYSTS:
                 return controllers.routes.Analysts.list(page, sortBy, sortOrder, filter1, filter2);
+            case PAGE_TYPE_USERS:
+                return controllers.routes.Users.list(page, sortBy, sortOrder, filter1, filter2);
             default:
                 return null;
         }
@@ -116,7 +119,7 @@ public class Application extends Controller {
          * @throws NoSuchAlgorithmException     If the algorithm doesn't exist
          */
         public String validate() throws NoSuchAlgorithmException {
-            if (Users.authenticate(username, password) == null) {
+            if (User.authenticate(username, password) == null) {
                 return "Invalid username or password.";
             }
             return null;

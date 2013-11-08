@@ -22,5 +22,10 @@ GET     /analysts/:id/desks                 controllers.Analysts.editDesks(id:Lo
 POST    /analysts/:id/addDesk/:deskId       controllers.Analysts.addDesk(id:Long, deskId:Long)
 POST    /analysts/:id/delDesk/:deskId       controllers.Analysts.delDesk(id:Long, deskId:Long)
 
+# Users
+GET     /users                              controllers.Users.list(p:Int ?= 0, s ?= "fullname", o ?= "asc", f ?= "", t ?= "")
+GET     /users/new                          controllers.Users.create()
+GET     /users/:id                          controllers.Users.edit(id:Long)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

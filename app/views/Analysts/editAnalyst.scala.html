@@ -7,11 +7,12 @@
 *                                                        *
 * @param id            The Analyst id (0 for new)        *
 * @param analystForm   The Analyst Form object           *
+* @param user          The logged-in user                *
 *********************************************************@
 
 @(  id:             Long,
     analystForm:    Form[models.Analyst],
-    user:           Users
+    user:           User
 )
 
 @import helper._
