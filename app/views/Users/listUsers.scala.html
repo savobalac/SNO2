@@ -125,7 +125,7 @@
                             * List the groups separated by commas (no comma for the last group, index starts at 0) *
                             ***************************************************************************************@
                             @for(group <- user.groups) {
-                            @group
+                                @group.name
                                 @if(!(user.groups.indexOf(group)==user.groups.size()-1)) {, }
                             }
                         </td>
@@ -151,7 +151,7 @@
     <script type="text/javascript">
         function setGroup() {
             var selectedGroup = $("#f option:selected").val();
-            $("#group").val(selectedDesk);
+            $("#group").val(selectedGroup);
         }
     </script>
 

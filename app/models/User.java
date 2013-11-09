@@ -67,18 +67,19 @@ public class User extends Model {
         // Search on fullname, otherwise filter on group name if it's set
         Page p = null;
         if (search.isEmpty()) {
-            //if (filter.isEmpty()) { // Get all records
+            if (filter.isEmpty()) { // Get all records
                 p = find.where()
                         .orderBy(sortBy + " " + order)
                         .findPagingList(pageSize)
                         .getPage(page);
-            //} else { // Filter
-            //    p = find.where()
-            //            .ilike("primaryDesk.name", "%" + filter + "%")
-            //            .orderBy(sortBy + " " + order)
-            //            .findPagingList(pageSize)
-            //            .getPage(page);
-            //}
+            } else { // Filter
+                p = find.where()
+                        .ilike("groups.name", "%" + filter + "%")
+                        .orderBy(sortBy + " " + order)
+                        .fetch("groups")
+                        .findPagingList(pageSize)
+                        .getPage(page);
+            }
         } else { // Search
             p = find.where()
                     .ilike("fullname", "%" + search + "%")
