@@ -30,6 +30,13 @@
         <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.8.23.css")'>
         <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-demo-docs-theme.css")'>
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+
+        <!-- More styling -->
+        <style>
+            body {
+                padding-top: 60px; /* So the flash messages are displayed */
+            }
+        </style>
     </head>
 
     <body>
@@ -59,25 +66,27 @@
         </div>
 
         <!-- Show any flash messages above the main content -->
-        @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
-            <div class="alert alert-danger">
-                <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
-            </div>
-        }
-        @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
-            <div class="alert alert-info">
-                @flash.get(utils.Utils.FLASH_KEY_INFO)
-            </div>
-        }
-        @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
-            <div class="alert alert-success">
-                @flash.get(utils.Utils.FLASH_KEY_SUCCESS)
-            </div>
-        }
+        <div class="container">
+            @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
+                <div class="alert alert-danger">
+                    <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
+                </div>
+            }
+            @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
+                <div class="alert alert-info">
+                    @flash.get(utils.Utils.FLASH_KEY_INFO)
+                </div>
+            }
+            @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
+                <div class="alert alert-success">
+                    <p>@flash.get(utils.Utils.FLASH_KEY_SUCCESS)</p>
+                </div>
+            }
 
-        <section id="main">
-            @content
-        </section>
+            <section id="main">
+                @content
+            </section>
+        </div>
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="//code.jquery.com/jquery.js"></script>
