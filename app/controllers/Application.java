@@ -73,7 +73,7 @@ public class Application extends Controller {
      */
     public static Result logout() {
         session().clear();
-        flash("success", "You've signed out.");
+        flash("success", "You have signed out.");
         return redirect(controllers.routes.Application.login());
     }
 

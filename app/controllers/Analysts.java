@@ -130,13 +130,14 @@ public class Analysts extends Controller {
         try {
             // Find the analyst record
             Analyst analyst = Analyst.find.byId(id);
+            String fullName = analyst.getFullName();
 
             // Delete desks
             analyst.delAllDesks(); // Many-many
 
             // Delete the analyst
             analyst.delete();
-            msg = "Analyst deleted.";
+            msg = "Analyst " + fullName + " deleted.";
             flash(Utils.FLASH_KEY_SUCCESS, msg);
         } catch (Exception e) {
             // Log an error and show a message

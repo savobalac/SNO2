@@ -53,7 +53,13 @@
                 @* Setting showConstraints to false will prevent "Required" from being displayed *@
                 @inputText(userForm("fullname"), 'style -> "width: 50%", '_label -> "Name:")
                 @inputText(userForm("username"), 'style -> "width: 50%", '_label -> "Username:", '_showConstraints -> false)
-                @inputText(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
+                @* Only show the password field for a new user *@
+                @* Still need a hidden field for an existing user, otherwise password will be null on update *@
+                @if(id==null || id==0) {
+                    @inputPassword(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
+                } else {
+                    <input type="hidden" id="password" name="password" value='@userForm.field("password").value()' />
+                }
                 @inputText(userForm("email"), 'style -> "width: 50%", '_label -> "Email:", '_showConstraints -> false)
             </div>
 

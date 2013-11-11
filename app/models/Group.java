@@ -43,56 +43,6 @@ public class Group extends Model {
 
 
     /**
-     * Returns a page of groups.
-     *
-     * @param page          Page to display
-     * @param pageSize      Number of groups per page
-     * @param sortBy        User property used for sorting
-     * @param order         Sort order (either or asc or desc)
-     * @param filter        Filter applied on column name
-     * @param search        Search applied on name
-     * @return Page<Group>
-     */
-    public static Page<Group> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
-
-        // Search on name
-        Page p = null;
-        if (search.isEmpty()) { // Get all records
-            p = find.where()
-                    .orderBy(sortBy + " " + order)
-                    .findPagingList(pageSize)
-                    .getPage(page);
-        } else { // Search
-            p = find.where()
-                    .ilike("name", "%" + search + "%")
-                    .orderBy(sortBy + " " + order)
-                    .findPagingList(pageSize)
-                    .getPage(page);
-        }
-        return p;
-    }
-
-
-    /**
-     * Saves or updates the group.
-     * @throws Exception If there was a problem updating the DB
-     */
-    public void saveOrUpdate() throws Exception {
-        // The id should be 0 for a new record
-        if (id==null || id<=0) {
-            // Check for duplicate Group name
-            Group group = Group.find.where().eq("name", this.name).findUnique();
-            if (group != null) {
-                throw new Exception("Group with same name already exists");
-            }
-            save();
-        } else {
-            update();
-        }
-    }
-
-
-    /**
      * Returns a list of all groups
      * @return List<Group>
      */

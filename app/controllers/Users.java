@@ -36,10 +36,14 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
-        // Get a page of users and render the list page
-        Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        User user = User.find.where().eq("username", request().username()).findUnique();
-        return ok(listUsers.render(pageUsers, sortBy, order, filter, search, user));
+        // Get a page of users and render the list page (check if an admin user)  {
+        if (Secured.isAdminUser()) {
+            Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
+            User user = User.find.where().eq("username", request().username()).findUnique();
+            return ok(listUsers.render(pageUsers, sortBy, order, filter, search, user));
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+        }
     }
 
 
@@ -48,7 +52,11 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result create() {
-        return edit(new Long(0));
+        if (Secured.isAdminUser()) { // Check if an admin user
+            return edit(new Long(0));
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+        }
     }
 
 
@@ -58,17 +66,21 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result edit(Long id) {
-        Form<User> userForm;
-        // New users have id = 0
-        if (id <= 0L) {
-            userForm = Form.form(User.class).fill(new User());
+        if (Secured.isAdminUser()) { // Check if an admin user
+            Form<User> userForm;
+            // New users have id = 0
+            if (id <= 0L) {
+                userForm = Form.form(User.class).fill(new User());
+            }
+            else {
+                User user = User.find.byId(id);
+                userForm = Form.form(User.class).fill(User.find.byId(id));
+            }
+            User user = User.find.where().eq("username", request().username()).findUnique();
+            return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, user));
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
         }
-        else {
-            User user = User.find.byId(id);
-            userForm = Form.form(User.class).fill(User.find.byId(id));
-        }
-        User user = User.find.where().eq("username", request().username()).findUnique();
-        return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, user));
     }
 
 
@@ -78,35 +90,42 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
-        // Get the user form and user
-        Form<User> userForm = Form.form(User.class).bindFromRequest();
-        User user = User.find.where().eq("username", request().username()).findUnique();
-        String msg;
-        try {
-            if (userForm.hasErrors()) { // Return to the editUser page
-                return badRequest(editUser.render(id, userForm, user));
-            } else {
-                User a = userForm.get(); // Get the user data
-
-                // Save if a new user, otherwise update, and show a message
-                a.saveOrUpdate();
-                String fullName = userForm.get().fullname;
-                if (id==null || id==0) {
-                    msg = "User " + fullName + " has been created.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+        // Get the user form and user (check if an admin user)
+        if (Secured.isAdminUser()) {
+            Form<User> userForm = Form.form(User.class).bindFromRequest();
+            User user = User.find.where().eq("username", request().username()).findUnique();
+            String msg;
+            try {
+                if (userForm.hasErrors()) { // Return to the editUser page
+                    return badRequest(editUser.render(id, userForm, user));
                 } else {
-                    msg = "User " + fullName + " successfully updated.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                    User a = userForm.get(); // Get the user data
+                    if (id==null || id==0) {
+                        a.password = Utils.hashString(a.password); // Hash the password when creating a new user
+                    }
+
+                    // Save if a new user, otherwise update, and show a message
+                    a.saveOrUpdate();
+                    String fullName = userForm.get().fullname;
+                    if (id==null || id==0) {
+                        msg = "User " + fullName + " has been created.";
+                        flash(Utils.FLASH_KEY_SUCCESS, msg);
+                    } else {
+                        msg = "User " + fullName + " successfully updated.";
+                        flash(Utils.FLASH_KEY_SUCCESS, msg);
+                    }
+                    // Redirect to remove user from query string
+                    return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
                 }
-                // Redirect to remove user from query string
-                return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+            } catch (Exception e) {
+                // Log an error, show a message and return to the editUser page
+                Utils.eHandler("Users.update(" + id.toString() + ")", e);
+                msg = String.format("Changes not saved. Error encountered ( %s ).", e.getMessage());
+                flash(Utils.FLASH_KEY_ERROR, msg);
+                return badRequest(editUser.render(id, userForm, user));
             }
-        } catch (Exception e) {
-            // Log an error, show a message and return to the editUser page
-            Utils.eHandler("Users.update(" + id.toString() + ")", e);
-            msg = String.format("Changes not saved. Error encountered ( %s ).", e.getMessage());
-            flash(Utils.FLASH_KEY_ERROR, msg);
-            return badRequest(editUser.render(id, userForm, user));
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
         }
     }
 
@@ -117,26 +136,31 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result delete(Long id) {
-        String msg;
-        try {
-            // Find the user record
-            User user = User.find.byId(id);
+        if (Secured.isAdminUser()) { // Check if an admin user
+            String msg;
+            try {
+                // Find the user record
+                User user = User.find.byId(id);
+                String fullName = user.fullname;
 
-            // Delete desks
-            user.delAllGroups(); // Many-many
+                // Delete groups
+                user.delAllGroups(); // Many-many
 
-            // Delete the user
-            user.delete();
-            msg = "User deleted.";
-            flash(Utils.FLASH_KEY_SUCCESS, msg);
-        } catch (Exception e) {
-            // Log an error and show a message
-            Utils.eHandler("Users.delete(" + id.toString() + ")", e);
-            msg = String.format("Error encountered (%s).", e.getMessage());
-            flash(Utils.FLASH_KEY_ERROR, msg);
-        } finally {
-            // Redirect to remove user from query string
-            return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                // Delete the user
+                user.delete();
+                msg = "User " + fullName + " deleted.";
+                flash(Utils.FLASH_KEY_SUCCESS, msg);
+            } catch (Exception e) {
+                // Log an error and show a message
+                Utils.eHandler("Users.delete(" + id.toString() + ")", e);
+                msg = String.format("Error encountered (%s).", e.getMessage());
+                flash(Utils.FLASH_KEY_ERROR, msg);
+            } finally {
+                // Redirect to remove user from query string
+                return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+            }
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
         }
     }
 
@@ -147,8 +171,12 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result editGroups(Long id) {
-        User user = User.find.byId(id);
-        return ok(tagListUserGroups.render(user));
+        if (Secured.isAdminUser()) { // Check if an admin user
+            User user = User.find.byId(id);
+            return ok(tagListUserGroups.render(user));
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+        }
     }
 
 
@@ -159,20 +187,24 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result addGroup(Long id, Long groupId) {
-        User user = User.find.byId(id);
-        Group group = Group.find.byId(groupId);
-        try {
-            if(user == null) {
-                return ok("Error: User not found.");
+        if (Secured.isAdminUser()) { // Check if an admin user
+            User user = User.find.byId(id);
+            Group group = Group.find.byId(groupId);
+            try {
+                if(user == null) {
+                    return ok("Error: User not found.");
+                }
+                else {
+                    user.addGroup(group);
+                    return ok("OK"); // "OK" is used by the calling Ajax function
+                }
             }
-            else {
-                user.addGroup(group);
-                return ok("OK"); // "OK" is used by the calling Ajax function
+            catch (Exception e) {
+                Utils.eHandler("Users.addGroup()", e);
+                return ok(e.getMessage());
             }
-        }
-        catch (Exception e) {
-            Utils.eHandler("Users.addGroup()", e);
-            return ok(e.getMessage());
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
         }
     }
 
@@ -184,26 +216,28 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result delGroup(Long id, Long groupId) {
-        User user = User.find.byId(id);
-        Group group = Group.find.byId(groupId);
-        try {
-            if (user == null) {
-                return ok("Error: User not found.");
+        if (Secured.isAdminUser()) { // Check if an admin user
+            User user = User.find.byId(id);
+            Group group = Group.find.byId(groupId);
+            try {
+                if (user == null) {
+                    return ok("Error: User not found.");
+                }
+                if (group == null) {
+                    return ok("Error: Group not found.");
+                } else {
+                    user.delGroup(group);
+                    return ok("OK"); // "OK" is used by the calling Ajax function
+                }
             }
-            if (group == null) {
-                return ok("Error: Group not found.");
-            } else {
-                user.delGroup(group);
-                return ok("OK"); // "OK" is used by the calling Ajax function
+            catch (Exception e) {
+                Utils.eHandler("Users.delGroup()", e);
+                return ok(e.getMessage());
             }
-        }
-        catch (Exception e) {
-            Utils.eHandler("Users.delGroup()", e);
-            return ok(e.getMessage());
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
         }
     }
-
-
 
 
 }

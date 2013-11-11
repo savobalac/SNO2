@@ -42,4 +42,13 @@ public class Secured extends Security.Authenticator {
     }
 
 
+    /**
+     * Checks if the logged-in user has admin rights.
+     * @return boolean If the user is an admin user
+     */
+    public static boolean isAdminUser() {
+        return User.isAdminUser(Context.current().request().username());
+    }
+
+
 }

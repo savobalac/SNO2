@@ -111,6 +111,20 @@ public class User extends Model {
 
 
     /**
+     * Checks if the user is an admin user.
+     *
+     * @param username  The username to be checked
+     * @return  boolean
+     */
+    public static boolean isAdminUser(String username) {
+        return find.where()
+                .eq("username", username)
+                .eq("groups.name", "Admin")
+                .findRowCount() > 0;
+    }
+
+
+    /**
      * Returns the number of groups a user is assigned to (groups could be null).
      * @return      int
      */
