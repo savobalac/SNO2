@@ -32,12 +32,5 @@ GET     /users/:id/groups                   controllers.Users.editGroups(id:Long
 POST    /users/:id/addGroup/:groupId        controllers.Users.addGroup(id:Long, groupId:Long)
 POST    /users/:id/delGroup/:groupId        controllers.Users.delGroup(id:Long, groupId:Long)
 
-# Groups
-GET     /groups                             controllers.Groups.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
-GET     /groups/new                         controllers.Groups.create()
-GET     /groups/:id                         controllers.Groups.edit(id:Long)
-POST    /groups/:id                         controllers.Groups.update(id:Long)
-POST    /groups/:id/delete                  controllers.Groups.delete(id:Long)
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
