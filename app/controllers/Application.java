@@ -25,7 +25,7 @@ import views.html.*;
 public class Application extends Controller {
 
     // Constants
-    public static final int RECORDS_PER_PAGE = 20;
+    public static final int RECORDS_PER_PAGE = 10;
 
     // Add a constant here when creating a new list page
     public static final int PAGE_TYPE_ANALYSTS  =  1;
