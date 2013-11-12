@@ -113,7 +113,7 @@ public class Analysts extends Controller {
         } catch (Exception e) {
             // Log an error, show a message and return to the editAnalyst page
             Utils.eHandler("Analysts.update(" + id.toString() + ")", e);
-            msg = String.format("Changes not saved. Error encountered ( %s ).", e.getMessage());
+            msg = String.format("%s. Changes not saved.", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
             return badRequest(editAnalyst.render(id, analystForm, user));
         }
@@ -142,7 +142,7 @@ public class Analysts extends Controller {
         } catch (Exception e) {
             // Log an error and show a message
             Utils.eHandler("Analysts.delete(" + id.toString() + ")", e);
-            msg = String.format("Error encountered (%s).", e.getMessage());
+            msg = String.format("%s. Changes not saved.", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
         } finally {
             // Redirect to remove analyst from query string
@@ -212,7 +212,7 @@ public class Analysts extends Controller {
                 return ok(msg);
             }
             if (analyst == null) {
-                msg = "Analyst not found.";
+                msg = "ERROR: Analyst not found. File not saved.";
                 return ok(msg);
             }
 
@@ -236,8 +236,8 @@ public class Analysts extends Controller {
                 // Check if the file exceeds the maximum allowable size
                 file = filePart.getFile();
                 if (Files.size(file.toPath()) > Utils.MAX_FILE_SIZE) {
-                    return ok("File " + fileName +
-                              " exceeds the maximum size allowed of " + Utils.MAX_FILE_SIZE_STRING + ".");
+                    return ok("File " + fileName + " exceeds the maximum size allowed of " +
+                              Utils.MAX_FILE_SIZE_STRING + ". File not saved.");
                 }
 
                 // Check if the analyst already has a file and delete it
@@ -278,7 +278,7 @@ public class Analysts extends Controller {
             }
         } catch (Exception e) {
             Utils.eHandler("Analysts.uploadFile()", e);
-            msg = String.format("Error encountered, changes not saved (%s).", e.getMessage());
+            msg = String.format("%s. Changes not saved.", e.getMessage());
             return ok(msg);
         } finally {
             // Free up resources
@@ -312,7 +312,7 @@ public class Analysts extends Controller {
         Desk desk = Desk.find.byId(deskId);
         try {
             if(analyst == null) {
-                return ok("Error: Analyst not found.");
+                return ok("ERROR: Analyst not found. Changes not saved.");
             }
             else {
                 analyst.addDesk(desk);
@@ -321,7 +321,7 @@ public class Analysts extends Controller {
         }
         catch (Exception e) {
             Utils.eHandler("Analysts.addDesk()", e);
-            return ok(e.getMessage());
+            return ok("ERROR: " + e.getMessage());
         }
     }
 
@@ -337,10 +337,10 @@ public class Analysts extends Controller {
         Desk desk = Desk.find.byId(deskId);
         try {
             if (analyst == null) {
-                return ok("Error: Analyst not found.");
+                return ok("ERROR: Analyst not found. Changes not saved.");
             }
             if (desk == null) {
-                return ok("Error: Desk not found.");
+                return ok("ERROR: Desk not found. Changes not saved.");
             } else {
                 analyst.delDesk(desk);
                 return ok("OK"); // "OK" is used by the calling Ajax function
@@ -348,7 +348,7 @@ public class Analysts extends Controller {
         }
         catch (Exception e) {
             Utils.eHandler("Analysts.delDesk()", e);
-            return ok(e.getMessage());
+            return ok("ERROR: " + e.getMessage());
         }
     }
 

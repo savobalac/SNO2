@@ -120,7 +120,7 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error, show a message and return to the editUser page
                 Utils.eHandler("Users.update(" + id.toString() + ")", e);
-                msg = String.format("Changes not saved. Error encountered ( %s ).", e.getMessage());
+                msg = String.format("%s. Changes not saved.", e.getMessage());
                 flash(Utils.FLASH_KEY_ERROR, msg);
                 return badRequest(editUser.render(id, userForm, user));
             }
@@ -153,7 +153,7 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error and show a message
                 Utils.eHandler("Users.delete(" + id.toString() + ")", e);
-                msg = String.format("Error encountered (%s).", e.getMessage());
+                msg = String.format("%s. Changes not saved.", e.getMessage());
                 flash(Utils.FLASH_KEY_ERROR, msg);
             } finally {
                 // Redirect to remove user from query string
@@ -192,7 +192,7 @@ public class Users extends Controller {
             Group group = Group.find.byId(groupId);
             try {
                 if(user == null) {
-                    return ok("Error: User not found.");
+                    return ok("ERROR: User not found. Changes not saved.");
                 }
                 else {
                     user.addGroup(group);
@@ -201,7 +201,7 @@ public class Users extends Controller {
             }
             catch (Exception e) {
                 Utils.eHandler("Users.addGroup()", e);
-                return ok(e.getMessage());
+                return ok("ERROR: " + e.getMessage());
             }
         } else {
             return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
@@ -221,10 +221,10 @@ public class Users extends Controller {
             Group group = Group.find.byId(groupId);
             try {
                 if (user == null) {
-                    return ok("Error: User not found.");
+                    return ok("ERROR: User not found. Changes not saved.");
                 }
                 if (group == null) {
-                    return ok("Error: Group not found.");
+                    return ok("ERROR: Group not found. Changes not saved.");
                 } else {
                     user.delGroup(group);
                     return ok("OK"); // "OK" is used by the calling Ajax function
@@ -232,7 +232,7 @@ public class Users extends Controller {
             }
             catch (Exception e) {
                 Utils.eHandler("Users.delGroup()", e);
-                return ok(e.getMessage());
+                return ok("ERROR: " + e.getMessage());
             }
         } else {
             return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
