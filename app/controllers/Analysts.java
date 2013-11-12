@@ -92,10 +92,23 @@ public class Analysts extends Controller {
             } else {
                 Analyst a = analystForm.get(); // Get the analyst data
 
-                // Checkboxes if unchecked return null
-                a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
-                a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
-                a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
+                // Checkboxes if unchecked or disabled return null
+                // Disabled checkboxes have an associated disabled field with its original value
+                if (analystForm.field("disEmailverified").value() != null) {
+                    a.emailverified = (analystForm.field("disEmailverified").value().equals("true"));
+                } else {
+                    a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
+                }
+                if (analystForm.field("disPhoneverified").value() != null) {
+                    a.phoneVerified = (analystForm.field("disPhoneverified").value().equals("true"));
+                } else {
+                    a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
+                }
+                if (analystForm.field("disContractSigned").value() != null) {
+                    a.contractSigned = (analystForm.field("disContractSigned").value().equals("true"));
+                } else {
+                    a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
+                }
 
                 // Save if a new analyst, otherwise update, and show a message
                 a.saveOrUpdate();

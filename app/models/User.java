@@ -111,7 +111,7 @@ public class User extends Model {
 
 
     /**
-     * Checks if the user is an admin user.
+     * Checks if the user is an admin user. This static method is called from static controller methods.
      *
      * @param username  The username to be checked
      * @return  boolean
@@ -120,7 +120,66 @@ public class User extends Model {
         return find.where()
                 .eq("username", username)
                 .eq("groups.name", "Admin")
-                .findRowCount() > 0;
+                .findRowCount() == 1;
+    }
+
+
+    /**
+     * Checks if this user is an admin user or a manager.
+     *
+     * @return  boolean
+     */
+    public boolean isAdminOrManager() {
+        return isAdmin() || isManager();
+    }
+
+
+    /**
+     * Checks if this user is an admin user, a manager or a staff member.
+     *
+     * @return  boolean
+     */
+    public boolean isAdminOrManagerOrStaff() {
+        return isAdmin() || isManager() || isStaff();
+    }
+
+
+    /**
+     * Checks if this user is an admin user.
+     *
+     * @return  boolean
+     */
+    public boolean isAdmin() {
+        return find.where()
+                .eq("username", username)
+                .eq("groups.name", "Admin")
+                .findRowCount() == 1;
+    }
+
+
+    /**
+     * Checks if this user is a manager.
+     *
+     * @return  boolean
+     */
+    public boolean isManager() {
+        return find.where()
+                .eq("username", username)
+                .eq("groups.name", "Manager")
+                .findRowCount() == 1;
+    }
+
+
+    /**
+     * Checks if this user is a staff member.
+     *
+     * @return  boolean
+     */
+    public boolean isStaff() {
+        return find.where()
+                .eq("username", username)
+                .eq("groups.name", "Staff")
+                .findRowCount() == 1;
     }
 
 

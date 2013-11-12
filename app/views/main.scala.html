@@ -57,7 +57,7 @@
                         <li><a href="@routes.Application.index()">Home</a></li>
                         <li><a href="/analysts">Analysts</a></li>
                         @* Only admin users can navigate to the users page *@
-                        @if(User.isAdminUser(user.username)) {
+                        @if(user.isAdmin()) {
                             <li><a href="/users">Users</a></li>
                         }
                         <li>@user.username <span>(@user.email)</span></li>
