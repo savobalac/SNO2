@@ -121,7 +121,8 @@
     <hr>
     <div class="actions">
         <input type="submit" value="Save" class="btn btn-primary">
-        <a href="@routes.Users.list()" class="btn btn-warning">Cancel</a>
+        @* If an admin user is amending another user, cancel goes to the list users page, otherwise to the home page *@
+        <a href="@if(user.isAdmin()&&(id!=user.id)){@routes.Users.list()}else{@routes.Application.index()}" class="btn btn-warning">Cancel</a>
     </div>
     }
     <hr>
