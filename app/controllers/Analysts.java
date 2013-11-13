@@ -366,4 +366,15 @@ public class Analysts extends Controller {
     }
 
 
+    /**
+     * Displays a (usually embedded) form to display the notes that have been recorded against an analyst.
+     * @param id Id of the analyst
+     * @return Result
+     */
+    public static Result editNotes(Long id) {
+        Analyst analyst = Analyst.find.byId(id);
+        return ok(tagListNotes.render(analyst));
+    }
+
+
 }

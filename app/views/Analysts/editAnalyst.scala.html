@@ -49,6 +49,7 @@
             <ul class="nav nav-tabs" id="tabList">
                 <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
                 <li id="tabDesksLink"><a href="#tabDesks" data-toggle="tab">Desks</a></li>
+                <li id="tabNotesLink"><a href="#tabNotes" data-toggle="tab">Notes</a></li>
                 <li id="tabProfileLink"><a href="#tabProfile" data-toggle="tab">Profile</a></li>
                 <li id="tabCvLink"><a href="#tabCv" data-toggle="tab">CV</a></li>
             </ul>
@@ -203,6 +204,14 @@
                 <br>
             </div>
 
+            @* Display the list of notes and a means to add one *@
+            <div class="tab-pane" id="tabNotes">
+                <div id="divNotes" class="col-4">
+                    @* The notes are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                </div>
+                <br>
+            </div>
+
             @* Display the profile image and a means to upload one *@
             <div class="tab-pane" id="tabProfile">
                 <div id="divProfileImage" class="col-4" >
@@ -279,9 +288,10 @@
         $(document).ready(function(){
             $('#saveWarning').hide();
             $('#ajaxError').hide();
+            getDesks();
+            getNotes();
             getProfileImage();
             getCvDocument();
-            getDesks();
         });
 
         // Get the list of desks assigned to the analysts (and prevent caching in IE)
@@ -340,6 +350,22 @@
                         $("#ajaxErrorMsg").text(returnedData);
                         $("#ajaxError").show();
                     }
+                }
+            });
+        }
+
+        // Get the list of notes recorded against the analyst (and prevent caching in IE)
+        function getNotes() {
+            var url = "/analysts/@id/notes";
+            var updateRegion = "#divNotes";
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    replaceRegionContents(updateRegion, returnedData);
                 }
             });
         }

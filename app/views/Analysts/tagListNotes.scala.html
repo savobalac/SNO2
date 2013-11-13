@@ -1,0 +1,42 @@
+@*************************************************************
+* Page:        tagListNotes                                  *
+* Author:      Sav Balac                                     *
+* Date:        13/11/13                                      *
+* Version:     1.0                                           *
+* Description: Lists the notes for the analyst (via Ajax)    *
+*                                                            *
+* @param analyst   The Analyst reference                     *
+*************************************************************@
+
+@( analyst: Analyst )
+
+
+@if(analyst==null || analyst.analystId==null || analyst.analystId==0) {
+
+    <div class="well-sm">
+        <em>New analyst must be saved before notes can be added</em>
+    </div>
+
+} else {
+
+    @* @if( (analyst.usernotes == null) || (analyst.getNumNotes() <= 0) ) { *@
+    @* @if( analyst.usernotes == null ) { *@
+        <div class="well">
+            <em>No notes</em>
+        </div>
+    @* } else { *@
+
+    <div class="row show-grid">
+        <div class="col-4">
+            <table class="table table-striped table-bordered table-condensed">
+                @* @for(note <- analyst.usernotes) { *@
+                    <tr>
+                        <td>@* @note.title *@</td>
+                    </tr>
+                @* } *@
+            </table>
+        </div>
+    </div>
+
+    @* } *@
+}

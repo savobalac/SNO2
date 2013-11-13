@@ -9,6 +9,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import utils.Utils;
 import views.html.Users.*;
+import views.html.*;
 
 /**
  * Users controller with methods to list, create, edit, update and delete.
@@ -37,12 +38,13 @@ public class Users extends Controller {
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
         // Get a page of users and render the list page (check if an admin user)  {
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) {
             Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-            User user = User.find.where().eq("username", request().username()).findUnique();
-            return ok(listUsers.render(pageUsers, sortBy, order, filter, search, user));
+            return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -52,10 +54,12 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result create() {
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             return edit(new Long(0));
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -80,7 +84,8 @@ public class Users extends Controller {
             }
             return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -135,7 +140,8 @@ public class Users extends Controller {
                 return badRequest(editUser.render(id, userForm, loggedInUser));
             }
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -146,6 +152,7 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result delete(Long id) {
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             String msg;
             try {
@@ -170,7 +177,8 @@ public class Users extends Controller {
                 return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
             }
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -181,11 +189,13 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result editGroups(Long id) {
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
             return ok(tagListUserGroups.render(user));
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -197,6 +207,7 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result addGroup(Long id, Long groupId) {
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
             Group group = Group.find.byId(groupId);
@@ -214,7 +225,8 @@ public class Users extends Controller {
                 return ok("ERROR: " + e.getMessage());
             }
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -226,6 +238,7 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result delGroup(Long id, Long groupId) {
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
             Group group = Group.find.byId(groupId);
@@ -245,7 +258,8 @@ public class Users extends Controller {
                 return ok("ERROR: " + e.getMessage());
             }
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -259,7 +273,8 @@ public class Users extends Controller {
             userForm = Form.form(User.class).fill(User.find.byId(id));
             return ok(editPassword.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 
@@ -313,7 +328,8 @@ public class Users extends Controller {
                 return badRequest(editPassword.render(id, userForm, loggedInUser));
             }
         } else {
-            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
         }
     }
 }
