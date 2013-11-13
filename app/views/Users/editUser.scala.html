@@ -48,10 +48,6 @@
                 @if(user.isAdmin()) {
                     <li id="tabGroupsLink"><a href="#tabGroups" data-toggle="tab">Groups</a></li>
                 }
-                @* Display the change password tab if the user has been created *@
-                @if(id>0) {
-                    <li id="tabPasswordLink"><a href="#tabPassword" data-toggle="tab">Change Password</a></li>
-                }
             </ul>
         </div>
         <br>
@@ -72,11 +68,16 @@
                     @userForm.field("username").value()
                 }
 
-                @* Hide the password field if the user has been created *@
+                @* Hide the password field and show a change password button if the user has been created *@
                 @if(id==0) {
                     @inputPassword(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
                 } else {
                     <input type="hidden" id="password" name="password" value='@userForm.field("password").value()' />
+                    <br>
+                    <br>
+                    <a class="btn btn-success btn-xs" href="/users/@id/password" rel="tooltip" title="Change Password" style="vertical-align:top">
+                        <i class="glyphicon icon-white"></i> Change Password
+                    </a>
                 }
             </div>
 
@@ -102,19 +103,6 @@
                     <br>
                 </div>
             }
-
-            @* Display the change password tab if the user has been created *@
-            @if(id>0) {
-                <div class="tab-pane" id="tabPassword">
-                    @inputPassword(userForm("oldPassword"), 'style -> "width: 50%", '_label -> "Old Password:", '_showConstraints -> false)
-                    @inputPassword(userForm("newPassword"), 'style -> "width: 50%", '_label -> "New Password:", '_showConstraints -> false)
-                    @inputPassword(userForm("confirmPassword"), 'style -> "width: 50%", '_label -> "Confirm Password:", '_showConstraints -> false)
-                    <br>
-                    <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Change Password" style="vertical-align:top" onclick="changePassword();">
-                        <i class="glyphicon icon-white"></i> Change Password
-                    </a>
-                </div>
-            }
         </div>
     </fieldset>
 
@@ -137,12 +125,6 @@
     </div>
     }
     <hr>
-
-    @if(user.isAdmin() && !(id==null || id==0)) {
-        @form(routes.Users.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
-            <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
-        }
-    }
 
     <!-- This div shows a loading message and animation used in combination with blockUI -->
     <div id="domMessage" style="display:none">

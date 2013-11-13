@@ -141,7 +141,7 @@ public class Users extends Controller {
 
 
     /**
-     * Deletes the user.
+     * Deletes the user. This method is currently disabled (not in routes).
      * @param id Id of the user to delete
      * @return Result
      */
@@ -250,4 +250,76 @@ public class Users extends Controller {
     }
 
 
+    public static Result editPassword(Long id) {
+        // Get the logged-in user
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        // Check if an admin user or if editing the logged-in user
+        if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
+            Form<User> userForm;
+            userForm = Form.form(User.class).fill(User.find.byId(id));
+            return ok(editPassword.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+        }
+    }
+
+    public static Result updatePassword(Long id) {
+        // Get the user form and user (check if an admin user or if updating the logged-in user)
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        boolean isLoggedInUser = id.equals(loggedInUser.id);
+        if (Secured.isAdminUser() || isLoggedInUser) {
+            Form<User> userForm = Form.form(User.class).bindFromRequest();
+            String msg;
+            try {
+                if (userForm.hasErrors()) { // Return to the editUser page
+                    return badRequest(editPassword.render(id, userForm, loggedInUser));
+                } else {
+                    // Get the user data
+                    User oldUser = User.find.byId(id);
+                    User newUser = userForm.get();
+
+                    String oldPassword = userForm.field("oldPassword").value();
+                    String newPassword = userForm.field("newPassword").value();
+                    String confirmPassword = userForm.field("confirmPassword").value();
+
+                    // Check that the old password entered matches the currently stored (hashed) password
+                    if ((!Utils.hashString(oldPassword).equals(oldUser.password))) {
+                        throw new Exception("The old password is incorrect");
+                    }
+
+                    // Check that the new and confirmation passwords have been entered
+                    if (newPassword.trim().isEmpty()) {
+                        throw new Exception("Please enter a value for the new password");
+                    }
+                    if (confirmPassword.trim().isEmpty()) {
+                        throw new Exception("Please enter a value for the confirmation password");
+                    }
+
+                    // Check that the new and confirmation passwords are the same
+                    if (!newPassword.equals(confirmPassword)) {
+                        throw new Exception("The new and confirmation passwords do not match");
+                    }
+
+                    // Hash the new password
+                    newUser.password = Utils.hashString(newPassword);
+
+                    // Update the user and show a message
+                    newUser.saveOrUpdate();
+                    msg = "Password successfully updated.";
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+
+                    // Redirect to the user's details page
+                    return redirect(controllers.routes.Users.edit(id));
+                }
+            } catch (Exception e) {
+                // Log an error, show a message and return to the editPassword page
+                Utils.eHandler("Users.updatePassword(" + id.toString() + ")", e);
+                msg = String.format("%s. Changes not saved.", e.getMessage());
+                flash(Utils.FLASH_KEY_ERROR, msg);
+                return badRequest(editPassword.render(id, userForm, loggedInUser));
+            }
+        } else {
+            return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
+        }
+    }
 }
