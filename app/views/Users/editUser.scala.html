@@ -44,7 +44,14 @@
         <div class="tabbable">
             <ul class="nav nav-tabs" id="tabList">
                 <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
-                <li id="tabGroupsLink"><a href="#tabGroups" data-toggle="tab">Groups</a></li>
+                @* Display the groups tab (if an admin user) *@
+                @if(user.isAdmin()) {
+                    <li id="tabGroupsLink"><a href="#tabGroups" data-toggle="tab">Groups</a></li>
+                }
+                @* Display the change password tab if the user has been created *@
+                @if(id>0) {
+                    <li id="tabPasswordLink"><a href="#tabPassword" data-toggle="tab">Change Password</a></li>
+                }
             </ul>
         </div>
         <br>
@@ -52,37 +59,62 @@
             <div class="tab-pane active" id="tabDetails">
                 @* Setting showConstraints to false will prevent "Required" from being displayed *@
                 @inputText(userForm("fullname"), 'style -> "width: 50%", '_label -> "Name:")
-                @inputText(userForm("username"), 'style -> "width: 50%", '_label -> "Username:", '_showConstraints -> false)
-                @* Only show the password field for a new user *@
-                @* Still need a hidden field for an existing user, otherwise password will be null on update *@
-                @if(id==null || id==0) {
+                @inputText(userForm("email"), 'style -> "width: 50%", '_label -> "Email:", '_showConstraints -> false)
+
+                @* Hide the username field if the user has been created *@
+                @if(id==0) {
+                    @inputText(userForm("username"), 'style -> "width: 50%", '_label -> "Username:", '_showConstraints -> false)
+                } else {
+                    <input type="hidden" id="username" name="username" value='@userForm.field("username").value()' />
+                    <br>
+                    <strong>Username:</strong>
+                    <br>
+                    @userForm.field("username").value()
+                }
+
+                @* Hide the password field if the user has been created *@
+                @if(id==0) {
                     @inputPassword(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
                 } else {
                     <input type="hidden" id="password" name="password" value='@userForm.field("password").value()' />
                 }
-                @inputText(userForm("email"), 'style -> "width: 50%", '_label -> "Email:", '_showConstraints -> false)
             </div>
 
-            @* Display the list of assigned groups and a means to add one *@
-            <div class="tab-pane" id="tabGroups">
-                <div id="divGroups" class="col-4">
-                    @* The groups are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+            @* Display the list of assigned groups (if an admin user) and a means to add one *@
+            @if(user.isAdmin()) {
+                <div class="tab-pane" id="tabGroups">
+                    <div id="divGroups" class="col-4">
+                        @* The groups are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                    </div>
+                    <br>
+                    <label for="divAddGroup">Add Group:</label>
+                    <div id="divAddGroup" class="col-4">
+                        <input type="Hidden" id="groupId" name="groupId" value="@id" />
+                        <select id="newGroup" name="newGroup">
+                            @for(group <- Group.getAll()) {
+                                <option value="@group.id">@group.name</option>
+                            }
+                        </select>
+                        <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
+                            <i class="glyphicon glyphicon-plus icon-white"></i> Add
+                        </a>
+                    </div>
+                    <br>
                 </div>
-                <br>
-                <label for="divAddGroup">Add Group:</label>
-                <div id="divAddGroup" class="col-4">
-                    <input type="Hidden" id="groupId" name="groupId" value="@id" />
-                    <select id="newGroup" name="newGroup">
-                        @for(group <- Group.getAll()) {
-                            <option value="@group.id">@group.name</option>
-                        }
-                    </select>
-                    <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
-                        <i class="glyphicon glyphicon-plus icon-white"></i> Add
+            }
+
+            @* Display the change password tab if the user has been created *@
+            @if(id>0) {
+                <div class="tab-pane" id="tabPassword">
+                    @inputPassword(userForm("oldPassword"), 'style -> "width: 50%", '_label -> "Old Password:", '_showConstraints -> false)
+                    @inputPassword(userForm("newPassword"), 'style -> "width: 50%", '_label -> "New Password:", '_showConstraints -> false)
+                    @inputPassword(userForm("confirmPassword"), 'style -> "width: 50%", '_label -> "Confirm Password:", '_showConstraints -> false)
+                    <br>
+                    <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Change Password" style="vertical-align:top" onclick="changePassword();">
+                        <i class="glyphicon icon-white"></i> Change Password
                     </a>
                 </div>
-                <br>
-            </div>
+            }
         </div>
     </fieldset>
 
@@ -106,7 +138,7 @@
     }
     <hr>
 
-    @if(!(id==null || id==0)) {
+    @if(user.isAdmin() && !(id==null || id==0)) {
         @form(routes.Users.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
             <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
         }

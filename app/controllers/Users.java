@@ -66,18 +66,19 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result edit(Long id) {
-        if (Secured.isAdminUser()) { // Check if an admin user
+        // Get the logged-in user
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        // Check if an admin user or if editing the logged-in user
+        if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
             // New users have id = 0
             if (id <= 0L) {
                 userForm = Form.form(User.class).fill(new User());
             }
             else {
-                User user = User.find.byId(id);
                 userForm = Form.form(User.class).fill(User.find.byId(id));
             }
-            User user = User.find.where().eq("username", request().username()).findUnique();
-            return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, user));
+            return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
         } else {
             return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
         }
@@ -90,22 +91,26 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
-        // Get the user form and user (check if an admin user)
-        if (Secured.isAdminUser()) {
+        // Get the user form and user (check if an admin user or if updating the logged-in user)
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        boolean isLoggedInUser = id.equals(loggedInUser.id);
+        if (Secured.isAdminUser() || isLoggedInUser) {
             Form<User> userForm = Form.form(User.class).bindFromRequest();
-            User user = User.find.where().eq("username", request().username()).findUnique();
             String msg;
             try {
                 if (userForm.hasErrors()) { // Return to the editUser page
-                    return badRequest(editUser.render(id, userForm, user));
+                    return badRequest(editUser.render(id, userForm, loggedInUser));
                 } else {
-                    User a = userForm.get(); // Get the user data
-                    if (id==null || id==0) {
-                        a.password = Utils.hashString(a.password); // Hash the password when creating a new user
+                    User newUser = userForm.get(); // Get the user data
+
+                    // Hash the password when creating a new user or if the password has changed
+                    User oldUser = User.find.byId(id);
+                    if (id==null || id==0 || (!newUser.password.equals(oldUser.password))) {
+                        newUser.password = Utils.hashString(newUser.password);
                     }
 
                     // Save if a new user, otherwise update, and show a message
-                    a.saveOrUpdate();
+                    newUser.saveOrUpdate();
                     String fullName = userForm.get().fullname;
                     if (id==null || id==0) {
                         msg = "User " + fullName + " has been created.";
@@ -114,15 +119,20 @@ public class Users extends Controller {
                         msg = "User " + fullName + " successfully updated.";
                         flash(Utils.FLASH_KEY_SUCCESS, msg);
                     }
-                    // Redirect to remove user from query string
-                    return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                    // If updating the logged-in user redirect to the home page
+                    // Otherwise redirect to the list users page (to remove the user from the query string)
+                    if (isLoggedInUser) {
+                        return redirect(controllers.routes.Application.index());
+                    } else {
+                        return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                    }
                 }
             } catch (Exception e) {
                 // Log an error, show a message and return to the editUser page
                 Utils.eHandler("Users.update(" + id.toString() + ")", e);
                 msg = String.format("%s. Changes not saved.", e.getMessage());
                 flash(Utils.FLASH_KEY_ERROR, msg);
-                return badRequest(editUser.render(id, userForm, user));
+                return badRequest(editUser.render(id, userForm, loggedInUser));
             }
         } else {
             return forbidden(); // The navbar doesn't show the users link, but deny in case the URL is set manually
