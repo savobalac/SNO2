@@ -278,14 +278,8 @@ public class Users extends Controller {
                     User oldUser = User.find.byId(id);
                     User newUser = userForm.get();
 
-                    String oldPassword = userForm.field("oldPassword").value();
                     String newPassword = userForm.field("newPassword").value();
                     String confirmPassword = userForm.field("confirmPassword").value();
-
-                    // Check that the old password entered matches the currently stored (hashed) password
-                    if ((!Utils.hashString(oldPassword).equals(oldUser.password))) {
-                        throw new Exception("The old password is incorrect");
-                    }
 
                     // Check that the new and confirmation passwords have been entered
                     if (newPassword.trim().isEmpty()) {
