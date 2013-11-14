@@ -81,8 +81,9 @@ public class Analyst extends Model {
     @OneToOne @JoinColumn(name="primary_desk")
     public Desk                     primaryDesk; // "primary_desk" is the name of the column in table analyst
 
-    @OneToMany
-    public List<Note>               usernotes;
+    @OneToMany(cascade=CascadeType.PERSIST, mappedBy="analyst")
+    public List<Note>               noteList;
+
 
     @ManyToMany (mappedBy="analysts")
     public List<Desk>               desks;
@@ -236,6 +237,19 @@ public class Analyst extends Model {
         catch (Exception e) {
             Utils.eHandler("Analyst.delAllDesks()", e);
             throw e;
+        }
+    }
+
+
+    /**
+     * Returns the number of notes that have been recorded against the analyst (noteList could be null).
+     * @return      int
+     */
+    public int getNumNotes() {
+        if (noteList!=null) {
+            return noteList.size();
+        } else {
+            return 0;
         }
     }
 

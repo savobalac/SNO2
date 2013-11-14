@@ -33,7 +33,7 @@ public class Note extends Model {
     public String                   content;
 
     @Constraints.Required
-    @OneToOne public Analyst        analyst; // The analyst is the user making the note
+    @ManyToOne @JoinColumn(name="analyst_id") public Analyst       analyst; // Many notes may be written about an analyst
 
 
     /**
