@@ -5,6 +5,7 @@ import play.db.ebean.Model;
 import utils.Utils;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * Model class that maps to DB table note.
@@ -33,7 +34,16 @@ public class Note extends Model {
     public String                   content;
 
     @Constraints.Required
-    @ManyToOne @JoinColumn(name="analyst_id") public Analyst       analyst; // Many notes may be written about an analyst
+    @ManyToOne @JoinColumn(name="analyst_id")
+    public Analyst                  analyst; // Many notes may be written about an analyst
+
+    @Constraints.Required
+    public Timestamp createdDt;
+
+    @ManyToOne @JoinColumn(name="updated_by")
+    public User                     updatedBy;
+
+    public Timestamp                updatedDt;
 
 
     /**

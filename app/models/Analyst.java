@@ -84,7 +84,6 @@ public class Analyst extends Model {
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="analyst")
     public List<Note>               noteList;
 
-
     @ManyToMany (mappedBy="analysts")
     public List<Desk>               desks;
 
