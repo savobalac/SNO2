@@ -127,18 +127,28 @@ public class Utils {
      * @return String
      */
     public static String formatCreatedTimestamp(Timestamp datetime) {
-        return "Created on " + formatTimestamp(datetime);
+        return "Created on " + formatTimestampVerbose(datetime);
     }
 
 
     /**
-     * Formats a timestamp as "<date> at <time>"
+     * Formats a timestamp as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34
+     * @param datetime Timestamp
+     * @return String
+     */
+    public static String formatTimestampVerbose(Timestamp datetime) {
+        return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
+                   "" + new SimpleDateFormat("HH:mm").format(datetime);
+    }
+
+
+    /**
+     * Formats a timestamp as "<date> <time>", e.g. 21-Oct-2013 12:34
      * @param datetime Timestamp
      * @return String
      */
     public static String formatTimestamp(Timestamp datetime) {
-        return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
-                   "" + new SimpleDateFormat("HH:mm").format(datetime);
+        return new SimpleDateFormat("dd-MMM-yyyy HH:mm").format(datetime);
     }
 
 

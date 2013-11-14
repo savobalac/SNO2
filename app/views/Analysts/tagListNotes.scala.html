@@ -27,12 +27,27 @@
 
     <div class="row show-grid">
         <div class="col-4">
-            <table class="table table-striped table-bordered table-condensed">
-                @for(note <- analyst.noteList) {
+            <table class="table table-striped table-bordered table-condensed table-hover">
+                <thead>
                     <tr>
-                        <td>@note.title</td>
+                        <th>Subject</th>
+                        <th>Written By</th>
+                        <th>Date & Time</th>
+                        <th>Last Updated By</th>
+                        <th>Date & Time</th>
                     </tr>
-                }
+                </thead>
+                <tbody>
+                    @for(note <- analyst.noteList) {
+                        <tr>
+                            <td>@note.title</td>
+                            <td>@note.user.fullname</td>
+                            <td>@utils.Utils.formatTimestamp(note.createdDt)</td>
+                            <td>@if(note.updatedBy!=null){note.updatedBy.fullname}</td>
+                            <td>@if(note.updatedDt!=null){utils.Utils.formatTimestamp(note.updatedDt)}</td>
+                        </tr>
+                    }
+                </tbody>
             </table>
         </div>
     </div>

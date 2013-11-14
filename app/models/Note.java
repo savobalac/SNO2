@@ -38,7 +38,7 @@ public class Note extends Model {
     public Analyst                  analyst; // Many notes may be written about an analyst
 
     @Constraints.Required
-    public Timestamp createdDt;
+    public Timestamp                createdDt;
 
     @ManyToOne @JoinColumn(name="updated_by")
     public User                     updatedBy;
