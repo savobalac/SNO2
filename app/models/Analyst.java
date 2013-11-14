@@ -179,7 +179,6 @@ public class Analyst extends Model {
      * Assigns a desk to the analyst.
      *
      * @param desk  The desk to be added
-     * @return      boolean
      * @throws      Exception    If there was a problem updating the DB
      */
     public void addDesk(Desk desk) throws Exception {
@@ -249,6 +248,25 @@ public class Analyst extends Model {
             return noteList.size();
         } else {
             return 0;
+        }
+    }
+
+
+    /**
+     * Adds a note to the analyst.
+     *
+     * @param note  The note to be added
+     * @throws      Exception    If there was a problem updating the DB
+     */
+    public void addNote(Note note) throws Exception {
+        try {
+            // Set the instance variable and update
+            noteList.add(note);
+            update();
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.addNote()", e);
+            throw e;
         }
     }
 

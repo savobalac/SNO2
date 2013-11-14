@@ -3,6 +3,7 @@ package controllers;
 import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Desk;
+import models.Note;
 import models.User;
 import models.S3File;
 import play.data.Form;
@@ -13,6 +14,7 @@ import utils.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.sql.Timestamp;
 
 /**
  * Analysts controller with methods to list, create, edit, update and delete.
@@ -374,6 +376,100 @@ public class Analysts extends Controller {
     public static Result editNotes(Long id) {
         Analyst analyst = Analyst.find.byId(id);
         return ok(tagListNotes.render(analyst));
+    }
+
+
+    /**
+     * Creates a new note.
+     * @return Result
+     */
+    public static Result createNote(Long aId) {
+        return editNote(aId, new Long(0));
+    }
+
+
+    /**
+     * Displays a form to create a new or edit an existing note.
+     * @param aId Id of the analyst
+     * @param nId Id of the note to edit
+     * @return Result
+     */
+    public static Result editNote(Long aId, Long nId) {
+
+        // Get the logged-in user
+        User user = User.find.where().eq("username", request().username()).findUnique();
+
+        // Get the analyst
+        Analyst analyst = Analyst.find.byId(aId);
+
+        // New notes have id 0, set the analyst, user and created datetime fields
+        Form<Note> noteForm;
+        if (nId <= 0L) {
+            Note note = new Note();
+            note.analyst = analyst;
+            noteForm = Form.form(Note.class).fill(note);
+        }
+        else {
+            noteForm = Form.form(Note.class).fill(Note.find.byId(nId));
+        }
+        return ok(editNote.render(((nId<0)?(new Long(0)):(nId)), aId, noteForm, user));
+
+    }
+
+
+    /**
+     * Updates the note from the form.
+     * @param aId Id of the analyst
+     * @param nId Id of the note to edit
+     * @return Result
+     */
+    public static Result updateNote(Long aId, Long nId) {
+        // Get the note form and user
+        Form<Note> noteForm = Form.form(Note.class).bindFromRequest();
+        User user = User.find.where().eq("username", request().username()).findUnique();
+        String msg;
+        try {
+            if (noteForm.hasErrors()) { // Return to the editNote page
+                return badRequest(editNote.render(nId, aId, noteForm, user));
+            } else {
+                // Get the analyst
+                Analyst analyst = Analyst.find.byId(aId);
+
+                // Get the note data
+                Note note = noteForm.get();
+
+                // Get the current date and time
+                Timestamp now = Utils.getCurrentDateTime();
+
+                // Save if a new note, otherwise update, add the note to the analyst and show a message
+                if (nId==0) {
+                    note.analyst = analyst;
+                    note.user = user;
+                    note.createdDt = now;
+                    note.save();
+                    analyst.addNote(note);
+                    msg = "Note: " + note.title + " has been created.";
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                } else {
+                    // Get the currently-stored note
+                    Note existingNote = Note.find.byId(nId);
+                    note.createdDt = existingNote.createdDt; // Ensure the created datetime isn't overwritten
+                    note.updatedBy = user;
+                    note.updatedDt = now;
+                    note.update();
+                    msg = "Note: " + note.title + " successfully updated.";
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                }
+                // Redirect to the edit analyst page
+                return redirect(controllers.routes.Analysts.edit(aId));
+            }
+        } catch (Exception e) {
+            // Log an error, show a message and return to the editAnalyst page
+            Utils.eHandler("Analysts.updateNote(" + aId.toString() + ", " + nId.toString() + ")", e);
+            msg = String.format("%s. Changes not saved.", e.getMessage());
+            flash(Utils.FLASH_KEY_ERROR, msg);
+            return badRequest(editNote.render(nId, aId, noteForm, user));
+        }
     }
 
 

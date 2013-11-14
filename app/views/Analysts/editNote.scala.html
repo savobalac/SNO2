@@ -1,0 +1,61 @@
+@*********************************************************
+* Page:        Create/Edit Note                          *
+* Author:      Sav Balac                                 *
+* Date:        14/11/13                                  *
+* Version:     1.0                                       *
+* Description: Allows a note to be created/edited        *
+*                                                        *
+* @param id            The Note id (0 for new)           *
+* @param analystId     The analyst the note is for       *
+* @param noteForm      The Note Form object              *
+* @param user          The logged-in user                *
+*********************************************************@
+
+@(  id:             Long,
+    analystId:      Long,
+    noteForm:       Form[models.Note],
+    user:           User
+)
+
+@import helper._
+@implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main(if(id==0){"New Note"} else {noteForm.get().title}, user) {
+
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+    @* The id is zero if creating a Note *@
+    @if(id==0) {
+        <h1 id="newNote">New Note</h1>
+    } else {
+        <h1 id="noteName"
+            <span class="ecRecType">Note: </span><span class="ecRecName">@noteForm.field("title").value()</span>
+        </h1>
+    }
+    <h1>
+        <span class="ecRecType">Analyst: </span>
+        <span class="ecRecName">@noteForm.field("analyst.firstname").value() @noteForm.field("analyst.lastname").value()</span>
+    </h1>
+
+    <hr>
+
+    @form(routes.Analysts.updateNote(analystId, id)) {
+        <fieldset>
+            <!-- The note id needs to be set, otherwise it will be null on update -->
+            <input type="hidden" id="noteId" name="noteId" value="@id" />
+
+            @* Setting showConstraints to false will prevent "Required" from being displayed *@
+            @inputText(noteForm("title"), 'style -> "width: 50%", '_label -> "Subject:", '_showConstraints -> false)
+            @textarea(noteForm("content"), 'style -> "width: 100%", 'rows -> "10", '_label -> "Content:", '_showConstraints -> false)
+        </fieldset>
+
+        <hr>
+        <div class="actions">
+            <input type="submit" value="Save" class="btn btn-primary">
+            <a href="/analysts/@analystId" class="btn btn-warning">Cancel</a>
+        </div>
+    }
+    <hr>
+
+}

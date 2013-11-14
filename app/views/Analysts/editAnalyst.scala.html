@@ -18,8 +18,6 @@
 @import helper._
 @implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
 
-
-
 @main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
@@ -169,12 +167,15 @@
                     <input type="hidden" id="disContractSigned" name="disContractSigned" value='@analystForm.field("contractSigned").value()' />
                 }
 
-                @textarea(analystForm("positionDescription"), 'style -> "width: 100%", '_label -> "Position:")
-                @textarea(analystForm("biography"), 'style -> "width: 100%", '_label -> "Biography:")
-                @textarea(analystForm("academic"), 'style -> "width: 100%", '_label -> "Academic:")
-                @textarea(analystForm("notes"), 'style -> "width: 100%", '_label -> "Notes:")
-                @inputText(analystForm("skype"), 'style -> "width: 50%", '_label -> "Skype:")
-                @textarea(analystForm("expertise"), 'style -> "width: 100%", '_label -> "Expertise:")
+                @textarea(analystForm("positionDescription"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Position:")
+                @textarea(analystForm("biography"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Biography:")
+                @textarea(analystForm("academic"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Academic:")
+
+                @* Notes are hidden because they are managed by the notes tab *@
+                <input type="hidden" id="notes" name="notes" value='@analystForm.field("notes").value()' />
+
+                @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
+                @textarea(analystForm("expertise"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Expertise:")
                 @select(
                     analystForm("primaryDesk.deskId"),
                     options(models.Desk.options),

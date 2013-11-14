@@ -23,7 +23,6 @@ public class Note extends Model {
     // Instance variables (Play! generates getters and setters)
     @Id public Long                 noteId;
 
-    @Constraints.Required
     @ManyToOne public User          user;
 
     @Constraints.Required
@@ -33,11 +32,9 @@ public class Note extends Model {
     @Lob @Column(name="content", length = Utils.MYSQL_TEXT_BYTES)
     public String                   content;
 
-    @Constraints.Required
     @ManyToOne @JoinColumn(name="analyst_id")
     public Analyst                  analyst; // Many notes may be written about an analyst
 
-    @Constraints.Required
     public Timestamp                createdDt;
 
     @ManyToOne @JoinColumn(name="updated_by")
@@ -50,6 +47,20 @@ public class Note extends Model {
      * Generic query helper for entity Note.
      */
     public static Finder<Long, Note> find = new Finder<Long, Note>(Long.class, Note.class);
+
+
+    /**
+     * Saves or updates the note.
+     * @throws Exception If there was a problem updating the DB
+     */
+    public void saveOrUpdate() throws Exception {
+        // The note id should be 0 for a new record
+        if (noteId==null || noteId<=0) {
+            save();
+        } else {
+            update();
+        }
+    }
 
 
 }

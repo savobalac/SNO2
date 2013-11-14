@@ -24,33 +24,40 @@
             <em>No notes</em>
         </div>
     } else {
-
-    <div class="row show-grid">
-        <div class="col-4">
-            <table class="table table-striped table-bordered table-condensed table-hover">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Written By</th>
-                        <th>Date & Time</th>
-                        <th>Last Updated By</th>
-                        <th>Date & Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for(note <- analyst.noteList) {
+        <div class="row show-grid">
+            <div class="col-4">
+                <table class="table table-striped table-bordered table-condensed">
+                    <thead>
                         <tr>
-                            <td>@note.title</td>
-                            <td>@note.user.fullname</td>
-                            <td>@utils.Utils.formatTimestamp(note.createdDt)</td>
-                            <td>@if(note.updatedBy!=null){note.updatedBy.fullname}</td>
-                            <td>@if(note.updatedDt!=null){utils.Utils.formatTimestamp(note.updatedDt)}</td>
+                            <th>Subject</th>
+                            <th>Written By</th>
+                            <th>Date & Time</th>
+                            <th>Last Updated By</th>
+                            <th>Date & Time</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @for(note <- analyst.noteList) {
+                            <tr>
+                                <td>
+                                    <a id="@note.noteId" class="noteId"
+                                       href="@routes.Analysts.editNote(analyst.analystId, note.noteId)">
+                                        @note.title
+                                    </a>
+                                </td>
+                                <td>@note.user.fullname</td>
+                                <td>@utils.Utils.formatTimestamp(note.createdDt)</td>
+                                <td>@if(note.updatedBy!=null){@note.updatedBy.fullname}</td>
+                                <td>@if(note.updatedDt!=null){@utils.Utils.formatTimestamp(note.updatedDt)}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
     }
+    <br>
+    <a class="btn btn-success btn-xs" href="/analysts/@analyst.analystId/note/new" rel="tooltip" title="Add Note" style="vertical-align:top">
+        <i class="glyphicon icon-white"></i> Add Note
+    </a>
 }

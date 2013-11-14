@@ -18,6 +18,9 @@ GET     /analysts/:id/desks                 controllers.Analysts.editDesks(id:Lo
 POST    /analysts/:id/addDesk/:deskId       controllers.Analysts.addDesk(id:Long, deskId:Long)
 POST    /analysts/:id/delDesk/:deskId       controllers.Analysts.delDesk(id:Long, deskId:Long)
 GET     /analysts/:id/notes                 controllers.Analysts.editNotes(id:Long)
+GET     /analysts/:aId/note/new             controllers.Analysts.createNote(aId:Long)
+GET     /analysts/:aId/note/:nId            controllers.Analysts.editNote(aId:Long, nId:Long)
+POST    /analysts/:aId/note/:nId            controllers.Analysts.updateNote(aId:Long, nId:Long)
 GET     /analysts/:id/profileImage          controllers.Analysts.editProfileImage(id:Long)
 POST    /analysts/:id/uploadProfileImage    controllers.Analysts.uploadProfileImage(id:Long)
 GET     /analysts/:id/cvDocument            controllers.Analysts.editCvDocument(id:Long)
@@ -35,6 +38,8 @@ POST    /users/:id/addGroup/:groupId        controllers.Users.addGroup(id:Long, 
 POST    /users/:id/delGroup/:groupId        controllers.Users.delGroup(id:Long, groupId:Long)
 GET     /users/:id/password                 controllers.Users.editPassword(id:Long)
 POST    /users/:id/password                 controllers.Users.updatePassword(id:Long)
+
+# Notes
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
