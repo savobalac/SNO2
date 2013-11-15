@@ -31,15 +31,21 @@ public class User extends Model {
     @Id public Long                 id;
 
     @Constraints.Required
+    @Formats.NonEmpty
     public String                   username;
 
     @Constraints.Required
+    @Formats.NonEmpty
     public String                   password;
 
     @Constraints.Required
+    @Formats.NonEmpty
     public String                   email;
 
+    @Constraints.Required
+    @Formats.NonEmpty
     public String                   fullname;
+
     public Timestamp                lastlogin;
 
     @ManyToMany(mappedBy="users")

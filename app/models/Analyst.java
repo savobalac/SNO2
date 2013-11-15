@@ -4,6 +4,8 @@ import com.avaje.ebean.Page;
 import java.sql.Timestamp;
 import java.util.List;
 import javax.persistence.*;
+
+import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
@@ -29,9 +31,11 @@ public class Analyst extends Model {
     public String                   salutation;
 
     @Constraints.Required
+    @Formats.NonEmpty
     public String                   firstname; // A required constraint will ensure form fields are entered
 
     @Constraints.Required
+    @Formats.NonEmpty
     public String                   lastname;
 
     @OneToOne @JoinColumn(name="status_id")
@@ -77,7 +81,7 @@ public class Analyst extends Model {
     @Lob @Column(name="expertise", length = Utils.MYSQL_TEXT_BYTES)
     public String                   expertise;
 
-    //@Constraints.Required
+    @Constraints.Required
     @OneToOne @JoinColumn(name="primary_desk")
     public Desk                     primaryDesk; // "primary_desk" is the name of the column in table analyst
 
@@ -289,6 +293,24 @@ public class Analyst extends Model {
         }
         catch (Exception e) {
             Utils.eHandler("Analyst.delNote(" + note.noteId + ", " + note.title + ")", e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * Deletes all notes from the analyst.
+     *
+     * @throws Exception    If there was a problem updating the DB
+     */
+    public void delAllNotes() throws Exception {
+        try {
+            // Set the instance variable and update
+            noteList.clear();
+            update();
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.delAllNotes()", e);
             throw e;
         }
     }

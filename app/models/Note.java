@@ -1,7 +1,9 @@
 package models;
 
+import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
+import play.db.ebean.Model.Finder;
 import utils.Utils;
 
 import javax.persistence.*;
@@ -26,9 +28,11 @@ public class Note extends Model {
     @ManyToOne public User          user;
 
     @Constraints.Required
+    @Formats.NonEmpty
     public String                   title;
 
     @Constraints.Required
+    @Formats.NonEmpty
     @Lob @Column(name="content", length = Utils.MYSQL_TEXT_BYTES)
     public String                   content;
 

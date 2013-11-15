@@ -13,7 +13,7 @@
 
 @if(analyst==null || analyst.analystId==null || analyst.analystId==0) {
 
-    <div class="well-sm">
+    <div class="well">
         <em>New analyst must be saved before desks can be added</em>
     </div>
 
@@ -25,22 +25,22 @@
         </div>
     } else {
 
-    <div class="row show-grid">
-        <div class="col-4">
-            <table class="table table-striped table-bordered table-condensed">
-                @for(desk <- analyst.desks) {
-                    <tr>
-                        <td width="16">
-                            <a href="#" rel="tooltip" title="Remove desk @desk.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delDesk(@desk.deskId);">
-                                <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
-                            </a>
-                        </td>
-                        <td>@desk.name</td>
-                    </tr>
-                }
-            </table>
+        <div class="row show-grid">
+            <div class="col-4">
+                <table class="table table-striped table-bordered table-condensed">
+                    @for(desk <- analyst.desks) {
+                        <tr>
+                            <td width="16">
+                                <a href="#" rel="tooltip" title="Remove desk: @desk.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delDesk(@desk.deskId);">
+                                    <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
+                                </a>
+                            </td>
+                            <td>@desk.name</td>
+                        </tr>
+                    }
+                </table>
+            </div>
         </div>
-    </div>
 
     }
 }

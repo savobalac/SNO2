@@ -18,19 +18,18 @@
 @import helper._
 @implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
 
-@main(if(id==0){"New Analyst"} else {analystForm.get().firstname + " " + analystForm.get().lastname}, user) {
+@main(if(id==0){"New Analyst"} else {Analyst.find.byId(id).getFullName()}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
     @* The id should be zero if creating an Analyst, but also test for null *@
     @if(id == null || id==0) {
-        <h1 id="newAnalyst">New Analyst</h1>
+        <h2 id="newAnalyst">New Analyst</h2>
     } else {
-        <h1 id="analystName"><span class="ecRecType">Analyst: </span>
-            <span class="ecRecName">@analystForm.field("firstname").value()</span>
-            <span class="ecRecName">@analystForm.field("lastname").value()</span>
-        </h1>
+        <h2 id="analystName"><span class="ecRecType">Analyst: </span>
+            <span class="ecRecName">@Analyst.find.byId(id).getFullName()</span>
+        </h2>
     }
 
     <hr>

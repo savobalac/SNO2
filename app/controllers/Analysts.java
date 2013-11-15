@@ -116,10 +116,10 @@ public class Analysts extends Controller {
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
                 if (id==null || id==0) {
-                    msg = "Analyst " + fullName + " has been created.";
+                    msg = "Analyst: " + fullName + " has been created.";
                     flash(Utils.FLASH_KEY_SUCCESS, msg);
                 } else {
-                    msg = "Analyst " + fullName + " successfully updated.";
+                    msg = "Analyst: " + fullName + " successfully updated.";
                     flash(Utils.FLASH_KEY_SUCCESS, msg);
                 }
                 // Redirect to remove analyst from query string
@@ -147,12 +147,13 @@ public class Analysts extends Controller {
             Analyst analyst = Analyst.find.byId(id);
             String fullName = analyst.getFullName();
 
-            // Delete desks
+            // Delete desks and notes
             analyst.delAllDesks(); // Many-many
+            analyst.delAllNotes();
 
             // Delete the analyst
             analyst.delete();
-            msg = "Analyst " + fullName + " deleted.";
+            msg = "Analyst: " + fullName + " deleted.";
             flash(Utils.FLASH_KEY_SUCCESS, msg);
         } catch (Exception e) {
             // Log an error and show a message
@@ -283,7 +284,7 @@ public class Analysts extends Controller {
                 }
                 analyst.saveOrUpdate();
 
-                msg = "File " + fileName + " successfully uploaded to analyst " + analyst.getFullName();
+                msg = "File: " + fileName + " successfully uploaded to analyst " + analyst.getFullName();
                 flash(Utils.FLASH_KEY_SUCCESS, msg);
                 msg = "OK"; // The AJAX call from editAnalyst tests for "OK"
                 return ok(msg);
@@ -402,7 +403,7 @@ public class Analysts extends Controller {
         // Get the analyst
         Analyst analyst = Analyst.find.byId(aId);
 
-        // New notes have id 0, set the analyst, user and created datetime fields
+        // New notes have id 0, set the analyst
         Form<Note> noteForm;
         if (nId <= 0L) {
             Note note = new Note();
@@ -489,6 +490,7 @@ public class Analysts extends Controller {
             if (note == null) {
                 return ok("ERROR: Note not found. Changes not saved.");
             } else {
+                // Remove the note from the analyst and delete it
                 analyst.delNote(note);
                 note.delete();
                 return ok("OK"); // "OK" is used by the calling Ajax function
@@ -497,6 +499,37 @@ public class Analysts extends Controller {
         catch (Exception e) {
             Utils.eHandler("Analysts.delNote(" + aId + ", " + noteId + ")", e);
             return ok("ERROR: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * Deletes the analyst. This version is called from the editNote page.
+     * @param aId     Id of the analyst
+     * @param noteId  Id of the note
+     * @return Result
+     */
+    public static Result deleteNote(Long aId, Long noteId) {
+        String msg;
+        try {
+            // Find the analyst and note
+            Analyst analyst = Analyst.find.byId(aId);
+            Note note = Note.find.byId(noteId);
+            String title = note.title;
+
+            // Remove the note from the analyst and delete it
+            analyst.delNote(note);
+            note.delete();
+            msg = "Note: " + title + " deleted.";
+            flash(Utils.FLASH_KEY_SUCCESS, msg);
+        } catch (Exception e) {
+            // Log an error and show a message
+            Utils.eHandler("Analysts.deleteNote(" + aId + ", " + noteId + ")", e);
+            msg = String.format("%s. Changes not saved.", e.getMessage());
+            flash(Utils.FLASH_KEY_ERROR, msg);
+        } finally {
+            // Redirect to the edit analyst page
+            return redirect(controllers.routes.Analysts.edit(aId));
         }
     }
 

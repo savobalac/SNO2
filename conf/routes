@@ -22,6 +22,7 @@ POST    /analysts/:id/delNote/:noteId       controllers.Analysts.delNote(id:Long
 GET     /analysts/:aId/note/new             controllers.Analysts.createNote(aId:Long)
 GET     /analysts/:aId/note/:nId            controllers.Analysts.editNote(aId:Long, nId:Long)
 POST    /analysts/:aId/note/:nId            controllers.Analysts.updateNote(aId:Long, nId:Long)
+POST    /analysts/:aId/note/:nId/delete     controllers.Analysts.deleteNote(aId:Long, nId:Long)
 GET     /analysts/:id/profileImage          controllers.Analysts.editProfileImage(id:Long)
 POST    /analysts/:id/uploadProfileImage    controllers.Analysts.uploadProfileImage(id:Long)
 GET     /analysts/:id/cvDocument            controllers.Analysts.editCvDocument(id:Long)
@@ -32,8 +33,7 @@ GET     /users                              controllers.Users.list(p:Int ?= 0, s
 GET     /users/new                          controllers.Users.create()
 GET     /users/:id                          controllers.Users.edit(id:Long)
 POST    /users/:id                          controllers.Users.update(id:Long)
-# Delete user disabled until further notice
-#POST    /users/:id/delete                   controllers.Users.delete(id:Long)
+POST    /users/:id/delete                   controllers.Users.delete(id:Long)
 GET     /users/:id/groups                   controllers.Users.editGroups(id:Long)
 POST    /users/:id/addGroup/:groupId        controllers.Users.addGroup(id:Long, groupId:Long)
 POST    /users/:id/delGroup/:groupId        controllers.Users.delGroup(id:Long, groupId:Long)

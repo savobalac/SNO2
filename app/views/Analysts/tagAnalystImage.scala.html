@@ -14,7 +14,7 @@
 
 @if(analyst==null || analyst.analystId==null || analyst.analystId==0) {
 
-    <div class="well-sm">
+    <div class="well">
         <em>New analyst must be saved before the image can be uploaded</em>
     </div>
 
@@ -27,6 +27,10 @@
         <div style="height:100px; width:100px;">
             <img src="@analyst.profileImage.getUrl()" align="left"
                  style="vertical-align: top; border: 0px; max-height:100%; max-width:100%">
+        </div>
+    } else {
+        <div class="well">
+            <em>No profile image</em>
         </div>
     }
 

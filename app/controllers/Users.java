@@ -107,6 +107,18 @@ public class Users extends Controller {
                     return badRequest(editUser.render(id, userForm, loggedInUser));
                 } else {
                     User newUser = userForm.get(); // Get the user data
+                    String confirmPassword = userForm.field("confirmPassword").value();
+
+                    // If a new user, check that the confirmation password has been entered
+                    if (id==0) {
+                        if (confirmPassword.trim().isEmpty()) {
+                            throw new Exception("Please enter a value for the confirmation password");
+                        }
+                        // Check that the new and confirmation passwords are the same
+                        if (!newUser.password.equals(confirmPassword)) {
+                            throw new Exception("The new and confirmation passwords do not match");
+                        }
+                    }
 
                     // Hash the password when creating a new user or if the password has changed
                     User oldUser = User.find.byId(id);
@@ -118,10 +130,10 @@ public class Users extends Controller {
                     newUser.saveOrUpdate();
                     String fullName = userForm.get().fullname;
                     if (id==null || id==0) {
-                        msg = "User " + fullName + " has been created.";
+                        msg = "User: " + fullName + " has been created.";
                         flash(Utils.FLASH_KEY_SUCCESS, msg);
                     } else {
-                        msg = "User " + fullName + " successfully updated.";
+                        msg = "User: " + fullName + " successfully updated.";
                         flash(Utils.FLASH_KEY_SUCCESS, msg);
                     }
                     // If updating the logged-in user redirect to the home page
@@ -165,7 +177,7 @@ public class Users extends Controller {
 
                 // Delete the user
                 user.delete();
-                msg = "User " + fullName + " deleted.";
+                msg = "User: " + fullName + " deleted.";
                 flash(Utils.FLASH_KEY_SUCCESS, msg);
             } catch (Exception e) {
                 // Log an error and show a message

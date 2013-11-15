@@ -18,18 +18,18 @@
 @import helper._
 @implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
 
-@main(if(id==0){"New User"} else {userForm.get().fullname}, user) {
+@main(if(id==0){"New User"} else {User.find.byId(id).fullname}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
     @* The id should be zero if creating a User, but also test for null *@
     @if(id == null || id==0) {
-        <h1 id="newUser">New User</h1>
+        <h2 id="newUser">New User</h2>
     } else {
-        <h1 id="userName"><span class="ecRecType">User: </span>
-            <span class="ecRecName">@userForm.field("fullname").value()</span>
-        </h1>
+        <h2 id="userName"><span class="ecRecType">User: </span>
+            <span class="ecRecName">@User.find.byId(id).fullname</span>
+        </h2>
     }
     <hr>
 
@@ -54,7 +54,7 @@
         <div class="tab-content">
             <div class="tab-pane active" id="tabDetails">
                 @* Setting showConstraints to false will prevent "Required" from being displayed *@
-                @inputText(userForm("fullname"), 'style -> "width: 50%", '_label -> "Name:")
+                @inputText(userForm("fullname"), 'style -> "width: 50%", '_label -> "Name:", '_showConstraints -> false)
                 @inputText(userForm("email"), 'style -> "width: 50%", '_label -> "Email:", '_showConstraints -> false)
 
                 @* Hide the username field if the user has been created *@
@@ -71,6 +71,7 @@
                 @* Hide the password field and show a change password button if the user has been created *@
                 @if(id==0) {
                     @inputPassword(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
+                    @inputPassword(userForm("confirmPassword"), 'style -> "width: 50%", '_label -> "Confirm Password:", '_showConstraints -> false)
                 } else {
                     <input type="hidden" id="password" name="password" value='@userForm.field("password").value()' />
                     <br>
@@ -125,7 +126,13 @@
         <a href="@if(user.isAdmin()&&(id!=user.id)){@routes.Users.list()}else{@routes.Application.index()}" class="btn btn-warning">Cancel</a>
     </div>
     }
-    <hr>
+
+    @* Only admin users can delete (and they can't delete themselves) *@
+    @if(user.isAdmin()&&(id!=user.id)&&id!=0) {
+        @form(routes.Users.delete(id), 'class -> "topRight") {
+            <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
+        }
+    }
 
     <!-- This div shows a loading message and animation used in combination with blockUI -->
     <div id="domMessage" style="display:none">

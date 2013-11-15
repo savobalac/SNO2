@@ -14,7 +14,7 @@
 
 @if(analyst==null || analyst.analystId==null || analyst.analystId==0) {
 
-    <div class="well-sm">
+    <div class="well">
         <em>New analyst must be saved before the CV document can be uploaded</em>
     </div>
 
@@ -26,6 +26,10 @@
     @if(analyst.cvDocument!=null) {
         <div>
             <a href="@analyst.cvDocument.getUrl()" target="_blank">@analyst.cvDocument.name</a>
+        </div>
+    } else {
+        <div class="well">
+            <em>No CV</em>
         </div>
     }
 
