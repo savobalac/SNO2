@@ -292,7 +292,7 @@ public class Analysts extends Controller {
                 return ok(msg);
             }
         } catch (Exception e) {
-            Utils.eHandler("Analysts.uploadFile()", e);
+            Utils.eHandler("Analysts.uploadFile(" + id + ", " + fileType + ")", e);
             msg = String.format("%s. Changes not saved.", e.getMessage());
             return ok(msg);
         } finally {
@@ -335,7 +335,7 @@ public class Analysts extends Controller {
             }
         }
         catch (Exception e) {
-            Utils.eHandler("Analysts.addDesk()", e);
+            Utils.eHandler("Analysts.addDesk(" + id + ", " + deskId + ")", e);
             return ok("ERROR: " + e.getMessage());
         }
     }
@@ -362,7 +362,7 @@ public class Analysts extends Controller {
             }
         }
         catch (Exception e) {
-            Utils.eHandler("Analysts.delDesk()", e);
+            Utils.eHandler("Analysts.delDesk(" + id + ", " + deskId + ")", e);
             return ok("ERROR: " + e.getMessage());
         }
     }
@@ -465,10 +465,38 @@ public class Analysts extends Controller {
             }
         } catch (Exception e) {
             // Log an error, show a message and return to the editAnalyst page
-            Utils.eHandler("Analysts.updateNote(" + aId.toString() + ", " + nId.toString() + ")", e);
+            Utils.eHandler("Analysts.updateNote(" + aId + ", " + nId + ")", e);
             msg = String.format("%s. Changes not saved.", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
             return badRequest(editNote.render(nId, aId, noteForm, user));
+        }
+    }
+
+
+    /**
+     * Deletes a note from the analyst. This version is called from the note list via Ajax.
+     * @param aId     Id of the analyst
+     * @param noteId  Id of the note
+     * @return Result
+     */
+    public static Result delNote(Long aId, Long noteId) {
+        Analyst analyst = Analyst.find.byId(aId);
+        Note note = Note.find.byId(noteId);
+        try {
+            if (analyst == null) {
+                return ok("ERROR: Analyst not found. Changes not saved.");
+            }
+            if (note == null) {
+                return ok("ERROR: Note not found. Changes not saved.");
+            } else {
+                analyst.delNote(note);
+                note.delete();
+                return ok("OK"); // "OK" is used by the calling Ajax function
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analysts.delNote(" + aId + ", " + noteId + ")", e);
+            return ok("ERROR: " + e.getMessage());
         }
     }
 

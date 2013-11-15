@@ -18,6 +18,7 @@ GET     /analysts/:id/desks                 controllers.Analysts.editDesks(id:Lo
 POST    /analysts/:id/addDesk/:deskId       controllers.Analysts.addDesk(id:Long, deskId:Long)
 POST    /analysts/:id/delDesk/:deskId       controllers.Analysts.delDesk(id:Long, deskId:Long)
 GET     /analysts/:id/notes                 controllers.Analysts.editNotes(id:Long)
+POST    /analysts/:id/delNote/:noteId       controllers.Analysts.delNote(id:Long, noteId:Long)
 GET     /analysts/:aId/note/new             controllers.Analysts.createNote(aId:Long)
 GET     /analysts/:aId/note/:nId            controllers.Analysts.editNote(aId:Long, nId:Long)
 POST    /analysts/:aId/note/:nId            controllers.Analysts.updateNote(aId:Long, nId:Long)

@@ -371,6 +371,26 @@
             });
         }
 
+        // Delete a note from the analyst
+        function delNote(noteId) {
+            $("#ajaxError").hide();
+            var url = "/analysts/@id/delNote/" + noteId;
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: 'html',
+                traditional: true,
+                success: function (returnedData) {
+                    if(returnedData=='OK') {
+                        getNotes();
+                    } else {
+                        $("#ajaxErrorMsg").text(returnedData);
+                        $("#ajaxError").show();
+                    }
+                }
+            });
+        }
+
         // Upload a profile image
         function uploadProfileImage() {
             if(@id==0) {

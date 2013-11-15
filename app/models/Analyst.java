@@ -191,7 +191,7 @@ public class Analyst extends Model {
             }
         }
         catch (Exception e) {
-            Utils.eHandler("Analyst.addDesk()", e);
+            Utils.eHandler("Analyst.addDesk(" + desk.deskId + ", " + desk.name + ")", e);
             throw e;
         }
     }
@@ -215,7 +215,7 @@ public class Analyst extends Model {
             }
         }
         catch (Exception e) {
-            Utils.eHandler("Analyst.delDesk()", e);
+            Utils.eHandler("Analyst.delDesk(" + desk.deskId + ", " + desk.name + ")", e);
             throw e;
         }
     }
@@ -265,7 +265,30 @@ public class Analyst extends Model {
             update();
         }
         catch (Exception e) {
-            Utils.eHandler("Analyst.addNote()", e);
+            Utils.eHandler("Analyst.addNote(" + note.noteId + ", " + note.title + ")", e);
+            throw e;
+        }
+    }
+
+
+    /**
+     * Deletes a note from the analyst.
+     *
+     * @param note  The note to be deleted
+     * @throws      Exception    If there was a problem updating the DB
+     */
+    public void delNote(Note note) throws Exception {
+        try {
+            // Remove the note if it exists, set the instance variables and update
+            if (noteList.contains(note)) {
+                noteList.remove(note);
+                update();
+            } else {
+                throw new Exception("Error: Note " + note.noteId + ", " + note.title + " not assigned to the analyst.");
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Analyst.delNote(" + note.noteId + ", " + note.title + ")", e);
             throw e;
         }
     }
