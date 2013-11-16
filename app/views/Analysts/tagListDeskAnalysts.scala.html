@@ -24,14 +24,13 @@
             <em>No desks assigned</em>
         </div>
     } else {
-
         <div class="row show-grid">
             <div class="col-4">
                 <table class="table table-striped table-bordered table-condensed">
                     @for(desk <- analyst.desks) {
                         <tr>
                             <td width="16">
-                                <a href="#" rel="tooltip" title="Remove desk: @desk.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delDesk(@desk.deskId);">
+                                <a href="#" rel="tooltip" title="Remove desk: @desk.name" style="vertical-align:top" onclick="delDesk(@desk.deskId);">
                                     <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
                                 </a>
                             </td>
@@ -41,6 +40,21 @@
                 </table>
             </div>
         </div>
-
     }
+
+    <br>
+    <label for="divAddDesk">Add Desk:</label>
+    <div id="divAddDesk" class="col-4">
+        <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
+        <select id="newDesk" name="newDesk">
+            @for(desk <- Desk.getAll()) {
+            <option value="@desk.deskId">@desk.name</option>
+            }
+        </select>
+        <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
+            <i class="glyphicon glyphicon-plus icon-white"></i> Add
+        </a>
+    </div>
+    <br>
+
 }

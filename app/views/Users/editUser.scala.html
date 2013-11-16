@@ -88,20 +88,6 @@
                     <div id="divGroups" class="col-4">
                         @* The groups are retrieved after the document has loaded via Ajax (see JavaScript below) *@
                     </div>
-                    <br>
-                    <label for="divAddGroup">Add Group:</label>
-                    <div id="divAddGroup" class="col-4">
-                        <input type="Hidden" id="groupId" name="groupId" value="@id" />
-                        <select id="newGroup" name="newGroup">
-                            @for(group <- Group.getAll()) {
-                                <option value="@group.id">@group.name</option>
-                            }
-                        </select>
-                        <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
-                            <i class="glyphicon glyphicon-plus icon-white"></i> Add
-                        </a>
-                    </div>
-                    <br>
                 </div>
             }
         </div>

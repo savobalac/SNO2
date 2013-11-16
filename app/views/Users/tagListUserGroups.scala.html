@@ -24,14 +24,13 @@
             <em>No groups assigned</em>
         </div>
     } else {
-
         <div class="row show-grid">
             <div class="col-4">
                 <table class="table table-striped table-bordered table-condensed">
                     @for(group <- user.groups) {
                         <tr>
                             <td width="16">
-                                <a href="#" rel="tooltip" title="Remove group @group.name (this action cannot be cancelled)" style="vertical-align:top" onclick="delGroup(@group.id);">
+                                <a href="#" rel="tooltip" title="Remove group @group.name" style="vertical-align:top" onclick="delGroup(@group.id);">
                                     <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
                                 </a>
                             </td>
@@ -41,6 +40,21 @@
                 </table>
             </div>
         </div>
-
     }
+
+    <br>
+    <label for="divAddGroup">Add Group:</label>
+    <div id="divAddGroup" class="col-4">
+        <input type="Hidden" id="userId" name="userId" value="@user.id" />
+        <select id="newGroup" name="newGroup">
+            @for(group <- Group.getAll()) {
+                <option value="@group.id">@group.name</option>
+            }
+        </select>
+        <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
+            <i class="glyphicon glyphicon-plus icon-white"></i> Add
+        </a>
+    </div>
+    <br>
+
 }

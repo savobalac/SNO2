@@ -188,20 +188,6 @@
                 <div id="divDesks" class="col-4">
                     @* The desks are retrieved after the document has loaded via Ajax (see JavaScript below) *@
                 </div>
-                <br>
-                <label for="divAddDesk">Add Desk:</label>
-                <div id="divAddDesk" class="col-4">
-                    <input type="Hidden" id="id" name="id" value="@id" />
-                    <select id="newDesk" name="newDesk">
-                        @for(desk <- Desk.getAll()) {
-                            <option value="@desk.deskId">@desk.name</option>
-                        }
-                    </select>
-                    <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
-                        <i class="glyphicon glyphicon-plus icon-white"></i> Add
-                    </a>
-                </div>
-                <br>
             </div>
 
             @* Display the list of notes and a means to add one *@
@@ -209,7 +195,6 @@
                 <div id="divNotes" class="col-4">
                     @* The notes are retrieved after the document has loaded via Ajax (see JavaScript below) *@
                 </div>
-                <br>
             </div>
 
             @* Display the profile image and a means to upload one *@
@@ -217,14 +202,6 @@
                 <div id="divProfileImage" class="col-4" >
                     @* The profile image is retrieved after the document has loaded via Ajax (see JavaScript below) *@
                 </div>
-                <div id="divUploadProfileImage" class="col-4">
-                    <br>
-                    <label class="btn btn-success btn-xs filebutton">
-                        <i class="glyphicon glyphicon-upload icon-white"></i> Upload an image
-                        <span><input type="file" id="profile" name="profile" onchange="uploadProfileImage()"></span>
-                    </label>
-                </div>
-                <br>
             </div>
 
             @* Display the CV document and a means to upload one *@
@@ -232,14 +209,6 @@
                 <div id="divCvDocument" class="col-4" >
                     @* The CV document is retrieved after the document has loaded via Ajax (see JavaScript below) *@
                 </div>
-                <div id="divUploadCvDocument" class="col-4">
-                    <br>
-                    <label class="btn btn-success btn-xs filebutton">
-                        <i class="glyphicon glyphicon-upload icon-white"></i> Upload a CV
-                        <span><input type="file" id="document" name="document" onchange="uploadCvDocument()"></span>
-                    </label>
-                </div>
-                <br>
             </div>
         </div>
     </fieldset>

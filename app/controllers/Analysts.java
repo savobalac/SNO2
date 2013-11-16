@@ -148,8 +148,16 @@ public class Analysts extends Controller {
             String fullName = analyst.getFullName();
 
             // Delete desks and notes
-            analyst.delAllDesks(); // Many-many
+            analyst.delAllDesks();
             analyst.delAllNotes();
+
+            // Delete profile image and CV
+            if (analyst.profileImage != null) {
+                S3File.find.byId(analyst.profileImage.id).delete();
+            }
+            if (analyst.cvDocument != null) {
+                S3File.find.byId(analyst.cvDocument.id).delete();
+            }
 
             // Delete the analyst
             analyst.delete();

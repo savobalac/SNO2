@@ -88,7 +88,7 @@ public class Analyst extends Model {
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="analyst")
     public List<Note>               noteList;
 
-    @ManyToMany (mappedBy="analysts")
+    @ManyToMany(cascade=CascadeType.REMOVE, mappedBy="analysts")
     public List<Desk>               desks;
 
     @OneToOne @JoinColumn(name="profile_image")

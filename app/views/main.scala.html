@@ -41,54 +41,65 @@
 
     <body>
 
-        <!-- Navbar -->
-        <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">SNO2</a>
+        <!-- Wrap all page content to give a fixed navbar -->
+        <div id="wrap">
+
+            <!-- Navbar -->
+            <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">SNO2</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="@routes.Application.index()">Home</a></li>
+                            <li><a href="/analysts">Analysts</a></li>
+                            @* Only admin users can navigate to the users page *@
+                            @if(user.isAdmin()) {
+                                <li><a href="/users">Users</a></li>
+                            }
+                            <li>@user.username <span>(@user.email)</span></li>
+                            <li><a href="@routes.Users.edit(user.id)">@user.fullname</a></li>
+                            <li><a href="@routes.Application.logout()">Sign Out</a></li>
+                        </ul>
+                    </div> <!-- /.navbar -->
                 </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="@routes.Application.index()">Home</a></li>
-                        <li><a href="/analysts">Analysts</a></li>
-                        @* Only admin users can navigate to the users page *@
-                        @if(user.isAdmin()) {
-                            <li><a href="/users">Users</a></li>
-                        }
-                        <li>@user.username <span>(@user.email)</span></li>
-                        <li><a href="@routes.Users.edit(user.id)">@user.fullname</a></li>
-                        <li><a href="@routes.Application.logout()">Sign Out</a></li>
-                    </ul>
-                </div><!--/.nav-collapse -->
             </div>
-        </div>
 
-        <!-- Show any flash messages above the main content -->
-        <div class="container">
-            @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
-                <div class="alert alert-danger">
-                    <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
-                </div>
-            }
-            @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
-                <div class="alert alert-info">
-                    @flash.get(utils.Utils.FLASH_KEY_INFO)
-                </div>
-            }
-            @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
-                <div class="alert alert-success">
-                    <p>@flash.get(utils.Utils.FLASH_KEY_SUCCESS)</p>
-                </div>
-            }
+            <!-- Show any flash messages above the main content -->
+            <div class="container">
+                @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
+                    <div class="alert alert-danger">
+                        <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
+                    </div>
+                }
+                @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
+                    <div class="alert alert-info">
+                        @flash.get(utils.Utils.FLASH_KEY_INFO)
+                    </div>
+                }
+                @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
+                    <div class="alert alert-success">
+                        <p>@flash.get(utils.Utils.FLASH_KEY_SUCCESS)</p>
+                    </div>
+                }
 
-            <section id="main">
-                @content
-            </section>
+                <section id="main">
+                    @content
+                </section>
+            </div>
+
+        </div> <!-- /#wrap -->
+
+        <div id="footer">
+            <div class="container">
+                <p class="text-muted credit">&copy; Organised Knowledge 2013</p>
+            </div>
         </div>
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

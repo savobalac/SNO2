@@ -41,7 +41,7 @@
                         @for(note <- analyst.noteList) {
                             <tr>
                                 <td width="16">
-                                    <a href="#" rel="tooltip" title="Remove note: @note.title (this action cannot be cancelled)" style="vertical-align:top" onclick="delNote(@note.noteId);">
+                                    <a href="#" rel="tooltip" title="Remove note: @note.title" style="vertical-align:top" onclick="delNote(@note.noteId);">
                                         <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
                                     </a>
                                 </td>
@@ -51,10 +51,28 @@
                                         @note.title
                                     </a>
                                 </td>
-                                <td>@note.user.fullname</td>
+                                <td>
+                                    @if(note.user!=null) {
+                                        @note.user.fullname
+                                    } else {
+                                        <em>User Deleted</em> <!-- Deleted users are set to null in the notes table -->
+                                    }
+                                </td>
                                 <td>@utils.Utils.formatTimestamp(note.createdDt)</td>
-                                <td>@if(note.updatedBy!=null){@note.updatedBy.fullname}</td>
-                                <td>@if(note.updatedDt!=null){@utils.Utils.formatTimestamp(note.updatedDt)}</td>
+                                <td>
+                                    @if(note.updatedBy!=null) {
+                                        @note.updatedBy.fullname
+                                    } else {
+                                        @if(note.updatedDt!=null) {
+                                            <em>User Deleted</em> <!-- Deleted users are set to null in the notes table -->
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @if(note.updatedDt!=null) {
+                                        @utils.Utils.formatTimestamp(note.updatedDt)
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -62,8 +80,11 @@
             </div>
         </div>
     }
+    <div id="divAddNote" class="col-4">
+        <br>
+        <a class="btn btn-success btn-xs" href="/analysts/@analyst.analystId/note/new" rel="tooltip" title="Add Note" style="vertical-align:top">
+            <i class="glyphicon icon-white"></i> Add Note
+        </a>
+    </div>
     <br>
-    <a class="btn btn-success btn-xs" href="/analysts/@analyst.analystId/note/new" rel="tooltip" title="Add Note" style="vertical-align:top">
-        <i class="glyphicon icon-white"></i> Add Note
-    </a>
 }
