@@ -63,14 +63,14 @@ public class AnalystsTest extends FluentTest {
         assertThat(title().contentEquals("Sav Balac"));
         assertThat(find("#analystName").contains("Analyst: Sav Balac")); // Check the main heading
 
-        // Edit the notes field (with the current date and time) and save
+        // Edit the expertise field (with the current date and time) and save
         String currentDateTime = Utils.formatCreatedTimestamp(Utils.getCurrentDateTime());
-        fill("#notes").with(currentDateTime);
+        fill("#expertise").with(currentDateTime);
         submit("#formUpload");
 
-        // Check the notes field was updated
+        // Check the expertise field was updated
         goTo("http://localhost:9000/analysts/3");
-        assertThat(find("#notes").contains(currentDateTime));
+        assertThat(find("#expertise").contains(currentDateTime));
     }
 
 

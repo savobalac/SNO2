@@ -29,7 +29,8 @@ public class ApplicationTest extends FluentTest {
         submit("#signIn");
         assertThat(url().contentEquals("http://localhost:9000/")); // The home (index) page
         assertThat(title().contentEquals("SNO2"));
-        assertThat(pageSource().contains("Donec id elit non mi porta gravida at eget metus."));
+        assertThat(pageSource().contains("Home"));
+        assertThat(pageSource().contains("Savo Balac"));
     }
 
 

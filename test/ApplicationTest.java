@@ -1,4 +1,4 @@
-import models.Users;
+import models.User;
 import org.junit.*;
 import play.libs.WS;
 import play.mvc.*;
@@ -50,12 +50,12 @@ public class ApplicationTest {
     public void testIndex() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                Users user = Users.find.byId(1L); // User 1 has username savbalac
+                User user = User.find.byId(1L); // User 1 has username savbalac
                 Result res = route(fakeRequest("GET", "/")
                                 .withSession("message", "SNO2")
                                 .withSession("user", "savbalac"));
-                assert(contentAsString(res).contains("Donec id elit non mi porta gravida at eget metus."));
-                assert(contentAsString(res).contains("savbalac"));
+                assert(contentAsString(res).contains("Home"));
+                assert(contentAsString(res).contains("Savo Balac"));
             }
         });
     }

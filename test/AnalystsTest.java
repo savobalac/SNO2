@@ -1,4 +1,4 @@
-import models.Users;
+import models.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class AnalystsTest {
     public void testListAnalysts() {
         running(fakeApplication(), new Runnable() {
             public void run() {
-                Users user = Users.find.byId(1L); // User 1 has username savbalac
+                User user = User.find.byId(1L); // User 1 has username savbalac
                 Result res = route(fakeRequest("GET", "/")
                                 .withSession("message", "SNO2")
                                 .withSession("user", "savbalac"));
