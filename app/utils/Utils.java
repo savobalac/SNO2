@@ -132,6 +132,16 @@ public class Utils {
 
 
     /**
+     * Returns a friendly "Last updated on <date> at <time>" string.
+     * @param datetime Timestamp
+     * @return String
+     */
+    public static String formatUpdatedTimestamp(Timestamp datetime) {
+        return "Last updated on " + formatTimestampVerbose(datetime);
+    }
+
+
+    /**
      * Formats a timestamp as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34
      * @param datetime Timestamp
      * @return String

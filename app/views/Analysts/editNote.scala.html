@@ -59,6 +59,27 @@
     }
     <hr>
 
+    <!-- Display the who created and updated the note, and when, if they exist -->
+    @if(noteId!=0) {
+        <span class="text-muted">
+            @utils.Utils.formatCreatedTimestamp(noteForm.get().createdDt) by
+            @if(noteForm.field("user").value()!=null) {
+                @noteForm.get().user.fullname
+            } else {
+                <em>Deleted User</em> <!-- Deleted users are set to null in the notes table -->
+            }
+            @if(noteForm.field("updatedDt").value()!=null) {
+                <br>
+                @utils.Utils.formatUpdatedTimestamp(noteForm.get().updatedDt) by
+                @if(noteForm.field("updatedBy").value()!=null) {
+                    @noteForm.get().updatedBy.fullname
+                } else {
+                    <em>Deleted User</em> <!-- Deleted users are set to null in the notes table -->
+                }
+            }
+        </span>
+    }
+
     @if((noteId!=0)) {
         @form(routes.Analysts.deleteNote(analystId, noteId), 'class -> "topRight") {
             <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">

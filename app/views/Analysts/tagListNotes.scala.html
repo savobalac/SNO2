@@ -55,7 +55,7 @@
                                     @if(note.user!=null) {
                                         @note.user.fullname
                                     } else {
-                                        <em>User Deleted</em> <!-- Deleted users are set to null in the notes table -->
+                                        <em>Deleted User</em> <!-- Deleted users are set to null in the notes table -->
                                     }
                                 </td>
                                 <td>@utils.Utils.formatTimestamp(note.createdDt)</td>
@@ -64,7 +64,7 @@
                                         @note.updatedBy.fullname
                                     } else {
                                         @if(note.updatedDt!=null) {
-                                            <em>User Deleted</em> <!-- Deleted users are set to null in the notes table -->
+                                            <em>Deleted User</em> <!-- Deleted users are set to null in the notes table -->
                                         }
                                     }
                                 </td>
