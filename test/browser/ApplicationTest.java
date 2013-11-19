@@ -34,4 +34,17 @@ public class ApplicationTest extends FluentTest {
     }
 
 
+    /**
+     * @verifies That signing out sends the user to the sign in page.
+     */
+    @Test
+    public void testSignOut() {
+        goTo("http://localhost:9000/logout");
+        assertThat(url().contentEquals("http://localhost:9000/login")); // The sign in page
+        assertThat(title().contentEquals("Sign in to SNO2"));
+        assertThat(pageSource().contains("Sign in to SNO2"));
+        assertThat(pageSource().contains("You have signed out."));
+    }
+
+
 }
