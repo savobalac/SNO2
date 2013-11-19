@@ -110,7 +110,7 @@
                 @for(user <- currentPage.getList) {
                     <tr>
                         <td>
-                            <a id="@user.id" class="userId" href="@routes.Users.edit(user.id)">
+                            <a id="@user.id" class="id" href="@routes.Users.edit(user.id)">
                                 @user.fullname
                             </a>
                         </td>
