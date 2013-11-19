@@ -1,4 +1,4 @@
-package browser;
+package browser.Application;
 
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Test;

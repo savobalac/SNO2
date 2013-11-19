@@ -1,4 +1,4 @@
-package browser;
+package browser.Users;
 
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.After;
@@ -17,7 +17,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * @version     %I%, %G%
  * @since       1.0
  */
-public class UsersTest2List extends FluentTest {
+public class UsersTest2Read extends FluentTest {
 
 
     /**

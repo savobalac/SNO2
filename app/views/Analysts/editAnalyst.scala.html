@@ -241,7 +241,7 @@
     </span>
 
     @if(!(id==null || id==0)) {
-        @form(routes.Analysts.delete(id), 'class -> "topRight",  'onsubmit -> "return confirmDelete()") {
+        @form(routes.Analysts.delete(id), 'id -> "deleteForm", 'class -> "topRight") {
             <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
         }
     }

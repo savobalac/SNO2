@@ -1,4 +1,4 @@
-package browser;
+package browser.Users;
 
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.After;

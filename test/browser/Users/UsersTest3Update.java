@@ -1,4 +1,4 @@
-package browser;
+package browser.Users;
 
 import org.fluentlenium.adapter.FluentTest;
 import org.fluentlenium.core.domain.FluentList;
@@ -38,7 +38,8 @@ public class UsersTest3Update extends FluentTest {
 
 
     /**
-     * @verifies That the edit user page shows the new user, edits the email field and saves.
+     * @verifies That the edit user page shows the new user, checks the the email field is updated,
+     *           updates the password and checks the user can log in with it.
      */
     @Test
     public void testEditUser() {
@@ -62,6 +63,10 @@ public class UsersTest3Update extends FluentTest {
             fill("#email").with(currentDateTime);
             submit("#formUpload");
 
+            // Check that we're on the list users page and that the user was updated
+            assertThat(url().contentEquals("http://localhost:9000/users"));
+            assertThat(pageSource().contains("Analyst: New User Created by Testing successfully updated."));
+
             // Check the email field was updated
             goTo("http://localhost:9000/users/" + id);
             assertThat(find("#email").contains(currentDateTime));
@@ -72,10 +77,11 @@ public class UsersTest3Update extends FluentTest {
             fill("#confirmPassword").with("newpassword");
             submit("#formUpload");
 
-            // Check the password was updated
+            // Check that we're on the user's page and that the password was updated
+            assertThat(url().contentEquals("http://localhost:9000/users/" + id));
             assertThat(pageSource().contains("Password successfully updated."));
 
-            // Sign out and login using the new password
+            // Log out and sign in using the new password
             goTo("http://localhost:9000/logout");
             fill("#username").with("newuser");
             fill("#password").with("newpassword");
@@ -83,6 +89,9 @@ public class UsersTest3Update extends FluentTest {
 
             // Check that the user is logged in
             assertThat(url().contentEquals("http://localhost:9000/")); // The home (index) page
+            assertThat(title().contentEquals("SNO2"));
+            assertThat(pageSource().contains("Home"));
+            assertThat(pageSource().contains("New User Created by Testing"));
         }
     }
 

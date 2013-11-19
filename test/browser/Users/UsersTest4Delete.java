@@ -1,4 +1,4 @@
-package browser;
+package browser.Users;
 
 import org.fluentlenium.adapter.FluentTest;
 import org.fluentlenium.core.domain.FluentList;
@@ -6,7 +6,6 @@ import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import utils.Utils;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
@@ -58,6 +57,9 @@ public class UsersTest4Delete extends FluentTest {
             assertThat(url().contentEquals("http://localhost:9000/users"));
             assertThat(title().contentEquals("Users"));
             assertThat(find("#homeTitle").contains("Users")); // Check the main heading
+
+            // Check that the user is no longer in the list
+            assertThat(pageSource().contains("User: New User Created by Testing deleted."));
             assertThat(!pageSource().contains("New User Created by Testing"));
         }
     }
