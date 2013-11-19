@@ -6,21 +6,22 @@ import org.fluentlenium.core.domain.FluentWebElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import utils.Utils;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 /**
- * Tests an analyst can be deleted using a browser (via Selenium and FluentLenium API).
+ * Tests the analyst can be edited using a browser (via Selenium and FluentLenium API).
  *
  * Date: 19/11/13
- * Time: 16:48
+ * Time: 16:36
  *
  * @author      Sav Balac
  * @version     %I%, %G%
  * @since       1.0
  */
-public class AnalystsTest4Delete extends FluentTest {
+public class Test3Update extends FluentTest {
 
 
     /**
@@ -37,10 +38,10 @@ public class AnalystsTest4Delete extends FluentTest {
 
 
     /**
-     * @verifies That the new analyst created above was deleted.
+     * @verifies That the edit analyst page shows the new analyst and checks the expertise field is updated.
      */
     @Test
-    public void testDeleteNewAnalyst() {
+    public void testEditAnalyst() {
 
         // Go to the list analysts page
         goTo("http://localhost:9000/analysts");
@@ -51,16 +52,23 @@ public class AnalystsTest4Delete extends FluentTest {
         if (newAnalystLinks.size() == 1) { // There should only be one analyst with that name
             id = newAnalystLinks.first().getId();
             goTo("http://localhost:9000/analysts/" + id);
-            submit("#deleteForm");
 
-            // Check that we're on the list analysts page
+            // Check we are editing analyst Sav Balac
+            assertThat(title().contentEquals("New Analyst Created by Testing"));
+            assertThat(find("#analystName").contains("Analyst: New Analyst Created by Testing")); // Check the main heading
+
+            // Edit the expertise field (with the current date and time) and save
+            String currentDateTime = Utils.formatCreatedTimestamp(Utils.getCurrentDateTime());
+            fill("#expertise").with(currentDateTime);
+            submit("#formUpload");
+
+            // Check that we're on the list analysts page and that the analyst was updated
             assertThat(url().contentEquals("http://localhost:9000/analysts"));
-            assertThat(title().contentEquals("Analysts"));
-            assertThat(find("#homeTitle").contains("Analysts")); // Check the main heading
+            assertThat(pageSource().contains("Analyst: New Analyst Created by Testing successfully updated."));
 
-            // Check that the analyst is no longer in the list
-            assertThat(pageSource().contains("Analyst: New Analyst Created by Testing deleted."));
-            assertThat(!pageSource().contains("New Analyst Created by Testing"));
+            // Check the expertise field was updated
+            goTo("http://localhost:9000/analysts/" + id);
+            assertThat(find("#expertise").contains(currentDateTime));
         }
     }
 

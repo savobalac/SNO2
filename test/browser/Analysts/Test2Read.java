@@ -8,16 +8,16 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * Tests an analyst can be created using a browser (via Selenium and FluentLenium API).
+ * Tests the list analyst page using a browser (via Selenium and FluentLenium API).
  *
  * Date: 19/11/13
- * Time: 16:21
+ * Time: 16:32
  *
  * @author      Sav Balac
  * @version     %I%, %G%
  * @since       1.0
  */
-public class AnalystsTest1Create extends FluentTest {
+public class Test2Read extends FluentTest {
 
 
     /**
@@ -34,24 +34,19 @@ public class AnalystsTest1Create extends FluentTest {
 
 
     /**
-     * @verifies That a new analyst was created.
+     * @verifies That the list analyst page shows analyst Sav Balac.
      */
     @Test
-    public void testANewAnalyst() {
+    public void testListAnalysts() {
 
-        // Check that the New Analyst page is showing
-        goTo("http://localhost:9000/analysts/new");
-        assertThat(title().contentEquals("New Analyst"));
-        assertThat(find("#newAnalyst").contains("New Analyst")); // Check the main heading
-
-        // Add the required fields and save
-        fill("#firstname").with("New Analyst");
-        fill("#lastname").with("Created by Testing");
-        submit("#formUpload");
-
-        // Check that we're on the list analysts page and that a new analyst has been created
+        // Check we're on the analysts page
+        goTo("http://localhost:9000/analysts");
         assertThat(url().contentEquals("http://localhost:9000/analysts"));
-        assertThat(pageSource().contains("Analyst: New Analyst Created by Testing has been created."));
+        assertThat(title().contentEquals("Analysts"));
+        assertThat(find("#homeTitle").contains("Analysts")); // Check the main heading
+
+        // Check that the new analyst is in the list
+        assertThat(pageSource().contains("New Analyst Created by Testing"));
     }
 
 

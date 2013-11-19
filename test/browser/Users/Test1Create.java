@@ -17,7 +17,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * @version     %I%, %G%
  * @since       1.0
  */
-public class UsersTest1Create extends FluentTest {
+public class Test1Create extends FluentTest {
 
 
     /**
