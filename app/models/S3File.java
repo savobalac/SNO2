@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import play.Logger;
 import play.db.ebean.Model;
+import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
 import plugins.S3Plugin;
 
 import javax.persistence.*;

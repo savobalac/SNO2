@@ -2,6 +2,7 @@ package models;
 
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
+import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
