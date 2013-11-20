@@ -1,6 +1,5 @@
 package models;
 
-import com.avaje.ebean.Page;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 
@@ -63,5 +62,6 @@ public class Group extends Model {
         }
         return options;
     }
+
 
 }

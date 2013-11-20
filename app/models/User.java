@@ -4,7 +4,7 @@ import com.avaje.ebean.Page;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
-import play.db.ebean.Model.Finder;
+import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
 import utils.Utils;
 
 import javax.persistence.Entity;
