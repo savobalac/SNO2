@@ -104,7 +104,7 @@ public class Utils {
      * Returns titles typically used in a select.
      * @return Map<String,String>
      */
-    public static Map<String,String> optionsTitle() {
+    public static Map<String,String> getTitles() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
 
         options.put(null, "Select a value");
