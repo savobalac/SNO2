@@ -21,7 +21,7 @@ import static org.fluentlenium.core.filter.FilterConstructor.withText;
  * @version     %I%, %G%
  * @since       1.0
  */
-public class UsersTest3Update extends FluentTest {
+public class Test3Update extends FluentTest {
 
 
     /**

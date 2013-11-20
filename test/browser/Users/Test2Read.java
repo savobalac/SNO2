@@ -17,7 +17,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * @version     %I%, %G%
  * @since       1.0
  */
-public class UsersTest2Read extends FluentTest {
+public class Test2Read extends FluentTest {
 
 
     /**
