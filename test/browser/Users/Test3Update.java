@@ -59,7 +59,7 @@ public class Test3Update extends FluentTest {
             assertThat(find("#userName").contains("User: New User Created by Testing")); // Check the main heading
 
             // Edit the email field (with the current date and time) and save
-            String currentDateTime = Utils.formatCreatedTimestamp(Utils.getCurrentDateTime());
+            String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
             fill("#email").with(currentDateTime);
             submit("#formUpload");
 

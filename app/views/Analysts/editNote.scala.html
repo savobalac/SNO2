@@ -33,14 +33,14 @@
             <span class="ecRecType">Note: </span><span class="ecRecName">@Note.find.byId(noteId).title</span>
         </h2>
     }
-    <h2>
+    <h2 id="analystName">
         <span class="ecRecType">Analyst: </span>
         <span class="ecRecName">@Analyst.find.byId(analystId).getFullName()</span>
     </h2>
 
     <hr>
 
-    @form(routes.Analysts.updateNote(analystId, noteId)) {
+    @form(routes.Analysts.updateNote(analystId, noteId), 'id -> "formUpload") {
         <fieldset>
             <!-- The note id needs to be set, otherwise it will be null on update -->
             <input type="hidden" id="noteId" name="noteId" value="@noteId" />
@@ -81,7 +81,7 @@
     }
 
     @if((noteId!=0)) {
-        @form(routes.Analysts.deleteNote(analystId, noteId), 'class -> "topRight") {
+        @form(routes.Analysts.deleteNote(analystId, noteId), 'id -> "deleteForm", 'class -> "topRight") {
             <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
         }
     }

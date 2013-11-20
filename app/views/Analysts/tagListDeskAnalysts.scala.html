@@ -48,10 +48,10 @@
         <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
         <select id="newDesk" name="newDesk">
             @for(desk <- Desk.getAll()) {
-            <option value="@desk.deskId">@desk.name</option>
+                <option value="@desk.deskId">@desk.name</option>
             }
         </select>
-        <a class="btn btn-success btn-xs" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
+        <a class="btn btn-success btn-xs" id="addDesk" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
             <i class="glyphicon glyphicon-plus icon-white"></i> Add
         </a>
     </div>

@@ -20,7 +20,7 @@ import static org.fluentlenium.core.filter.FilterConstructor.withText;
  * @version     %I%, %G%
  * @since       1.0
  */
-public class Test4Delete extends FluentTest {
+public class Test5Delete extends FluentTest {
 
 
     /**
@@ -37,7 +37,7 @@ public class Test4Delete extends FluentTest {
 
 
     /**
-     * @verifies That the new analyst created above was deleted.
+     * @verifies That the new analyst created earlier was deleted.
      */
     @Test
     public void testDeleteNewAnalyst() {

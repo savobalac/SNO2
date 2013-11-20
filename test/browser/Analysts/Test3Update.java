@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import utils.Utils;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
@@ -53,12 +55,12 @@ public class Test3Update extends FluentTest {
             id = newAnalystLinks.first().getId();
             goTo("http://localhost:9000/analysts/" + id);
 
-            // Check we are editing analyst Sav Balac
+            // Check we are editing the new analyst
             assertThat(title().contentEquals("New Analyst Created by Testing"));
             assertThat(find("#analystName").contains("Analyst: New Analyst Created by Testing")); // Check the main heading
 
             // Edit the expertise field (with the current date and time) and save
-            String currentDateTime = Utils.formatCreatedTimestamp(Utils.getCurrentDateTime());
+            String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
             fill("#expertise").with(currentDateTime);
             submit("#formUpload");
 

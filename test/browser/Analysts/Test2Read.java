@@ -34,7 +34,7 @@ public class Test2Read extends FluentTest {
 
 
     /**
-     * @verifies That the list analyst page shows analyst Sav Balac.
+     * @verifies That the list analyst page shows the new analyst.
      */
     @Test
     public void testListAnalysts() {
