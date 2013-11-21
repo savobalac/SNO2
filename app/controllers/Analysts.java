@@ -45,8 +45,7 @@ public class Analysts extends AbstractController {
 
         // Get a page of analysts and render the list page
         Page<Analyst> pageAnalysts = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
-        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, loggedInUser));
+        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, getLoggedInUser()));
     }
 
 
@@ -73,8 +72,7 @@ public class Analysts extends AbstractController {
             Analyst analyst = Analyst.find.byId(id);
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
-        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, loggedInUser));
+        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, getLoggedInUser()));
     }
 
 
@@ -85,7 +83,7 @@ public class Analysts extends AbstractController {
      */
     public static Result update(Long id) {
         Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest(); // Get the form data
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        User loggedInUser = getLoggedInUser();
         String msg;
         try {
             if (analystForm.hasErrors()) { // Return to the editAnalyst page
@@ -126,7 +124,7 @@ public class Analysts extends AbstractController {
             }
         } catch (Exception e) {
             // Log an error, show a message and return to the editAnalyst page
-            Utils.eHandler("Analysts.update(" + id.toString() + ")", e);
+            Utils.eHandler("Analysts.update(" + id + ")", e);
             showSaveError(e); // Method in AbstractController
             return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
         }
@@ -161,7 +159,7 @@ public class Analysts extends AbstractController {
             flash(Utils.FLASH_KEY_SUCCESS, "Analyst: " + fullName + " deleted.");
         } catch (Exception e) {
             // Log an error and show a message
-            Utils.eHandler("Analysts.delete(" + id.toString() + ")", e);
+            Utils.eHandler("Analysts.delete(" + id + ")", e);
             showSaveError(e); // Method in AbstractController
         } finally {
             // Redirect to remove the analyst from query string
@@ -405,13 +403,10 @@ public class Analysts extends AbstractController {
      */
     public static Result editNote(Long aId, Long nId) {
 
-        // Get the logged-in user
-        User user = User.find.where().eq("username", request().username()).findUnique();
-
         // Get the analyst
         Analyst analyst = Analyst.find.byId(aId);
 
-        // New notes have id 0, set the analyst
+        // New notes have id 0 - set the analyst
         Form<Note> noteForm;
         if (nId <= 0L) {
             Note note = new Note();
@@ -421,7 +416,7 @@ public class Analysts extends AbstractController {
         else {
             noteForm = Form.form(Note.class).fill(Note.find.byId(nId));
         }
-        return ok(editNote.render(((nId<0)?(new Long(0)):(nId)), aId, noteForm, user));
+        return ok(editNote.render(((nId<0)?(new Long(0)):(nId)), aId, noteForm, getLoggedInUser()));
 
     }
 
@@ -435,11 +430,11 @@ public class Analysts extends AbstractController {
     public static Result updateNote(Long aId, Long nId) {
         // Get the note form and user
         Form<Note> noteForm = Form.form(Note.class).bindFromRequest();
-        User user = User.find.where().eq("username", request().username()).findUnique();
+        User loggedInUser = getLoggedInUser();
         String msg;
         try {
             if (noteForm.hasErrors()) { // Return to the editNote page
-                return badRequest(editNote.render(nId, aId, noteForm, user));
+                return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
             } else {
                 // Get the analyst
                 Analyst analyst = Analyst.find.byId(aId);
@@ -453,7 +448,7 @@ public class Analysts extends AbstractController {
                 // Save if a new note, otherwise update, add the note to the analyst and show a message
                 if (nId==0) {
                     note.analyst = analyst;
-                    note.user = user;
+                    note.user = loggedInUser;
                     note.createdDt = now;
                     note.save();
                     analyst.addNote(note);
@@ -463,7 +458,7 @@ public class Analysts extends AbstractController {
                     // Get the currently-stored note
                     Note existingNote = Note.find.byId(nId);
                     note.createdDt = existingNote.createdDt; // Ensure the created datetime isn't overwritten
-                    note.updatedBy = user;
+                    note.updatedBy = loggedInUser;
                     note.updatedDt = now;
                     note.update();
                     msg = "Note: " + note.title + " successfully updated.";
@@ -476,7 +471,7 @@ public class Analysts extends AbstractController {
             // Log an error, show a message and return to the editAnalyst page
             Utils.eHandler("Analysts.updateNote(" + aId + ", " + nId + ")", e);
             showSaveError(e); // Method in AbstractController
-            return badRequest(editNote.render(nId, aId, noteForm, user));
+            return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
         }
     }
 

@@ -40,7 +40,7 @@ public class Users extends AbstractController {
     public static Result list(int page, String sortBy, String order, String filter, String search) {
 
         // Get a page of users and render the list page
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser()) { // Check if an admin user
             Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
             return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
@@ -67,11 +67,10 @@ public class Users extends AbstractController {
      * @return Result
      */
     public static Result create() {
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             return edit(new Long(0));
         } else {
-            return accessDenied(loggedInUser);
+            return accessDenied(getLoggedInUser());
         }
     }
 
@@ -84,7 +83,7 @@ public class Users extends AbstractController {
     public static Result edit(Long id) {
 
         // Check if an admin user or if editing the logged-in user
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
             // New users have id = 0
@@ -108,7 +107,7 @@ public class Users extends AbstractController {
     public static Result update(Long id) {
 
         // Check if an admin user or if updating the logged-in user
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        User loggedInUser = getLoggedInUser();
         boolean isLoggedInUser = id.equals(loggedInUser.id);
         if (Secured.isAdminUser() || isLoggedInUser) {
             Form<User> userForm = Form.form(User.class).bindFromRequest(); // Get the form data
@@ -173,7 +172,6 @@ public class Users extends AbstractController {
      * @return Result
      */
     public static Result delete(Long id) {
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             try {
                 // Find the user record
@@ -195,7 +193,7 @@ public class Users extends AbstractController {
                 return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
             }
         } else {
-            return accessDenied(loggedInUser);
+            return accessDenied(getLoggedInUser());
         }
     }
 
@@ -206,12 +204,11 @@ public class Users extends AbstractController {
      * @return Result
      */
     public static Result editGroups(Long id) {
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
             return ok(tagListUserGroups.render(user));
         } else {
-            return accessDenied(loggedInUser);
+            return accessDenied(getLoggedInUser());
         }
     }
 
@@ -246,7 +243,6 @@ public class Users extends AbstractController {
      * @return Result
      */
     private static Result changeGroup(Long id, Long groupId, String action) {
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
             Group group = Group.find.byId(groupId);
@@ -273,38 +269,47 @@ public class Users extends AbstractController {
                 return ok("ERROR: " + e.getMessage());
             }
         } else {
-            return accessDenied(loggedInUser);
+            return accessDenied(getLoggedInUser());
         }
     }
 
 
+    /**
+     * Displays a form to edit the user's password.
+     * @param id Id of the user to edit
+     * @return Result
+     */
     public static Result editPassword(Long id) {
-        // Get the logged-in user
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         // Check if an admin user or if editing the logged-in user
+        User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
             userForm = Form.form(User.class).fill(User.find.byId(id));
-            return ok(editPassword.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
+            return ok(editPassword.render(id, userForm, loggedInUser));
         } else {
             return accessDenied(loggedInUser);
         }
     }
 
+
+    /**
+     * Updates the user's password from the form.
+     * @param id Id of the user to update
+     * @return Result
+     */
     public static Result updatePassword(Long id) {
-        // Get the user form and user (check if an admin user or if updating the logged-in user)
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+
+        // Check if an admin user or if updating the logged-in user
+        User loggedInUser = getLoggedInUser();
         boolean isLoggedInUser = id.equals(loggedInUser.id);
         if (Secured.isAdminUser() || isLoggedInUser) {
-            Form<User> userForm = Form.form(User.class).bindFromRequest();
-            String msg;
+            Form<User> userForm = Form.form(User.class).bindFromRequest(); // Get the form data
             try {
-                if (userForm.hasErrors()) { // Return to the editUser page
+                if (userForm.hasErrors()) { // Return to the editPassword page
                     return badRequest(editPassword.render(id, userForm, loggedInUser));
                 } else {
                     // Get the user data
-                    User oldUser = User.find.byId(id);
-                    User newUser = userForm.get();
+                    User user = userForm.get();
 
                     String newPassword = userForm.field("newPassword").value();
                     String confirmPassword = userForm.field("confirmPassword").value();
@@ -323,14 +328,13 @@ public class Users extends AbstractController {
                     }
 
                     // Hash the new password
-                    newUser.password = Utils.hashString(newPassword);
+                    user.password = Utils.hashString(newPassword);
 
                     // Update the user and show a message
-                    newUser.saveOrUpdate();
-                    msg = "Password successfully updated.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                    user.saveOrUpdate();
+                    flash(Utils.FLASH_KEY_SUCCESS, "Password successfully updated.");
 
-                    // Redirect to the user's details page
+                    // Redirect to the edit user page
                     return redirect(controllers.routes.Users.edit(id));
                 }
             } catch (Exception e) {

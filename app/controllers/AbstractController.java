@@ -1,5 +1,6 @@
 package controllers;
 
+import models.User;
 import play.mvc.Controller;
 import utils.Utils;
 
@@ -14,6 +15,15 @@ import utils.Utils;
  * @since       1.0
  */
 public abstract class AbstractController extends Controller {
+
+
+    /**
+     * Returns the logged-in user.
+     * @return User
+     */
+    static User getLoggedInUser() {
+        return User.find.where().eq("username", request().username()).findUnique();
+    }
 
 
     /**
