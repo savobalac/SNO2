@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Model class that maps to DB table user.
- * Contains a method to authenticate the user.
+ * Contains methods to list/save/update, check if a user is in a group, add/remove groups and authenticate the user.
  *
  * Date: 16/10/13
  * Time: 12:59
@@ -31,8 +31,8 @@ public class User extends Model {
     // Instance variables
     @Id public Long                 id;
 
-    @Constraints.Required
-    @Formats.NonEmpty
+    @Constraints.Required                     // A required constraint will ensure form fields are entered
+    @Formats.NonEmpty                         // A non-empty format will convert spaces to null and ensure validation
     public String                   username;
 
     @Constraints.Required
@@ -74,26 +74,25 @@ public class User extends Model {
 
         // Search on fullname, otherwise filter on group name if it's set
         Page p = null;
-        if (search.isEmpty()) {
-            if (filter.isEmpty()) { // Get all records
-                p = find.where()
-                        .orderBy(sortBy + " " + order)
-                        .findPagingList(pageSize)
-                        .getPage(page);
-            } else { // Filter
-                p = find.where()
-                        .ilike("groups.name", "%" + filter + "%")
-                        .orderBy(sortBy + " " + order)
-                        .fetch("groups")
-                        .findPagingList(pageSize)
-                        .getPage(page);
-            }
-        } else { // Search
+        if (!search.isEmpty()) { // Search
             p = find.where()
                     .ilike("fullname", "%" + search + "%")
                     .orderBy(sortBy + " " + order)
                     .findPagingList(pageSize)
                     .getPage(page);
+        } else {
+            if (!filter.isEmpty()) { // Filter
+                p = find.where()
+                        .ilike("groups.name", "%" + filter + "%")
+                        .orderBy(sortBy + " " + order)
+                        .findPagingList(pageSize)
+                        .getPage(page);
+            } else { // Get all records
+                p = find.where()
+                        .orderBy(sortBy + " " + order)
+                        .findPagingList(pageSize)
+                        .getPage(page);
+            }
         }
         return p;
     }
@@ -105,7 +104,7 @@ public class User extends Model {
      */
     public void saveOrUpdate() throws Exception {
         // The id should be 0 for a new record
-        if (id==null || id<=0) {
+        if (id <= 0) {
             // Check for duplicate username
             User user = User.find.where().eq("username", this.username).findUnique();
             if (user != null) {
@@ -133,22 +132,22 @@ public class User extends Model {
 
 
     /**
+     * Checks if this user is an admin user, a manager or a staff member.
+     *
+     * @return  boolean
+     */
+    public boolean isAdminOrManagerOrStaff() {
+        return isAdminOrManager() || isStaff();
+    }
+
+
+    /**
      * Checks if this user is an admin user or a manager.
      *
      * @return  boolean
      */
     public boolean isAdminOrManager() {
         return isAdmin() || isManager();
-    }
-
-
-    /**
-     * Checks if this user is an admin user, a manager or a staff member.
-     *
-     * @return  boolean
-     */
-    public boolean isAdminOrManagerOrStaff() {
-        return isAdmin() || isManager() || isStaff();
     }
 
 
@@ -196,7 +195,7 @@ public class User extends Model {
      * @return      int
      */
     public int getNumGroups() {
-        if (groups!=null) {
+        if (groups != null) {
             return groups.size();
         } else {
             return 0;
@@ -270,10 +269,10 @@ public class User extends Model {
 
 
     /**
-     * Authenticates the user. The hashed password is 64 characters long.
+     * Checks the user's password. The hashed password is 64 characters long.
      * @param username Username
      * @param password Password to be hashed before checking
-     * @return Result
+     * @return User
      * @throws NoSuchAlgorithmException    If the hashing algorithm doesn't exist
      */
     public static User authenticate(String username, String password) throws NoSuchAlgorithmException {

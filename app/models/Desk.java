@@ -34,7 +34,7 @@ public class Desk extends Model {
     @ManyToMany @JoinTable(name="deskanalyst",
         joinColumns={@JoinColumn(name="desk_id", referencedColumnName="desk_id")},
         inverseJoinColumns={@JoinColumn(name="analyst_id", referencedColumnName="analyst_id")}
-    ) public List<Analyst>          analysts;
+    ) public List<Analyst>          analysts; // The columns are in deskanalyst, the referenced columns are in analyst and desk
 
 
     /**

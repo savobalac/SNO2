@@ -19,7 +19,7 @@
 
 } else {
 
-    @if( (user.groups == null) || (user.getNumGroups() <= 0) ) {
+    @if(user.getNumGroups() <= 0) {
         <div class="well">
             <em>No groups assigned</em>
         </div>

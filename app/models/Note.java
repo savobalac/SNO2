@@ -36,8 +36,8 @@ public class Note extends Model {
     @Lob @Column(name="content", length = Utils.MYSQL_TEXT_BYTES)
     public String                   content;
 
-    @ManyToOne @JoinColumn(name="analyst_id")
-    public Analyst                  analyst; // Many notes may be written about an analyst
+    @ManyToOne @JoinColumn(name="analyst_id") // analyst_id is the name of the column in table note
+    public Analyst                  analyst;  // Many notes may be written about an analyst
 
     public Timestamp                createdDt;
 

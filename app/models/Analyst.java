@@ -13,7 +13,7 @@ import utils.Utils;
 
 /**
  * Model class that maps to DB table analyst.
- * Contains methods to get the list, save/update and add/delete desks.
+ * Contains methods to list/save/update, add/remove desks and add/remove notes.
  *
  * Date: 16/10/13
  * Time: 12:59
@@ -30,9 +30,9 @@ public class Analyst extends Model {
     @Id public Long                 analystId;
     public String                   salutation;
 
-    @Constraints.Required
-    @Formats.NonEmpty
-    public String                   firstname; // A required constraint will ensure form fields are entered
+    @Constraints.Required                      // A required constraint will ensure form fields are entered
+    @Formats.NonEmpty                          // A non-empty format will convert spaces to null and ensure validation
+    public String                   firstname;
 
     @Constraints.Required
     @Formats.NonEmpty
@@ -42,7 +42,7 @@ public class Analyst extends Model {
     public Status                   status; // "status_id" is the name of the column in table analyst
 
     @OneToOne @JoinColumn(name="rank")
-    public Rank                     rank; // "rank" is the name of the column in table analyst
+    public Rank                     rank;
 
     public String                   email;
     public String                   emailAlternate;
@@ -83,7 +83,7 @@ public class Analyst extends Model {
 
     @Constraints.Required
     @OneToOne @JoinColumn(name="primary_desk")
-    public Desk                     primaryDesk; // "primary_desk" is the name of the column in table analyst
+    public Desk                     primaryDesk;
 
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="analyst")
     public List<Note>               noteList;
@@ -117,27 +117,27 @@ public class Analyst extends Model {
      */
     public static Page<Analyst> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
 
-        // Search on lastname, otherwise filter on primary desk
+        // Search on lastname, otherwise filter on the primary desk's name
         Page p = null;
-        if (search.isEmpty()) {
-            if (filter.isEmpty()) { // Get all records
-                p = find.where()
-                        .orderBy(sortBy + " " + order)
-                        .findPagingList(pageSize)
-                        .getPage(page);
-            } else { // Filter
-                p = find.where()
-                        .ilike("primaryDesk.name", "%" + filter + "%")
-                        .orderBy(sortBy + " " + order)
-                        .findPagingList(pageSize)
-                        .getPage(page);
-            }
-        } else { // Search
+        if (!search.isEmpty()) { // Search
             p = find.where()
                     .ilike("lastname", "%" + search + "%")
                     .orderBy(sortBy + " " + order)
                     .findPagingList(pageSize)
                     .getPage(page);
+        } else {
+            if (!filter.isEmpty()) { // Filter
+                p = find.where()
+                        .ilike("primaryDesk.name", "%" + filter + "%")
+                        .orderBy(sortBy + " " + order)
+                        .findPagingList(pageSize)
+                        .getPage(page);
+            } else { // Get all records
+                p = find.where()
+                        .orderBy(sortBy + " " + order)
+                        .findPagingList(pageSize)
+                        .getPage(page);
+            }
         }
         return p;
     }
@@ -149,7 +149,7 @@ public class Analyst extends Model {
      */
     public void saveOrUpdate() throws Exception {
         // The analyst id should be 0 for a new record
-        if (analystId==null || analystId<=0) {
+        if (analystId <= 0) {
             save();
         } else {
             update();
@@ -171,7 +171,7 @@ public class Analyst extends Model {
      * @return      int
      */
     public int getNumDesks() {
-        if (desks!=null) {
+        if (desks != null) {
             return desks.size();
         } else {
             return 0;
@@ -248,7 +248,7 @@ public class Analyst extends Model {
      * @return      int
      */
     public int getNumNotes() {
-        if (noteList!=null) {
+        if (noteList != null) {
             return noteList.size();
         } else {
             return 0;
