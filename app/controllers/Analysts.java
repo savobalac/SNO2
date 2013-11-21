@@ -31,6 +31,11 @@ import java.sql.Timestamp;
 public class Analysts extends AbstractController {
 
 
+
+    // Check use of getLoggedInUser()
+
+
+
     /**
      * Displays a paginated list of analysts.
      *
