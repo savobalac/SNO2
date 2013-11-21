@@ -17,7 +17,7 @@ import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows com
  * Time: 14:42
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.1
  * @since       1.0
  */
 @Entity

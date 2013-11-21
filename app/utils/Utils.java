@@ -13,7 +13,7 @@ import java.util.*;
  * Time: 13:23
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.0
  * @since       1.0
  */
 public class Utils {

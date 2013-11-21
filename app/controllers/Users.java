@@ -13,13 +13,14 @@ import views.html.*;
 
 /**
  * Users controller with methods to list, create, edit, update and delete.
- * There are also methods to render and modify a user's groups.
+ * There are methods to list and modify a user's groups, show the edit password page and update.
+ * Non-admin users can only update their details and password.
  *
  * Date:        08/11/13
  * Time:        12:14
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.0
  * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
@@ -32,20 +33,32 @@ public class Users extends Controller {
      * @param page          Current page number (starts from 0)
      * @param sortBy        Column to be sorted
      * @param order         Sort order (either asc or desc)
-     * @param filter        Filter applied on <column name>
-     * @param search        Filter applied on <column names>
+     * @param filter        Filter applied on group name
+     * @param search        Search applied on full name
      * @return Result
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
-        // Get a page of users and render the list page (check if an admin user)  {
+
+        // Get a page of users and render the list page
         User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
-        if (Secured.isAdminUser()) {
+        if (Secured.isAdminUser()) { // Check if an admin user
             Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
             return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
+    }
+
+
+    /**
+     * Show an error and the Access Denied page. In case the URL is set manually and the user doesn't have access.
+     *
+     * @param loggedInUser  The logged-in user
+     * @return Result
+     */
+    private static Result accessDenied(User loggedInUser) {
+        flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
+        return ok(accessDenied.render(loggedInUser));
     }
 
 
@@ -58,8 +71,7 @@ public class Users extends Controller {
         if (Secured.isAdminUser()) { // Check if an admin user
             return edit(new Long(0));
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -70,22 +82,20 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result edit(Long id) {
-        // Get the logged-in user
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+
         // Check if an admin user or if editing the logged-in user
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
             // New users have id = 0
             if (id <= 0L) {
                 userForm = Form.form(User.class).fill(new User());
-            }
-            else {
+            } else {
                 userForm = Form.form(User.class).fill(User.find.byId(id));
             }
             return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -96,21 +106,22 @@ public class Users extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
-        // Get the user form and user (check if an admin user or if updating the logged-in user)
+
+        // Check if an admin user or if updating the logged-in user
         User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         boolean isLoggedInUser = id.equals(loggedInUser.id);
         if (Secured.isAdminUser() || isLoggedInUser) {
-            Form<User> userForm = Form.form(User.class).bindFromRequest();
+            Form<User> userForm = Form.form(User.class).bindFromRequest(); // Get the form data
             String msg;
             try {
                 if (userForm.hasErrors()) { // Return to the editUser page
                     return badRequest(editUser.render(id, userForm, loggedInUser));
                 } else {
                     User newUser = userForm.get(); // Get the user data
-                    String confirmPassword = userForm.field("confirmPassword").value();
+                    String confirmPassword = userForm.field("confirmPassword").value(); // Not part of the user model
 
-                    // If a new user, check that the confirmation password has been entered
-                    if (id==0) {
+                    // If a new user, check that the confirmation password has been entered (other fields have validation)
+                    if (id == 0) {
                         if (confirmPassword.trim().isEmpty()) {
                             throw new Exception("Please enter a value for the confirmation password");
                         }
@@ -122,22 +133,22 @@ public class Users extends Controller {
 
                     // Hash the password when creating a new user or if the password has changed
                     User oldUser = User.find.byId(id);
-                    if (id==null || id==0 || (!newUser.password.equals(oldUser.password))) {
+                    if (id == 0 || (!newUser.password.equals(oldUser.password))) {
                         newUser.password = Utils.hashString(newUser.password);
                     }
 
                     // Save if a new user, otherwise update, and show a message
                     newUser.saveOrUpdate();
                     String fullName = userForm.get().fullname;
-                    if (id==null || id==0) {
+                    if (id == 0) {
                         msg = "User: " + fullName + " has been created.";
-                        flash(Utils.FLASH_KEY_SUCCESS, msg);
                     } else {
                         msg = "User: " + fullName + " successfully updated.";
-                        flash(Utils.FLASH_KEY_SUCCESS, msg);
                     }
-                    // If updating the logged-in user redirect to the home page
-                    // Otherwise redirect to the list users page (to remove the user from the query string)
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+
+                    // If updating the logged-in user redirect to the home page,
+                    // Otherwise redirect to the list page (and remove the user from the query string)
                     if (isLoggedInUser) {
                         return redirect(controllers.routes.Application.index());
                     } else {
@@ -147,14 +158,23 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error, show a message and return to the editUser page
                 Utils.eHandler("Users.update(" + id.toString() + ")", e);
-                msg = String.format("%s. Changes not saved.", e.getMessage());
-                flash(Utils.FLASH_KEY_ERROR, msg);
+                showSaveError(e);
                 return badRequest(editUser.render(id, userForm, loggedInUser));
             }
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
+    }
+
+
+    /**
+     * Shows a "Changes not saved" error.
+     *
+     * @param e  The exception that caused the error
+     */
+    private static void showSaveError(Exception e) {
+        String msg = String.format("%s. Changes not saved.", e.getMessage());
+        flash(Utils.FLASH_KEY_ERROR, msg);
     }
 
 
@@ -182,15 +202,13 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error and show a message
                 Utils.eHandler("Users.delete(" + id.toString() + ")", e);
-                msg = String.format("%s. Changes not saved.", e.getMessage());
-                flash(Utils.FLASH_KEY_ERROR, msg);
+                showSaveError(e);
             } finally {
                 // Redirect to remove user from query string
                 return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
             }
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -206,8 +224,7 @@ public class Users extends Controller {
             User user = User.find.byId(id);
             return ok(tagListUserGroups.render(user));
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -237,8 +254,7 @@ public class Users extends Controller {
                 return ok("ERROR: " + e.getMessage());
             }
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -270,8 +286,7 @@ public class Users extends Controller {
                 return ok("ERROR: " + e.getMessage());
             }
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -285,8 +300,7 @@ public class Users extends Controller {
             userForm = Form.form(User.class).fill(User.find.byId(id));
             return ok(editPassword.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 
@@ -335,13 +349,11 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error, show a message and return to the editPassword page
                 Utils.eHandler("Users.updatePassword(" + id.toString() + ")", e);
-                msg = String.format("%s. Changes not saved.", e.getMessage());
-                flash(Utils.FLASH_KEY_ERROR, msg);
+                showSaveError(e);
                 return badRequest(editPassword.render(id, userForm, loggedInUser));
             }
         } else {
-            flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-            return ok(forbidden.render(loggedInUser)); // Deny in case the URL is set manually
+            return accessDenied(loggedInUser);
         }
     }
 }

@@ -22,7 +22,7 @@ import java.util.UUID;
  * Time: 10:38
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.1
  * @since       1.0
  */
 @Entity

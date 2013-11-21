@@ -13,7 +13,7 @@ import javax.persistence.Id;
  * Time: 13:19
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.0
  * @since       1.0
  */
 

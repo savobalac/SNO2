@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  * Time: 11:57
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.0
  * @since       1.0
  */
 @Entity

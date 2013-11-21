@@ -18,13 +18,13 @@ import java.sql.Timestamp;
 
 /**
  * Analysts controller with methods to list, create, edit, update and delete.
- * There are also methods to render and modify an analyst's profile, CV and desks.
+ * There are methods to list and modify desks, list and modify notes, and show and upload a profile and CV.
  *
  * Date:        16/10/13
  * Time:        13:35
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.1
  * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
@@ -37,15 +37,16 @@ public class Analysts extends Controller {
      * @param page          Current page number (starts from 0)
      * @param sortBy        Column to be sorted
      * @param order         Sort order (either asc or desc)
-     * @param filter        Filter applied on <column name>
-     * @param search        Filter applied on <column names>
+     * @param filter        Filter applied on primary desk name
+     * @param search        Search applied on last name
      * @return Result
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
+
         // Get a page of analysts and render the list page
         Page<Analyst> pageAnalysts = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        User user = User.find.where().eq("username", request().username()).findUnique();
-        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, user));
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, loggedInUser));
     }
 
 
@@ -65,16 +66,15 @@ public class Analysts extends Controller {
      */
     public static Result edit(Long id) {
         Form<Analyst> analystForm;
-        // New analysts have id = 0
+        // New analysts have id 0
         if (id <= 0L) {
             analystForm = Form.form(Analyst.class).fill(new Analyst());
-        }
-        else {
+        } else {
             Analyst analyst = Analyst.find.byId(id);
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
-        User user = User.find.where().eq("username", request().username()).findUnique();
-        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, user));
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
+        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, loggedInUser));
     }
 
 
@@ -84,18 +84,17 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result update(Long id) {
-        // Get the analyst form and user
-        Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest();
-        User user = User.find.where().eq("username", request().username()).findUnique();
+        Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest(); // Get the form data
+        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         String msg;
         try {
             if (analystForm.hasErrors()) { // Return to the editAnalyst page
-                return badRequest(editAnalyst.render(id, analystForm, user));
+                return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
             } else {
                 Analyst a = analystForm.get(); // Get the analyst data
 
-                // Checkboxes if unchecked or disabled return null
                 // Disabled checkboxes have an associated disabled field with its original value
+                // Checkboxes, if unchecked or disabled, return null
                 if (analystForm.field("disEmailverified").value() != null) {
                     a.emailverified = (analystForm.field("disEmailverified").value().equals("true"));
                 } else {
@@ -115,14 +114,14 @@ public class Analysts extends Controller {
                 // Save if a new analyst, otherwise update, and show a message
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
-                if (id==null || id==0) {
+                if (id == 0) {
                     msg = "Analyst: " + fullName + " has been created.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
                 } else {
                     msg = "Analyst: " + fullName + " successfully updated.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
                 }
-                // Redirect to remove analyst from query string
+                flash(Utils.FLASH_KEY_SUCCESS, msg);
+
+                // Redirect to the list page and remove the analyst from the query string
                 return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
             }
         } catch (Exception e) {
@@ -130,7 +129,7 @@ public class Analysts extends Controller {
             Utils.eHandler("Analysts.update(" + id.toString() + ")", e);
             msg = String.format("%s. Changes not saved.", e.getMessage());
             flash(Utils.FLASH_KEY_ERROR, msg);
-            return badRequest(editAnalyst.render(id, analystForm, user));
+            return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
         }
     }
 

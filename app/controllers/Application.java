@@ -13,13 +13,13 @@ import views.html.*;
 
 /**
  * Application controller that renders the home (index) page and logs the user in and out.
- * Contains a method to call the correct list page when a pagination link is used and an inner class for login.
+ * Contains a method to call the correct list page when a pagination link is used, and an inner class for login.
  *
  * Date: 16/10/13
  * Time: 12:59
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.1
  * @since       1.0
  */
 public class Application extends Controller {
@@ -36,7 +36,7 @@ public class Application extends Controller {
      * Renders the index page.
      * @return Result
      */
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Secured.class) // Will require the user to be logged in
     public static Result index() {
         return ok(index.render("SNO2", User.find.where().eq("username", request().username()).findUnique() ));
     }
@@ -106,7 +106,7 @@ public class Application extends Controller {
 
 
     /**
-     * Inner class that hold the username and password and validates the user.
+     * Inner class that holds the username and password and validates the user.
      */
     public static class Login {
 

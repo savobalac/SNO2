@@ -1,6 +1,5 @@
 package controllers;
 
-import play.*;
 import play.mvc.*;
 import play.mvc.Http.*;
 
@@ -8,13 +7,13 @@ import models.*;
 
 /**
  * Ensures pages have an authenticated user.
- * Contains methods to get the username and redirect to the login page if the user is not authorised.
+ * Contains methods to get the username, redirect to the login page if not authorised and check if an admin user.
  *
  * Date: 18/10/13
  * Time: 11:37
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.1
  * @since       1.0
  */
 public class Secured extends Security.Authenticator {

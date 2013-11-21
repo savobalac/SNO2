@@ -19,7 +19,7 @@ import utils.Utils;
  * Time: 12:59
  *
  * @author      Sav Balac
- * @version     %I%, %G%
+ * @version     1.1
  * @since       1.0
  */
 @Entity
