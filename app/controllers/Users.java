@@ -24,7 +24,7 @@ import views.html.*;
  * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
-public class Users extends Controller {
+public class Users extends AbstractController {
 
 
     /**
@@ -112,7 +112,6 @@ public class Users extends Controller {
         boolean isLoggedInUser = id.equals(loggedInUser.id);
         if (Secured.isAdminUser() || isLoggedInUser) {
             Form<User> userForm = Form.form(User.class).bindFromRequest(); // Get the form data
-            String msg;
             try {
                 if (userForm.hasErrors()) { // Return to the editUser page
                     return badRequest(editUser.render(id, userForm, loggedInUser));
@@ -140,6 +139,7 @@ public class Users extends Controller {
                     // Save if a new user, otherwise update, and show a message
                     newUser.saveOrUpdate();
                     String fullName = userForm.get().fullname;
+                    String msg;
                     if (id == 0) {
                         msg = "User: " + fullName + " has been created.";
                     } else {
@@ -158,7 +158,7 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error, show a message and return to the editUser page
                 Utils.eHandler("Users.update(" + id.toString() + ")", e);
-                showSaveError(e);
+                showSaveError(e); // Method in AbstractController
                 return badRequest(editUser.render(id, userForm, loggedInUser));
             }
         } else {
@@ -168,25 +168,13 @@ public class Users extends Controller {
 
 
     /**
-     * Shows a "Changes not saved" error.
-     *
-     * @param e  The exception that caused the error
-     */
-    private static void showSaveError(Exception e) {
-        String msg = String.format("%s. Changes not saved.", e.getMessage());
-        flash(Utils.FLASH_KEY_ERROR, msg);
-    }
-
-
-    /**
-     * Deletes the user. This method is currently disabled (not in routes).
+     * Deletes the user.
      * @param id Id of the user to delete
      * @return Result
      */
     public static Result delete(Long id) {
         User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
-            String msg;
             try {
                 // Find the user record
                 User user = User.find.byId(id);
@@ -195,14 +183,13 @@ public class Users extends Controller {
                 // Delete groups
                 user.delAllGroups(); // Many-many
 
-                // Delete the user
+                // Delete the user and show a message
                 user.delete();
-                msg = "User: " + fullName + " deleted.";
-                flash(Utils.FLASH_KEY_SUCCESS, msg);
+                flash(Utils.FLASH_KEY_SUCCESS, "User: " + fullName + " deleted.");
             } catch (Exception e) {
                 // Log an error and show a message
                 Utils.eHandler("Users.delete(" + id.toString() + ")", e);
-                showSaveError(e);
+                showSaveError(e); // Method in AbstractController
             } finally {
                 // Redirect to remove user from query string
                 return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
@@ -241,15 +228,16 @@ public class Users extends Controller {
             User user = User.find.byId(id);
             Group group = Group.find.byId(groupId);
             try {
-                if(user == null) {
+                if (user == null) {
                     return ok("ERROR: User not found. Changes not saved.");
                 }
-                else {
+                if (group == null) {
+                    return ok("ERROR: Group not found. Changes not saved.");
+                } else {
                     user.addGroup(group);
                     return ok("OK"); // "OK" is used by the calling Ajax function
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Utils.eHandler("Users.addGroup()", e);
                 return ok("ERROR: " + e.getMessage());
             }
@@ -349,7 +337,7 @@ public class Users extends Controller {
             } catch (Exception e) {
                 // Log an error, show a message and return to the editPassword page
                 Utils.eHandler("Users.updatePassword(" + id.toString() + ")", e);
-                showSaveError(e);
+                showSaveError(e); // Method in AbstractController
                 return badRequest(editPassword.render(id, userForm, loggedInUser));
             }
         } else {

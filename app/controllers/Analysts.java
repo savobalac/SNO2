@@ -28,7 +28,7 @@ import java.sql.Timestamp;
  * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
-public class Analysts extends Controller {
+public class Analysts extends AbstractController {
 
 
     /**
@@ -127,8 +127,7 @@ public class Analysts extends Controller {
         } catch (Exception e) {
             // Log an error, show a message and return to the editAnalyst page
             Utils.eHandler("Analysts.update(" + id.toString() + ")", e);
-            msg = String.format("%s. Changes not saved.", e.getMessage());
-            flash(Utils.FLASH_KEY_ERROR, msg);
+            showSaveError(e); // Method in AbstractController
             return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
         }
     }
@@ -140,7 +139,6 @@ public class Analysts extends Controller {
      * @return Result
      */
     public static Result delete(Long id) {
-        String msg;
         try {
             // Find the analyst record
             Analyst analyst = Analyst.find.byId(id);
@@ -158,17 +156,15 @@ public class Analysts extends Controller {
                 S3File.find.byId(analyst.cvDocument.id).delete();
             }
 
-            // Delete the analyst
+            // Delete the analyst and show a message
             analyst.delete();
-            msg = "Analyst: " + fullName + " deleted.";
-            flash(Utils.FLASH_KEY_SUCCESS, msg);
+            flash(Utils.FLASH_KEY_SUCCESS, "Analyst: " + fullName + " deleted.");
         } catch (Exception e) {
             // Log an error and show a message
             Utils.eHandler("Analysts.delete(" + id.toString() + ")", e);
-            msg = String.format("%s. Changes not saved.", e.getMessage());
-            flash(Utils.FLASH_KEY_ERROR, msg);
+            showSaveError(e); // Method in AbstractController
         } finally {
-            // Redirect to remove analyst from query string
+            // Redirect to remove the analyst from query string
             return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
         }
     }
@@ -334,15 +330,16 @@ public class Analysts extends Controller {
         Analyst analyst = Analyst.find.byId(id);
         Desk desk = Desk.find.byId(deskId);
         try {
-            if(analyst == null) {
+            if (analyst == null) {
                 return ok("ERROR: Analyst not found. Changes not saved.");
             }
-            else {
+            if (desk == null) {
+                return ok("ERROR: Desk not found. Changes not saved.");
+            } else {
                 analyst.addDesk(desk);
                 return ok("OK"); // "OK" is used by the calling Ajax function
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Utils.eHandler("Analysts.addDesk(" + id + ", " + deskId + ")", e);
             return ok("ERROR: " + e.getMessage());
         }
@@ -474,8 +471,7 @@ public class Analysts extends Controller {
         } catch (Exception e) {
             // Log an error, show a message and return to the editAnalyst page
             Utils.eHandler("Analysts.updateNote(" + aId + ", " + nId + ")", e);
-            msg = String.format("%s. Changes not saved.", e.getMessage());
-            flash(Utils.FLASH_KEY_ERROR, msg);
+            showSaveError(e); // Method in AbstractController
             return badRequest(editNote.render(nId, aId, noteForm, user));
         }
     }
@@ -532,8 +528,7 @@ public class Analysts extends Controller {
         } catch (Exception e) {
             // Log an error and show a message
             Utils.eHandler("Analysts.deleteNote(" + aId + ", " + noteId + ")", e);
-            msg = String.format("%s. Changes not saved.", e.getMessage());
-            flash(Utils.FLASH_KEY_ERROR, msg);
+            showSaveError(e); // Method in AbstractController
         } finally {
             // Redirect to the edit analyst page
             return redirect(controllers.routes.Analysts.edit(aId));

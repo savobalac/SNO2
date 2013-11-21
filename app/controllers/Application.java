@@ -22,7 +22,7 @@ import views.html.*;
  * @version     1.1
  * @since       1.0
  */
-public class Application extends Controller {
+public class Application extends AbstractController {
 
     // Constants
     public static final int RECORDS_PER_PAGE = 10;
