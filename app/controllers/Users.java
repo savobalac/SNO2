@@ -157,7 +157,7 @@ public class Users extends AbstractController {
                 }
             } catch (Exception e) {
                 // Log an error, show a message and return to the editUser page
-                Utils.eHandler("Users.update(" + id.toString() + ")", e);
+                Utils.eHandler("Users.update(" + id + ")", e);
                 showSaveError(e); // Method in AbstractController
                 return badRequest(editUser.render(id, userForm, loggedInUser));
             }
@@ -188,7 +188,7 @@ public class Users extends AbstractController {
                 flash(Utils.FLASH_KEY_SUCCESS, "User: " + fullName + " deleted.");
             } catch (Exception e) {
                 // Log an error and show a message
-                Utils.eHandler("Users.delete(" + id.toString() + ")", e);
+                Utils.eHandler("Users.delete(" + id + ")", e);
                 showSaveError(e); // Method in AbstractController
             } finally {
                 // Redirect to remove user from query string
@@ -223,27 +223,7 @@ public class Users extends AbstractController {
      * @return Result
      */
     public static Result addGroup(Long id, Long groupId) {
-        User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
-        if (Secured.isAdminUser()) { // Check if an admin user
-            User user = User.find.byId(id);
-            Group group = Group.find.byId(groupId);
-            try {
-                if (user == null) {
-                    return ok("ERROR: User not found. Changes not saved.");
-                }
-                if (group == null) {
-                    return ok("ERROR: Group not found. Changes not saved.");
-                } else {
-                    user.addGroup(group);
-                    return ok("OK"); // "OK" is used by the calling Ajax function
-                }
-            } catch (Exception e) {
-                Utils.eHandler("Users.addGroup()", e);
-                return ok("ERROR: " + e.getMessage());
-            }
-        } else {
-            return accessDenied(loggedInUser);
-        }
+        return changeGroup(id, groupId, "add");
     }
 
 
@@ -254,6 +234,18 @@ public class Users extends AbstractController {
      * @return Result
      */
     public static Result delGroup(Long id, Long groupId) {
+        return changeGroup(id, groupId, "delete");
+    }
+
+
+    /**
+     * Adds or deletes a group to/from the user.
+     * @param id       Id of the user
+     * @param groupId  Id of the group
+     * @param action   "add" or "delete"
+     * @return Result
+     */
+    private static Result changeGroup(Long id, Long groupId, String action) {
         User loggedInUser = User.find.where().eq("username", request().username()).findUnique();
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
@@ -265,12 +257,19 @@ public class Users extends AbstractController {
                 if (group == null) {
                     return ok("ERROR: Group not found. Changes not saved.");
                 } else {
-                    user.delGroup(group);
+                    // Add, delete or return an error
+                    if (action.equals("add")) {
+                        user.addGroup(group);
+                    } else if (action.equals("delete")) {
+                        user.delGroup(group);
+                    } else {
+                        return ok("ERROR: incorrect action, use add or delete");
+                    }
                     return ok("OK"); // "OK" is used by the calling Ajax function
                 }
             }
             catch (Exception e) {
-                Utils.eHandler("Users.delGroup()", e);
+                Utils.eHandler("Users.changeGroup(" + id + ", " + groupId + ", " + action + ")", e);
                 return ok("ERROR: " + e.getMessage());
             }
         } else {
@@ -336,7 +335,7 @@ public class Users extends AbstractController {
                 }
             } catch (Exception e) {
                 // Log an error, show a message and return to the editPassword page
-                Utils.eHandler("Users.updatePassword(" + id.toString() + ")", e);
+                Utils.eHandler("Users.updatePassword(" + id + ")", e);
                 showSaveError(e); // Method in AbstractController
                 return badRequest(editPassword.render(id, userForm, loggedInUser));
             }

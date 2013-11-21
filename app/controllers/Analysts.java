@@ -327,22 +327,7 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result addDesk(Long id, Long deskId) {
-        Analyst analyst = Analyst.find.byId(id);
-        Desk desk = Desk.find.byId(deskId);
-        try {
-            if (analyst == null) {
-                return ok("ERROR: Analyst not found. Changes not saved.");
-            }
-            if (desk == null) {
-                return ok("ERROR: Desk not found. Changes not saved.");
-            } else {
-                analyst.addDesk(desk);
-                return ok("OK"); // "OK" is used by the calling Ajax function
-            }
-        } catch (Exception e) {
-            Utils.eHandler("Analysts.addDesk(" + id + ", " + deskId + ")", e);
-            return ok("ERROR: " + e.getMessage());
-        }
+        return changeDesk(id, deskId, "add");
     }
 
 
@@ -353,6 +338,18 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result delDesk(Long id, Long deskId) {
+        return changeDesk(id, deskId, "delete");
+    }
+
+
+    /**
+     * Adds or deletes a desk to/from the analyst.
+     * @param id      Id of the analyst
+     * @param deskId  Id of the desk
+     * @param action  "add" or "delete"
+     * @return Result
+     */
+    private static Result changeDesk(Long id, Long deskId, String action) {
         Analyst analyst = Analyst.find.byId(id);
         Desk desk = Desk.find.byId(deskId);
         try {
@@ -362,12 +359,19 @@ public class Analysts extends AbstractController {
             if (desk == null) {
                 return ok("ERROR: Desk not found. Changes not saved.");
             } else {
-                analyst.delDesk(desk);
+                // Add, delete or return an error
+                if (action.equals("add")) {
+                    analyst.addDesk(desk);
+                } else if (action.equals("delete")) {
+                    analyst.delDesk(desk);
+                } else {
+                    return ok("ERROR: incorrect action, use add or delete");
+                }
                 return ok("OK"); // "OK" is used by the calling Ajax function
             }
         }
         catch (Exception e) {
-            Utils.eHandler("Analysts.delDesk(" + id + ", " + deskId + ")", e);
+            Utils.eHandler("Analysts.changeDesk(" + id + ", " + deskId + ", " + action + ")", e);
             return ok("ERROR: " + e.getMessage());
         }
     }
