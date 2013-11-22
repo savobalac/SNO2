@@ -63,12 +63,13 @@
                 <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
                 @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:", '_showConstraints -> false)
                 @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:", '_showConstraints -> false)
+                <br>
 
-                <!-- selects need the identifier of the referenced table, e.g. status.statusId -->
                 @select(
-                    analystForm("status.statusId"),
-                    options(models.Status.options),
-                    '_label -> "Status:"
+                    analystForm("primaryDesk.deskId"),
+                    options(models.Desk.options),
+                    '_label -> "Primary Desk:",
+                    '_showConstraints -> false
                 )
 
                 <!-- Enable Rank if an admin user, manager or staff member -->
@@ -86,6 +87,14 @@
                         'disabled -> ""
                     )
                 }
+
+                <!-- selects need the identifier of the referenced table, e.g. status.statusId -->
+                @select(
+                    analystForm("status.statusId"),
+                    options(models.Status.options),
+                    '_label -> "Status:"
+                )
+                <br>
 
                 @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
 
@@ -105,6 +114,7 @@
                     <input type="hidden" id="paypalAccountEmail" name="paypalAccountEmail"
                            value='@analystForm.field("paypalAccountEmail").value()' />
                 }
+                <br>
 
                 @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
 
@@ -114,6 +124,7 @@
                 } else {
                     <input type="hidden" id="phone" name="phone" value='@analystForm.field("phone").value()' />
                 }
+                <br>
 
                 <!-- Show address fields if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
@@ -133,6 +144,7 @@
                 }
 
                 @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
+                <br>
 
                 <!-- Enable Email verified if an admin user, manager or staff member -->
                 <!-- Disabled checkboxes always return null, so need a hidden field  -->
@@ -153,15 +165,6 @@
                            value='@analystForm.field("phoneVerified").value()' />
                 }
 
-                <!-- Enable Wiki username if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
-                } else {
-                    @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:", 'disabled -> "")
-                }
-
-                @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
-
                 <!-- Enable Contract signed if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
@@ -170,6 +173,19 @@
                     <input type="hidden" id="disContractSigned" name="disContractSigned"
                            value='@analystForm.field("contractSigned").value()' />
                 }
+                <br>
+
+                @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
+
+                <!-- Enable Wiki username if an admin user, manager or staff member -->
+                @if(user.isAdminOrManagerOrStaff()) {
+                    @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
+                } else {
+                    @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:", 'disabled -> "")
+                }
+
+                @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
+                <br>
 
                 @textarea(analystForm("positionDescription"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Position:")
                 @textarea(analystForm("biography"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Biography:")
@@ -178,14 +194,7 @@
                 <!-- Notes are hidden because they are managed by the notes tab -->
                 <input type="hidden" id="notes" name="notes" value='@analystForm.field("notes").value()' />
 
-                @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
                 @textarea(analystForm("expertise"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Expertise:")
-                @select(
-                    analystForm("primaryDesk.deskId"),
-                    options(models.Desk.options),
-                    '_label -> "Primary Desk:",
-                    '_showConstraints -> false
-                )
             </div>
 
             <!-- Display the list of assigned desks and a means to add one -->
