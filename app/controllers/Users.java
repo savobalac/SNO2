@@ -4,7 +4,6 @@ import com.avaje.ebean.Page;
 import models.User;
 import models.Group;
 import play.data.Form;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import utils.Utils;
@@ -21,7 +20,6 @@ import views.html.*;
  *
  * @author      Sav Balac
  * @version     1.0
- * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Users extends AbstractController {
@@ -68,7 +66,7 @@ public class Users extends AbstractController {
      */
     public static Result create() {
         if (Secured.isAdminUser()) { // Check if an admin user
-            return edit(new Long(0));
+            return edit(0L);
         } else {
             return accessDenied(getLoggedInUser());
         }
@@ -86,13 +84,13 @@ public class Users extends AbstractController {
         User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
-            // New users have id = 0
+            // New users have id 0
             if (id <= 0L) {
                 userForm = Form.form(User.class).fill(new User());
             } else {
                 userForm = Form.form(User.class).fill(User.find.byId(id));
             }
-            return ok(editUser.render(((id<0)?(new Long(0)):(id)), userForm, loggedInUser));
+            return ok(editUser.render(((id<0)?(0L):(id)), userForm, loggedInUser));
         } else {
             return accessDenied(loggedInUser);
         }
@@ -130,8 +128,8 @@ public class Users extends AbstractController {
                     }
 
                     // Hash the password when creating a new user or if the password has changed
-                    User oldUser = User.find.byId(id);
-                    if (id == 0 || (!newUser.password.equals(oldUser.password))) {
+                    User existingUser = User.find.byId(id);
+                    if (id == 0 || (!newUser.password.equals(existingUser.password))) {
                         newUser.password = Utils.hashString(newUser.password);
                     }
 

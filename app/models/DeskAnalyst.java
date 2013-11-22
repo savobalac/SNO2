@@ -14,7 +14,6 @@ import javax.persistence.Id;
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 
 @Entity

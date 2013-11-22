@@ -17,7 +17,6 @@ import java.sql.Timestamp;
  *
  * @author      Sav Balac
  * @version     1.0
- * @since       1.0
  */
 @Entity
 public class Note extends Model {

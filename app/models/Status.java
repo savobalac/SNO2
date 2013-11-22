@@ -17,7 +17,6 @@ import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows com
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 @Entity
 public class Status extends Model {

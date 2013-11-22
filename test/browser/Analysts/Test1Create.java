@@ -47,7 +47,7 @@ public class Test1Create extends FluentTest {
         // Add the required fields and save
         fill("#firstname").with("New Analyst");
         fill("#lastname").with("Created by Testing");
-        submit("#formUpload");
+        submit("#analystForm");
 
         // Check that we're on the list analysts page and that a new analyst has been created
         assertThat(url().contentEquals("http://localhost:9000/analysts"));

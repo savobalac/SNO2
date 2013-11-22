@@ -1,14 +1,14 @@
-@*********************************************************
-* Page:        Create/Edit Analyst                       *
-* Author:      Sav Balac                                 *
-* Date:        17/10/13                                  *
-* Version:     1.0                                       *
-* Description: Allows an analyst to be edited            *
-*                                                        *
-* @param id            The Analyst id (0 for new)        *
-* @param analystForm   The Analyst Form object           *
-* @param user          The logged-in user                *
-*********************************************************@
+@**********************************************************
+* Page:         Create/Edit Analyst                       *
+* Author:       Sav Balac                                 *
+* Date:         17/10/13                                  *
+* Version:      1.1                                       *
+* Description:  Allows an analyst to be edited            *
+*                                                         *
+* @param id            The Analyst id (0 for new)         *
+* @param analystForm   The Analyst Form object            *
+* @param user          The logged-in user                 *
+**********************************************************@
 
 @(  id:             Long,
     analystForm:    Form[models.Analyst],
@@ -18,13 +18,13 @@
 @import helper._
 @implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
 
+<!-- A new analyst has an id of 0 -->
 @main(if(id==0){"New Analyst"} else {Analyst.find.byId(id).getFullName()}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-    @* The id should be zero if creating an Analyst, but also test for null *@
-    @if(id == null || id==0) {
+    @if(id==0) {
         <h2 id="newAnalyst">New Analyst</h2>
     } else {
         <h2 id="analystName"><span class="ecRecType">Analyst: </span>
@@ -34,14 +34,14 @@
 
     <hr>
 
-    @form(routes.Analysts.update(id), 'id -> "formUpload", 'enctype -> "multipart/form-data") {
+    @form(routes.Analysts.update(id), 'id -> "analystForm", 'enctype -> "multipart/form-data") {
     <fieldset>
         <!-- analystId needs to be set, otherwise it will be null on update -->
         <input type="Hidden" id="analystId" name="analystId" value="@id" />
 
-        <!-- To partition fields into their tabs, need to contain links in a div of class tabbable -->
+        <!-- To partition fields into their tabs, need to contain links in a div of class tabbable                -->
         <!-- All tab panes need containing in a div of class tab-content (these classes require bootstrap-tab.js) -->
-        <!-- See http://www.w3resource.com/twitter-bootstrap/nav-tabs-and-pills-tutorial.php for reference -->
+        <!-- See http://www.w3resource.com/twitter-bootstrap/nav-tabs-and-pills-tutorial.php for reference        -->
         <div class="tabbable">
             <ul class="nav nav-tabs" id="tabList">
                 <li id="tabDetailsLink" class="active"><a href="#tabDetails" data-toggle="tab">Details</a></li>
@@ -60,18 +60,18 @@
                     '_label -> "Salutation:"
                 )
 
-                @* Setting showConstraints to false will prevent "Required" from being displayed *@
+                <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
                 @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:", '_showConstraints -> false)
                 @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:", '_showConstraints -> false)
 
-                @* selects need the identifier of the referenced table, e.g. status.statusId *@
+                <!-- selects need the identifier of the referenced table, e.g. status.statusId -->
                 @select(
                     analystForm("status.statusId"),
                     options(models.Status.options),
                     '_label -> "Status:"
                 )
 
-                @* Enable Rank if an admin user, manager or staff member *@
+                <!-- Enable Rank if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @select(
                         analystForm("rank.id"),
@@ -89,31 +89,33 @@
 
                 @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
 
-                @* Show Alternate email if an admin user or manager *@
-                @* When hiding fields, use a hidden field to ensure updates work *@
+                <!-- Show Alternate email if an admin user or manager -->
+                <!-- When hiding fields, use a hidden field to ensure updates work -->
                 @if(user.isAdminOrManager()) {
                     @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
                 } else {
-                    <input type="hidden" id="emailAlternate" name="emailAlternate" value='@analystForm.field("emailAlternate").value()' />
+                    <input type="hidden" id="emailAlternate" name="emailAlternate"
+                           value='@analystForm.field("emailAlternate").value()' />
                 }
 
-                @* Show PayPal account email if an admin user, manager or staff member *@
+                <!-- Show PayPal account email if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
                 } else {
-                    <input type="hidden" id="paypalAccountEmail" name="paypalAccountEmail" value='@analystForm.field("paypalAccountEmail").value()' />
+                    <input type="hidden" id="paypalAccountEmail" name="paypalAccountEmail"
+                           value='@analystForm.field("paypalAccountEmail").value()' />
                 }
 
                 @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
 
-                @* Show Phone if an admin user or manager *@
+                <!-- Show Phone if an admin user or manager -->
                 @if(user.isAdminOrManager()) {
                     @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
                 } else {
                     <input type="hidden" id="phone" name="phone" value='@analystForm.field("phone").value()' />
                 }
 
-                @* Show address fields if an admin user, manager or staff member *@
+                <!-- Show address fields if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
                     @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
@@ -132,24 +134,26 @@
 
                 @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
 
-                @* Enable Email verified if an admin user, manager or staff member *@
-                @* Disabled checkboxes always return null, so need a hidden field  *@
+                <!-- Enable Email verified if an admin user, manager or staff member -->
+                <!-- Disabled checkboxes always return null, so need a hidden field  -->
                 @if(user.isAdminOrManagerOrStaff()) {
                      @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
                  } else {
                      @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:", 'disabled -> "")
-                     <input type="hidden" id="disEmailverified" name="disEmailverified" value='@analystForm.field("emailverified").value()' />
+                     <input type="hidden" id="disEmailverified" name="disEmailverified"
+                            value='@analystForm.field("emailverified").value()' />
                  }
 
-                @* Enable Phone verified if an admin user, manager or staff member *@
+                <!-- Enable Phone verified if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
                 } else {
                     @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:", 'disabled -> "")
-                    <input type="hidden" id="disPhoneverified" name="disPhoneverified" value='@analystForm.field("phoneVerified").value()' />
+                    <input type="hidden" id="disPhoneverified" name="disPhoneverified"
+                           value='@analystForm.field("phoneVerified").value()' />
                 }
 
-                @* Enable Wiki username if an admin user, manager or staff member *@
+                <!-- Enable Wiki username if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
                 } else {
@@ -158,19 +162,20 @@
 
                 @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
 
-                @* Enable Contract signed if an admin user, manager or staff member *@
+                <!-- Enable Contract signed if an admin user, manager or staff member -->
                 @if(user.isAdminOrManagerOrStaff()) {
                     @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
                 } else {
                     @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:", 'disabled -> "")
-                    <input type="hidden" id="disContractSigned" name="disContractSigned" value='@analystForm.field("contractSigned").value()' />
+                    <input type="hidden" id="disContractSigned" name="disContractSigned"
+                           value='@analystForm.field("contractSigned").value()' />
                 }
 
                 @textarea(analystForm("positionDescription"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Position:")
                 @textarea(analystForm("biography"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Biography:")
                 @textarea(analystForm("academic"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Academic:")
 
-                @* Notes are hidden because they are managed by the notes tab *@
+                <!-- Notes are hidden because they are managed by the notes tab -->
                 <input type="hidden" id="notes" name="notes" value='@analystForm.field("notes").value()' />
 
                 @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
@@ -183,31 +188,31 @@
                 )
             </div>
 
-            @* Display the list of assigned desks and a means to add one *@
+            <!-- Display the list of assigned desks and a means to add one -->
             <div class="tab-pane" id="tabDesks">
                 <div id="divDesks" class="col-4">
-                    @* The desks are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                    <!-- The desks are retrieved after the document has loaded via Ajax (see JavaScript below) -->
                 </div>
             </div>
 
-            @* Display the list of notes and a means to add one *@
+            <!-- Display the list of notes and a means to add one -->
             <div class="tab-pane" id="tabNotes">
                 <div id="divNotes" class="col-4">
-                    @* The notes are retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                    <!-- The notes are retrieved after the document has loaded via Ajax (see JavaScript below) -->
                 </div>
             </div>
 
-            @* Display the profile image and a means to upload one *@
+            <!-- Display the profile image and a means to upload one -->
             <div class="tab-pane" id="tabProfile">
                 <div id="divProfileImage" class="col-4" >
-                    @* The profile image is retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                    <!-- The profile image is retrieved after the document has loaded via Ajax (see JavaScript below) -->
                 </div>
             </div>
 
-            @* Display the CV document and a means to upload one *@
+            <!-- Display the CV document and a means to upload one -->
             <div class="tab-pane" id="tabCv">
                 <div id="divCvDocument" class="col-4" >
-                    @* The CV document is retrieved after the document has loaded via Ajax (see JavaScript below) *@
+                    <!-- The CV document is retrieved after the document has loaded via Ajax (see JavaScript below) -->
                 </div>
             </div>
         </div>
@@ -219,7 +224,7 @@
         Please save the new analyst first.
     </div>
 
-    <!-- This div shows an error message if there was an error with an ajax call -->
+    <!-- This div shows an error message if there was an error with an Ajax call -->
     <div class="alert alert-danger alert-dismissable" id="ajaxError">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <span id="ajaxErrorMsg"></span>
@@ -233,14 +238,15 @@
     }
     <hr>
 
-    <!-- Display the create_on field if it exists -->
+    <!-- Display when the analyst was created if the field exists -->
     <span class="text-muted">
         @if(analystForm.field("createOn").value()!=null) {
             @utils.Utils.formatCreatedTimestamp( analystForm.get().createOn )
         }
     </span>
 
-    @if(!(id==null || id==0)) {
+    <!-- New analysts can't be deleted as they haven't been saved yet -->
+    @if(!(id==0)) {
         @form(routes.Analysts.delete(id), 'id -> "deleteForm", 'class -> "topRight") {
             <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
         }
@@ -365,6 +371,7 @@
                 $('#saveWarning').show();
             } else {
                 $("#ajaxError").hide();
+
                 // Show a loading message
                 $.blockUI({ message: $('#domMessage') });
 
@@ -378,9 +385,9 @@
                         if(returnedData=='OK') {
                             getProfileImage();
                             $("#profile").val("");
-                            setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
+                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
                         } else {
-                            setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
+                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
                             $("#ajaxErrorMsg").text(returnedData);
                             $("#ajaxError").show();
                         }
@@ -411,6 +418,7 @@
                 $('#saveWarning').show();
             } else {
                 $("#ajaxError").hide();
+
                 // Show a loading message
                 $.blockUI({ message: $('#domMessage') });
 
@@ -424,9 +432,9 @@
                         if(returnedData=='OK') {
                             getCvDocument();
                             $("#document").val("");
-                            setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
+                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
                         } else {
-                            setTimeout($.unblockUI, 500); // Remove the loading message (500 ms)
+                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
                             $("#ajaxErrorMsg").text(returnedData);
                             $("#ajaxError").show();
                         }

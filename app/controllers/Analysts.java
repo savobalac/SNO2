@@ -25,15 +25,9 @@ import java.sql.Timestamp;
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Analysts extends AbstractController {
-
-
-
-    // Check use of getLoggedInUser()
-
 
 
     /**
@@ -59,7 +53,7 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result create() {
-        return edit(new Long(0));
+        return edit(0L);
     }
 
 
@@ -74,10 +68,9 @@ public class Analysts extends AbstractController {
         if (id <= 0L) {
             analystForm = Form.form(Analyst.class).fill(new Analyst());
         } else {
-            Analyst analyst = Analyst.find.byId(id);
             analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
         }
-        return ok(editAnalyst.render(((id<0)?(new Long(0)):(id)), analystForm, getLoggedInUser()));
+        return ok(editAnalyst.render(((id<0)?(0L):(id)), analystForm, getLoggedInUser()));
     }
 
 
@@ -89,7 +82,6 @@ public class Analysts extends AbstractController {
     public static Result update(Long id) {
         Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest(); // Get the form data
         User loggedInUser = getLoggedInUser();
-        String msg;
         try {
             if (analystForm.hasErrors()) { // Return to the editAnalyst page
                 return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
@@ -117,6 +109,7 @@ public class Analysts extends AbstractController {
                 // Save if a new analyst, otherwise update, and show a message
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
+                String msg;
                 if (id == 0) {
                     msg = "Analyst: " + fullName + " has been created.";
                 } else {
@@ -151,7 +144,7 @@ public class Analysts extends AbstractController {
             analyst.delAllDesks();
             analyst.delAllNotes();
 
-            // Delete profile image and CV
+            // Delete profile image and CV (no foreign keys)
             if (analyst.profileImage != null) {
                 S3File.find.byId(analyst.profileImage.id).delete();
             }
@@ -221,21 +214,15 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result uploadFile(Long id, String fileType) {
-        String fileName = "";
         File file = null;
-        String msg = "";
-
-        // Get the analyst record
-        Analyst analyst = Analyst.find.byId(id);
         try {
-            // This should be prevented by the view, but test anyway
-            if (id == 0) {
-                msg = "Analyst must be saved before uploading files.";
-                return ok(msg);
+            if (id == 0) { // Uploads to new analysts should be prevented by the view, but test anyway
+                return ok("Analyst must be saved before uploading files.");
             }
+            // Get the analyst
+            Analyst analyst = Analyst.find.byId(id);
             if (analyst == null) {
-                msg = "ERROR: Analyst not found. File not saved.";
-                return ok(msg);
+                return ok("ERROR: Analyst not found. File not saved.");
             }
 
             // Get the file part from the form
@@ -243,6 +230,7 @@ public class Analysts extends AbstractController {
             Http.MultipartFormData.FilePart filePart = body.getFile(fileType);
 
             // Check the file exists
+            String fileName = "";
             if (filePart != null) {
                 fileName = filePart.getFilename();
 
@@ -250,8 +238,7 @@ public class Analysts extends AbstractController {
                 if (fileType.equals("profile")) {
                     String contentType = filePart.getContentType();
                     if (!contentType.startsWith("image/")) {
-                        msg = "File " + fileName + " is not an image. File not saved.";
-                        return ok(msg);
+                        return ok("File " + fileName + " is not an image. File not saved.");
                     }
                 }
 
@@ -282,26 +269,22 @@ public class Analysts extends AbstractController {
                 s3File.save();
                 filePart = null;
 
-                // Save the s3File to the analyst
+                // Save the s3File to the analyst, update and show a message
                 if (fileType.equals("profile")) {
                     analyst.profileImage = s3File;
                 } else {
                     analyst.cvDocument = s3File;
                 }
-                analyst.saveOrUpdate();
-
-                msg = "File: " + fileName + " successfully uploaded to analyst " + analyst.getFullName();
-                flash(Utils.FLASH_KEY_SUCCESS, msg);
-                msg = "OK"; // The AJAX call from editAnalyst tests for "OK"
-                return ok(msg);
+                analyst.update();
+                flash(Utils.FLASH_KEY_SUCCESS,
+                      "File: " + fileName + " successfully uploaded to analyst: " + analyst.getFullName());
+                return ok("OK"); // The Ajax call from editAnalyst checks for "OK"
             } else { // File not found
-                msg = "Please select a file.";
-                return ok(msg);
+                return ok("Please select a file.");
             }
         } catch (Exception e) {
             Utils.eHandler("Analysts.uploadFile(" + id + ", " + fileType + ")", e);
-            msg = String.format("%s. Changes not saved.", e.getMessage());
-            return ok(msg);
+            return ok(String.format("%s Changes not saved.", e.getMessage()));
         } finally {
             // Free up resources
             if (file != null) {
@@ -381,7 +364,7 @@ public class Analysts extends AbstractController {
 
 
     /**
-     * Displays a (usually embedded) form to display the notes that have been recorded against an analyst.
+     * Displays a (usually embedded) form to display the notes that have been written about an analyst.
      * @param id Id of the analyst
      * @return Result
      */
@@ -396,7 +379,7 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result createNote(Long aId) {
-        return editNote(aId, new Long(0));
+        return editNote(aId, 0L);
     }
 
 
@@ -411,17 +394,17 @@ public class Analysts extends AbstractController {
         // Get the analyst
         Analyst analyst = Analyst.find.byId(aId);
 
-        // New notes have id 0 - set the analyst
+        // New notes have id 0
         Form<Note> noteForm;
         if (nId <= 0L) {
             Note note = new Note();
-            note.analyst = analyst;
+            note.analyst = analyst; // Set the analyst
             noteForm = Form.form(Note.class).fill(note);
         }
         else {
             noteForm = Form.form(Note.class).fill(Note.find.byId(nId));
         }
-        return ok(editNote.render(((nId<0)?(new Long(0)):(nId)), aId, noteForm, getLoggedInUser()));
+        return ok(editNote.render(((nId<0)?(0L):(nId)), aId, noteForm, getLoggedInUser()));
 
     }
 
@@ -433,47 +416,43 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result updateNote(Long aId, Long nId) {
-        // Get the note form and user
-        Form<Note> noteForm = Form.form(Note.class).bindFromRequest();
+        Form<Note> noteForm = Form.form(Note.class).bindFromRequest(); // Get the form data
         User loggedInUser = getLoggedInUser();
-        String msg;
         try {
             if (noteForm.hasErrors()) { // Return to the editNote page
                 return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
             } else {
-                // Get the analyst
+                // Get the analyst and note data
                 Analyst analyst = Analyst.find.byId(aId);
-
-                // Get the note data
                 Note note = noteForm.get();
 
                 // Get the current date and time
                 Timestamp now = Utils.getCurrentDateTime();
 
                 // Save if a new note, otherwise update, add the note to the analyst and show a message
-                if (nId==0) {
+                String msg;
+                if (nId == 0) {
                     note.analyst = analyst;
                     note.user = loggedInUser;
                     note.createdDt = now;
                     note.save();
                     analyst.addNote(note);
                     msg = "Note: " + note.title + " has been created.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
-                } else {
-                    // Get the currently-stored note
+                } else { // Get the currently-stored note
                     Note existingNote = Note.find.byId(nId);
                     note.createdDt = existingNote.createdDt; // Ensure the created datetime isn't overwritten
                     note.updatedBy = loggedInUser;
                     note.updatedDt = now;
                     note.update();
                     msg = "Note: " + note.title + " successfully updated.";
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
                 }
+                flash(Utils.FLASH_KEY_SUCCESS, msg);
+
                 // Redirect to the edit analyst page
                 return redirect(controllers.routes.Analysts.edit(aId));
             }
         } catch (Exception e) {
-            // Log an error, show a message and return to the editAnalyst page
+            // Log an error, show a message and return to the editNote page
             Utils.eHandler("Analysts.updateNote(" + aId + ", " + nId + ")", e);
             showSaveError(e); // Method in AbstractController
             return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
@@ -517,18 +496,16 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result deleteNote(Long aId, Long noteId) {
-        String msg;
         try {
             // Find the analyst and note
             Analyst analyst = Analyst.find.byId(aId);
             Note note = Note.find.byId(noteId);
             String title = note.title;
 
-            // Remove the note from the analyst and delete it
+            // Remove the note from the analyst, delete it and show a message
             analyst.delNote(note);
             note.delete();
-            msg = "Note: " + title + " deleted.";
-            flash(Utils.FLASH_KEY_SUCCESS, msg);
+            flash(Utils.FLASH_KEY_SUCCESS, "Note: " + title + " deleted.");
         } catch (Exception e) {
             // Log an error and show a message
             Utils.eHandler("Analysts.deleteNote(" + aId + ", " + noteId + ")", e);

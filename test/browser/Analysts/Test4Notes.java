@@ -68,7 +68,7 @@ public class Test4Notes extends FluentTest {
             // Add the required fields and save
             fill("#title").with("New Subject Created by Testing");
             fill("#content").with("New Content Created by Testing");
-            submit("#formUpload");
+            submit("#notesForm");
 
             // Check that we're on the edit analyst page and that the note was added
             assertThat(url().contentEquals("http://localhost:9000/analysts/" + id));
@@ -92,7 +92,7 @@ public class Test4Notes extends FluentTest {
                 // Edit the content field (with the current date and time) and save
                 String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
                 fill("#content").with(currentDateTime);
-                submit("#formUpload");
+                submit("#notesForm");
 
                 // Check that we're on the edit analyst page and that the note was updated
                 assertThat(url().contentEquals("http://localhost:9000/analysts/" + id));

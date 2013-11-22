@@ -1,18 +1,18 @@
-@*************************************************************
-* Page:        tagAnalystCV                                  *
-* Author:      Sav Balac                                     *
-* Date:        21/10/13                                      *
-* Version:     1.0                                           *
-* Description: Shows the CV document (via Ajax)              *
-*                                                            *
-* @param analyst   The Analyst reference                     *
-*************************************************************@
+@**************************************************************
+* Page:         tagAnalystCV                                  *
+* Author:       Sav Balac                                     *
+* Date:         21/10/13                                      *
+* Version:      1.1                                           *
+* Description:  Shows the CV document (via Ajax)              *
+*                                                             *
+* @param analyst   The Analyst reference                      *
+**************************************************************@
 
 @( analyst: Analyst )
 
 @import helper._
 
-@if(analyst==null || analyst.analystId==null || analyst.analystId==0) {
+@if(analyst.analystId==0) {
 
     <div class="well">
         <em>New analyst must be saved before the CV document can be uploaded</em>
@@ -20,9 +20,7 @@
 
 } else {
 
-    @********************************************
-    * Don't show the CV document if none exists *
-    ********************************************@
+    <!-- Show the CV document if it exists -->
     @if(analyst.cvDocument!=null) {
         <div>
             <a href="@analyst.cvDocument.getUrl()" target="_blank">@analyst.cvDocument.name</a>
@@ -33,6 +31,7 @@
         </div>
     }
 
+    <!-- Allow a CV document to be uploaded (uploadCvDocument() is in editAnalyst) -->
     <div id="divUploadCvDocument" class="col-4">
         <br>
         <label class="btn btn-success btn-xs filebutton">

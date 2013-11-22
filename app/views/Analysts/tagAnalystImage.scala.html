@@ -1,18 +1,18 @@
-@*************************************************************
-* Page:        tagAnalystImage                               *
-* Author:      Sav Balac                                     *
-* Date:        21/10/13                                      *
-* Version:     1.0                                           *
-* Description: Shows the profile image (via Ajax)            *
-*                                                            *
-* @param analyst   The Analyst reference                     *
-*************************************************************@
+@**************************************************************
+* Page:         tagAnalystImage                               *
+* Author:       Sav Balac                                     *
+* Date:         21/10/13                                      *
+* Version:      1.1                                           *
+* Description:  Shows the profile image (via Ajax)            *
+*                                                             *
+* @param analyst   The Analyst reference                      *
+**************************************************************@
 
 @( analyst: Analyst )
 
 @import helper._
 
-@if(analyst==null || analyst.analystId==null || analyst.analystId==0) {
+@if(analyst.analystId==0) {
 
     <div class="well">
         <em>New analyst must be saved before the image can be uploaded</em>
@@ -20,9 +20,7 @@
 
 } else {
 
-    @*******************************************
-    * Don't show the image file if none exists *
-    ********************************************@
+    <!-- Show the profile image if it exists -->
     @if(analyst.profileImage!=null) {
         <div style="height:100px; width:100px;">
             <img src="@analyst.profileImage.getUrl()" align="left"
@@ -34,6 +32,7 @@
         </div>
     }
 
+    <!-- Allow a profile image to be uploaded (uploadProfileImage() is in editAnalyst) -->
     <div id="divUploadProfileImage" class="col-4">
         <br>
         <label class="btn btn-success btn-xs filebutton">

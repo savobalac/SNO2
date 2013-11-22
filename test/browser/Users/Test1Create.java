@@ -50,7 +50,7 @@ public class Test1Create extends FluentTest {
         fill("#username").with("newuser");
         fill("#password").with("password");
         fill("#confirmPassword").with("password");
-        submit("#formUpload");
+        submit("#userForm");
 
         // Check that we're on the list users page and that a new user has been created
         assertThat(url().contentEquals("http://localhost:9000/users"));

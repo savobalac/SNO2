@@ -1,17 +1,16 @@
-@*************************************************************
-* Page:        tagListUserGroups                             *
-* Author:      Sav Balac                                     *
-* Date:        08/11/13                                      *
-* Version:     1.0                                           *
-* Description: Lists the groups for the user (via Ajax)      *
-*                                                            *
-* @param user   The User reference                           *
-*************************************************************@
+@**************************************************************
+* Page:         tagListUserGroups                             *
+* Author:       Sav Balac                                     *
+* Date:         08/11/13                                      *
+* Version:      1.0                                           *
+* Description:  Lists the groups for the user (via Ajax)      *
+*                                                             *
+* @param user   The User reference                            *
+**************************************************************@
 
 @( user: User )
 
-
-@if(user==null || user.id==null || user.id==0) {
+@if(user.id==0) {
 
     <div class="well">
         <em>New user must be saved before groups can be added</em>
@@ -29,6 +28,7 @@
                 <table class="table table-striped table-bordered table-condensed">
                     @for(group <- user.groups) {
                         <tr>
+                            <!-- Allow a group to be removed (delGroup() is in editUser) -->
                             <td width="16">
                                 <a href="#" rel="tooltip" title="Remove group @group.name" style="vertical-align:top" onclick="delGroup(@group.id);">
                                     <img src='@routes.Assets.at("images/cross.png")' style="vertical-align:middle" height="16" width="16">
@@ -43,6 +43,8 @@
     }
 
     <br>
+
+    <!-- Allow a group to be added (addGroup() is in editUser) -->
     <label for="divAddGroup">Add Group:</label>
     <div id="divAddGroup" class="col-4">
         <input type="Hidden" id="userId" name="userId" value="@user.id" />

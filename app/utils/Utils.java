@@ -13,8 +13,7 @@ import java.util.*;
  * Time: 13:23
  *
  * @author      Sav Balac
- * @version     1.0
- * @since       1.0
+ * @version     1.1
  */
 public class Utils {
 
@@ -25,15 +24,15 @@ public class Utils {
     public static final int    MAX_FILE_SIZE = 10485760; // In bytes
     public static final String MAX_FILE_SIZE_STRING = MAX_FILE_SIZE / 1048576 + "Mb";
 
-    public static final int LOG_LEVEL_NORMAL = 0;
-    public static final int LOG_LEVEL_DEBUG = 1;
-    public static final int LOG_LEVEL_VERBOSE = 2;
+    public static final int LOG_LEVEL_NORMAL  = 0;
+    public static final int LOG_LEVEL_DEBUG   = 1; // Not yet implemented
+    public static final int LOG_LEVEL_VERBOSE = 2; // Not yet implemented
 
-    public static final int LOG_TYPE_ERROR = -1;
-    public static final int LOG_TYPE_GENERAL = 0;
+    public static final int LOG_TYPE_ERROR   = -1;
+    public static final int LOG_TYPE_GENERAL =  0;
 
-    public static final String FLASH_KEY_INFO = "info";
-    public static final String FLASH_KEY_ERROR = "error";
+    public static final String FLASH_KEY_INFO    = "info";
+    public static final String FLASH_KEY_ERROR   = "error";
     public static final String FLASH_KEY_SUCCESS = "success";
 
 
@@ -71,7 +70,7 @@ public class Utils {
 
 
     /**
-     * Logs a message.
+     * Logs a message. Log level and type to be implemented.
      * @param logLevel  0 = Normal, 1 = Debug, 2 = Verbose
      * @param logType  -1 = Error, 0 = General
      * @param msg      Description of the message
@@ -94,7 +93,7 @@ public class Utils {
         List<Integer> list = new ArrayList<Integer>(numIntegers);
         for (int idx = 0; idx < numIntegers; idx++) {
             int value = start + idx;
-            list.add(idx, new Integer(value));
+            list.add(idx, value);
         }
         return list;
     }

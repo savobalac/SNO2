@@ -62,7 +62,7 @@ public class Test3Update extends FluentTest {
             // Edit the expertise field (with the current date and time) and save
             String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
             fill("#expertise").with(currentDateTime);
-            submit("#formUpload");
+            submit("#analystForm");
 
             // Check that we're on the list analysts page and that the analyst was updated
             assertThat(url().contentEquals("http://localhost:9000/analysts"));

@@ -3,7 +3,6 @@ package controllers;
 import models.User;
 import java.security.NoSuchAlgorithmException;
 import play.api.mvc.Call;
-import play.mvc.Controller;
 import play.mvc.Security;
 
 import play.mvc.Result;
@@ -20,7 +19,6 @@ import views.html.*;
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 public class Application extends AbstractController {
 

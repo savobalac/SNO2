@@ -23,7 +23,6 @@ import java.util.UUID;
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 @Entity
 @Table(name="s3file")

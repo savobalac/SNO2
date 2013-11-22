@@ -14,7 +14,6 @@ import models.*;
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 public class Secured extends Security.Authenticator {
 

@@ -56,12 +56,12 @@ public class Test3Update extends FluentTest {
 
             // Check we are editing the new user
             assertThat(title().contentEquals("New User Created by Testing"));
-            assertThat(find("#userName").contains("User: New User Created by Testing")); // Check the main heading
+            assertThat(find("#usersName").contains("User: New User Created by Testing")); // Check the main heading
 
             // Edit the email field (with the current date and time) and save
             String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
             fill("#email").with(currentDateTime);
-            submit("#formUpload");
+            submit("#userForm");
 
             // Check that we're on the list users page and that the user was updated
             assertThat(url().contentEquals("http://localhost:9000/users"));
@@ -75,7 +75,7 @@ public class Test3Update extends FluentTest {
             goTo("http://localhost:9000/users/" + id + "/password");
             fill("#newPassword").with("newpassword");
             fill("#confirmPassword").with("newpassword");
-            submit("#formUpload");
+            submit("#userForm");
 
             // Check that we're on the user's page and that the password was updated
             assertThat(url().contentEquals("http://localhost:9000/users/" + id));

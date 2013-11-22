@@ -39,8 +39,8 @@
 <div class="row">
     <div class="text-center">
             <ul class="pagination">
-                <!-- Enables the Previous 50/25/10 page links if enough pages exist   -->
-                <!-- Can move down by 50 pages if at least 50 pages (1000 rows) exist -->
+                <!-- Enables the Previous 50/25/10 page links if enough pages exist  -->
+                <!-- Can move down by 50 pages if at least 50 pages (500 rows) exist -->
                 @if(pageCount > 50) {
                     @if(page - 50 >= 0) {
                         <li class="prev">
@@ -53,7 +53,7 @@
                         </li>
                     }
                 }
-                <!-- Can move down by 25 pages if at least 25 pages (500 rows) exist -->
+                <!-- Can move down by 25 pages if at least 25 pages (250 rows) exist -->
                 @if(pageCount > 25) {
                     @if(page - 25 >= 0) {
                         <li class="prev">
@@ -66,7 +66,7 @@
                         </li>
                     }
                 }
-                <!-- Can move down by 10 pages if at least 10 pages (200 rows) exist -->
+                <!-- Can move down by 10 pages if at least 10 pages (100 rows) exist -->
                 @if(pageCount > 10) {
                     @if(page - 10 >= 0) {
                         <li class="prev">
@@ -148,7 +148,7 @@
                 } else {
                     <li class="disabled"><a>&raquo; Next</a></li>
                 }
-                <!-- Can move up by 10 pages if at least 10 pages (200 rows) exist -->
+                <!-- Can move up by 10 pages if at least 10 pages (100 rows) exist -->
                 @if(pageCount > 10) {
                     @if(pageCount - page > 10) {
                         <li class="next">
@@ -161,7 +161,7 @@
                         </li>
                     }
                 }
-                <!-- Can move up by 25 pages if at least 25 pages (500 rows) exist -->
+                <!-- Can move up by 25 pages if at least 25 pages (250 rows) exist -->
                 @if(pageCount > 25) {
                     @if(pageCount - page > 25) {
                         <li class="next">
@@ -174,7 +174,7 @@
                         </li>
                     }
                 }
-                <!-- Can move up by 50 pages if at least 50 pages (1000 rows) exist -->
+                <!-- Can move up by 50 pages if at least 50 pages (500 rows) exist -->
                 @if(pageCount > 50) {
                     @if(pageCount - page > 50) {
                         <li class="next">

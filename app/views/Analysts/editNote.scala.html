@@ -1,15 +1,15 @@
-@*********************************************************
-* Page:        Create/Edit Note                          *
-* Author:      Sav Balac                                 *
-* Date:        14/11/13                                  *
-* Version:     1.0                                       *
-* Description: Allows a note to be created/edited        *
-*                                                        *
-* @param noteId        The Note id (0 for new)           *
-* @param analystId     The analyst the note is for       *
-* @param noteForm      The Note Form object              *
-* @param user          The logged-in user                *
-*********************************************************@
+@**********************************************************
+* Page:         Create/Edit Note                          *
+* Author:       Sav Balac                                 *
+* Date:         14/11/13                                  *
+* Version:      1.0                                       *
+* Description:  Allows a note to be created/edited        *
+*                                                         *
+* @param noteId        The Note id (0 for new)            *
+* @param analystId     The analyst the note is for        *
+* @param noteForm      The Note Form object               *
+* @param user          The logged-in user                 *
+**********************************************************@
 
 @(  noteId:         Long,
     analystId:      Long,
@@ -20,12 +20,12 @@
 @import helper._
 @implicitField = @{ FieldConstructor(twitterBootstrapInput.f) }
 
+<!-- A new note has an id of 0 -->
 @main(if(noteId==0){"New Note"} else {Note.find.byId(noteId).title}, user) {
 
     <script src="//code.jquery.com/jquery.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-    @* The noteId is zero if creating a Note *@
     @if(noteId==0) {
         <h2 id="newNote">New Note</h2>
     } else {
@@ -40,12 +40,12 @@
 
     <hr>
 
-    @form(routes.Analysts.updateNote(analystId, noteId), 'id -> "formUpload") {
+    @form(routes.Analysts.updateNote(analystId, noteId), 'id -> "notesForm") {
         <fieldset>
             <!-- The note id needs to be set, otherwise it will be null on update -->
             <input type="hidden" id="noteId" name="noteId" value="@noteId" />
 
-            @* Setting showConstraints to false will prevent "Required" from being displayed *@
+            <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
             @inputText(noteForm("title"), 'style -> "width: 75%", '_label -> "Subject:", '_showConstraints -> false)
             <br>
             @textarea(noteForm("content"), 'style -> "width: 100%", 'rows -> "15", '_label -> "Content:", '_showConstraints -> false)
@@ -80,6 +80,7 @@
         </span>
     }
 
+    <!-- New notes can't be deleted as they haven't been saved yet -->
     @if((noteId!=0)) {
         @form(routes.Analysts.deleteNote(analystId, noteId), 'id -> "deleteForm", 'class -> "topRight") {
             <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">

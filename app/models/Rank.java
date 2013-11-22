@@ -18,7 +18,6 @@ import java.util.Map;
  *
  * @author      Sav Balac
  * @version     1.1
- * @since       1.0
  */
 @Entity
 public class Rank extends Model {

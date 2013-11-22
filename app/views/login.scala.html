@@ -1,12 +1,12 @@
-@*********************************************************
-* Page:        Login                                     *
-* Author:      Sav Balac                                 *
-* Date:        17/10/13                                  *
-* Version:     1.0                                       *
-* Description: The sign in page                          *
-*                                                        *
-* @param form       The login form                       *
-*********************************************************@
+@**********************************************************
+* Page:         Login                                     *
+* Author:       Sav Balac                                 *
+* Date:         17/10/13                                  *
+* Version:      1.0                                       *
+* Description:  The sign in page                          *
+*                                                         *
+* @param form   The login form                            *
+**********************************************************@
 
 @(form: Form[Application.Login])
 
@@ -63,9 +63,11 @@
                 </div>
             }
 
+            <!-- Username and password -->
             <p>
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Username" value='@form("username").value' required autofocus>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Username"
+                       value='@form("username").value' required autofocus>
             </p>
             <p>
                 <label for="password">Password</label>

@@ -1,15 +1,15 @@
 @****************************************************************
-* Page:        List Analysts                                    *
-* Author:      Sav                                              *
-* Date:        17/10/13                                         *
-* Version:     1.0                                              *
-* Description: Lists the analysts                               *
+* Page:         List Analysts                                   *
+* Author:       Sav                                             *
+* Date:         17/10/13                                        *
+* Version:      1.1                                             *
+* Description:  Lists the analysts                              *
 *                                                               *
 * @param currentPage        The page of Analyst objects         *
 * @param currentSortBy      The sort column                     *
 * @param currentOrder       Ascending or descending             *
 * @param currentFilter      The search filter                   *
-* @param currentSearch      Search on columnname                *
+* @param currentSearch      Search on surname                   *
 * @param user               The logged-in user                  *
 ****************************************************************@
 
@@ -63,6 +63,7 @@
 
     <hr>
 
+    <!-- Search and filter -->
     <div id="actions">
         <form name="frmFilter" class="form-inline" role="form" well form-searchaction='@link(0, "name")' method="GET">
             <div class="form-group">
@@ -111,7 +112,7 @@
                     <tr>
                         <td>
                             <a id="@Analyst.analystId" class="analystId" href="@routes.Analysts.edit(Analyst.analystId)">
-                                @Analyst.firstname @Analyst.lastname
+                                @Analyst.lastname, @Analyst.firstname
                             </a>
                         </td>
                         <td>
@@ -132,7 +133,7 @@
         <!-- Show pagination links -->
         @tags.pagination(new Integer(Application.PAGE_TYPE_ANALYSTS), currentPage.getTotalPageCount,
                          currentPage.getPageIndex, new Boolean(currentPage.hasPrev), new Boolean(currentPage.hasNext),
-                         currentSortBy, currentOrder, currentFilter, currentSearch, new Long(0))
+                         currentSortBy, currentOrder, currentFilter, currentSearch, 0L)
 
         <hr>
 
@@ -143,6 +144,7 @@
     <hr>
 
     <script type="text/javascript">
+        // Set the primary desk filter
         function setPrimaryDesk() {
             var selectedDesk = $("#f option:selected").val();
             $("#primaryDesk").val(selectedDesk);

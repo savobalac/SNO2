@@ -1,14 +1,14 @@
-@***************************************************************
-* Page:         Main                                           *
-* Author:       Sav Balac                                      *
-* Date:         17/10/13                                       *
-* Version:      1.0                                            *
-* Description:  All pages are shown within this page,          *
-*               which contains css, js, nav bar and messages.  *
-*                                                              *
-* @param title       Page title                                *
-* @param user        The logged-in user                        *
-***************************************************************@
+@*************************************************************************
+* Page:         Main                                                     *
+* Author:       Sav Balac                                                *
+* Date:         17/10/13                                                 *
+* Version:      1.1                                                      *
+* Description:  All pages are shown within this page (except for login)  *
+*               which contains css, js, nav bar and messages.            *
+*                                                                        *
+* @param title       Page title                                          *
+* @param user        The logged-in user                                  *
+*************************************************************************@
 
 @(title: String, user: User)(content: Html)
 
@@ -16,7 +16,7 @@
 <html lang="en">
     <head>
         <title>@title</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=9" /> <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />  <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Recommended by Bootstrap 3 - remove the above line? -->
 
         <!-- css -->
@@ -59,7 +59,7 @@
                         <ul class="nav navbar-nav">
                             <li><a href="@routes.Application.index()">Home</a></li>
                             <li><a href="/analysts">Analysts</a></li>
-                            @* Only admin users can navigate to the users page *@
+                            <!-- Only admin users can navigate to the users page -->
                             @if(user.isAdmin()) {
                                 <li><a href="/users">Users</a></li>
                             }

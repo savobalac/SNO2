@@ -18,7 +18,6 @@ import java.util.Map;
  *
  * @author      Sav Balac
  * @version     1.0
- * @since       1.0
  */
 @Entity
 @Table(name="groups") // Can't have a database table called "group"
