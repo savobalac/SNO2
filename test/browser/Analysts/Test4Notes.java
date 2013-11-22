@@ -18,8 +18,7 @@ import static org.fluentlenium.core.filter.FilterConstructor.withText;
  * Time: 10:32
  *
  * @author      Sav Balac
- * @version     %I%, %G%
- * @since       1.0
+ * @version     1.0
  */
 public class Test4Notes extends FluentTest {
 

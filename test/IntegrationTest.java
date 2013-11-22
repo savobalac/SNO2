@@ -12,8 +12,7 @@ import static org.fest.assertions.Assertions.*;
  * Time: 05:47
  *
  * @author      Sav Balac
- * @version     %I%, %G%
- * @since       1.0
+ * @version     1.0
  */
 public class IntegrationTest {
 

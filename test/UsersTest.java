@@ -15,9 +15,8 @@ import static play.test.Helpers.*;
  * Date: 19/11/13
  * Time: 10:20
  *
- * @author Sav Balac
- * @version %I%, %G%
- * @since 1.0
+ * @author      Sav Balac
+ * @version     1.0
  */
 public class UsersTest {
 

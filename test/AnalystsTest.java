@@ -17,8 +17,7 @@ import static play.test.Helpers.fakeRequest;
  * Time: 12:19
  *
  * @author      Sav Balac
- * @version     %I%, %G%
- * @since       1.0
+ * @version     1.0
  */
 public class AnalystsTest {
 

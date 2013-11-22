@@ -14,8 +14,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * Time: 16:21
  *
  * @author      Sav Balac
- * @version     %I%, %G%
- * @since       1.0
+ * @version     1.0
  */
 public class Test1Create extends FluentTest {
 
