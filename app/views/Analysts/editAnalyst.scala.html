@@ -263,14 +263,34 @@
         $(document).ready(function(){
             $('#saveWarning').hide();
             $('#ajaxError').hide();
-            getTabDetail("/analysts/@id/desks",        "#divDesks");
-            getTabDetail("/analysts/@id/notes",        "#divNotes");
-            getTabDetail("/analysts/@id/profileImage", "#divProfileImage");
-            getTabDetail("/analysts/@id/cvDocument",   "#divCvDocument");
+            getDesks();
+            getNotes();
+            getProfileImage();
+            getCvDocument();
         });
 
-        // Get the tab detail assigned to the analyst (and prevent caching in IE)
-        function getTabDetail(url, div) {
+        // Get desks
+        function getDesks() {
+            getDetail("/analysts/@id/desks", "#divDesks");
+        }
+
+        // Get notes
+        function getNotes() {
+            getDetail("/analysts/@id/notes", "#divNotes");
+        }
+
+        // Get profile image
+        function getProfileImage() {
+            getDetail("/analysts/@id/profileImage", "#divProfileImage");
+        }
+
+        // Get CV document
+        function getCvDocument() {
+            getDetail("/analysts/@id/cvDocument", "#divCvDocument");
+        }
+
+        // Get the detail assigned to the analyst (and prevent caching in IE)
+        function getDetail(url, div) {
             $.ajax({
                 type: "GET",
                 url: url,
@@ -327,22 +347,6 @@
             });
         }
 
-        // Get the list of notes recorded against the analyst (and prevent caching in IE)
-        function getNotes() {
-            var url = "/analysts/@id/notes";
-            var updateRegion = "#divNotes";
-            $.ajax({
-                type: "GET",
-                url: url,
-                cache: false,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    replaceRegionContents(updateRegion, returnedData);
-                }
-            });
-        }
-
         // Delete a note from the analyst
         function delNote(noteId) {
             $("#ajaxError").hide();
@@ -394,22 +398,6 @@
             }
         }
 
-        // Get the profile image (and prevent caching in IE)
-        function getProfileImage() {
-            var url = "/analysts/@id/profileImage";
-            var updateRegion = "#divProfileImage";
-            $.ajax({
-                type: "GET",
-                url: url,
-                cache: false,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    replaceRegionContents(updateRegion, returnedData);
-                }
-            });
-        }
-
         // Upload a CV document
         function uploadCvDocument() {
             if(@id==0) {
@@ -439,22 +427,6 @@
                     }
                 });
             }
-        }
-
-        // Get the CV document (and prevent caching in IE)
-        function getCvDocument() {
-            var url = "/analysts/@id/cvDocument";
-            var updateRegion = "#divCvDocument";
-            $.ajax({
-                type: "GET",
-                url: url,
-                cache: false,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    replaceRegionContents(updateRegion, returnedData);
-                }
-            });
         }
 
         // Replace the inner content of the submitted region (this function needs to be below any calls to it)

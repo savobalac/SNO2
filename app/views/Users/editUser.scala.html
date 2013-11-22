@@ -136,11 +136,16 @@
         $(document).ready(function(){
             $('#saveWarning').hide();
             $('#ajaxError').hide();
-            getTabDetail("/users/@id/groups", "#divGroups");
+            getGroups();
         });
 
-        // Get the tab detail assigned to the user (and prevent caching in IE)
-        function getTabDetail(url, div) {
+        // Get groups
+        function getGroups() {
+            getDetail("/users/@id/groups", "#divGroups");
+        }
+
+        // Get the detail assigned to the user (and prevent caching in IE)
+        function getDetail(url, div) {
             $.ajax({
                 type: "GET",
                 url: url,
