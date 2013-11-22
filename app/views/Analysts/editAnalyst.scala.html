@@ -263,16 +263,14 @@
         $(document).ready(function(){
             $('#saveWarning').hide();
             $('#ajaxError').hide();
-            getDesks();
-            getNotes();
-            getProfileImage();
-            getCvDocument();
+            getTabDetail("/analysts/@id/desks",        "#divDesks");
+            getTabDetail("/analysts/@id/notes",        "#divNotes");
+            getTabDetail("/analysts/@id/profileImage", "#divProfileImage");
+            getTabDetail("/analysts/@id/cvDocument",   "#divCvDocument");
         });
 
-        // Get the list of desks assigned to the analysts (and prevent caching in IE)
-        function getDesks() {
-            var url = "/analysts/@id/desks";
-            var updateRegion = "#divDesks";
+        // Get the tab detail assigned to the analyst (and prevent caching in IE)
+        function getTabDetail(url, div) {
             $.ajax({
                 type: "GET",
                 url: url,
@@ -280,7 +278,7 @@
                 dataType: 'html',
                 traditional: true,
                 success: function (returnedData) {
-                    replaceRegionContents(updateRegion, returnedData);
+                    replaceRegionContents(div, returnedData);
                 }
             });
         }

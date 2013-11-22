@@ -136,13 +136,11 @@
         $(document).ready(function(){
             $('#saveWarning').hide();
             $('#ajaxError').hide();
-            getGroups();
+            getTabDetail("/users/@id/groups", "#divGroups");
         });
 
-        // Get the list of groups assigned to the user (and prevent caching in IE)
-        function getGroups() {
-            var url = "/users/@id/groups";
-            var updateRegion = "#divGroups";
+        // Get the tab detail assigned to the user (and prevent caching in IE)
+        function getTabDetail(url, div) {
             $.ajax({
                 type: "GET",
                 url: url,
@@ -150,7 +148,7 @@
                 dataType: 'html',
                 traditional: true,
                 success: function (returnedData) {
-                    replaceRegionContents(updateRegion, returnedData);
+                    replaceRegionContents(div, returnedData);
                 }
             });
         }
