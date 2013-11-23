@@ -64,6 +64,7 @@
                 @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:", '_showConstraints -> false)
                 @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:", '_showConstraints -> false)
                 <br>
+                <br>
 
                 @select(
                     analystForm("primaryDesk.deskId"),
@@ -95,6 +96,7 @@
                     '_label -> "Status:"
                 )
                 <br>
+                <br>
 
                 @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
 
@@ -115,6 +117,7 @@
                            value='@analystForm.field("paypalAccountEmail").value()' />
                 }
                 <br>
+                <br>
 
                 @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
 
@@ -124,6 +127,7 @@
                 } else {
                     <input type="hidden" id="phone" name="phone" value='@analystForm.field("phone").value()' />
                 }
+                <br>
                 <br>
 
                 <!-- Show address fields if an admin user, manager or staff member -->
@@ -144,6 +148,7 @@
                 }
 
                 @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
+                <br>
                 <br>
 
                 <!-- Enable Email verified if an admin user, manager or staff member -->
@@ -174,6 +179,7 @@
                            value='@analystForm.field("contractSigned").value()' />
                 }
                 <br>
+                <br>
 
                 @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
 
@@ -185,6 +191,7 @@
                 }
 
                 @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
+                <br>
                 <br>
 
                 @textarea(analystForm("positionDescription"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Position:")

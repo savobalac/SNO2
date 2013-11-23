@@ -45,7 +45,7 @@ public class Test2Read extends FluentTest {
         assertThat(find("#homeTitle").contains("Analysts")); // Check the main heading
 
         // Check that the new analyst is in the list
-        assertThat(pageSource().contains("New Analyst Created by Testing"));
+        assertThat(pageSource().contains("Created by Testing, New Analyst"));
     }
 
 

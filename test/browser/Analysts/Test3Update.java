@@ -48,7 +48,7 @@ public class Test3Update extends FluentTest {
         goTo("http://localhost:9000/analysts");
 
         // Get the id of the newly-created analyst
-        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("New Analyst Created by Testing"));
+        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("Created by Testing, New Analyst"));
         String id;
         if (newAnalystLinks.size() == 1) { // There should only be one analyst with that name
             id = newAnalystLinks.first().getId();
