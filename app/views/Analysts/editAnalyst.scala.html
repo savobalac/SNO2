@@ -394,7 +394,7 @@
                 $.blockUI({ message: $('#domMessage') });
 
                 var url = '/analysts/' + @id + '/uploadProfileImage';
-                $("#formUpload")
+                $("#analystForm")
                 .ajaxSubmit({
                     url:    url,
                     type:   "post",
@@ -425,7 +425,7 @@
                 $.blockUI({ message: $('#domMessage') });
 
                 var url = '/analysts/' + @id + '/uploadCvDocument';
-                $("#formUpload")
+                $("#analystForm")
                 .ajaxSubmit({
                     url:    url,
                     type:   "post",
