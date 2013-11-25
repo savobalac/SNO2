@@ -19,7 +19,7 @@ import static org.fluentlenium.core.filter.FilterConstructor.withText;
  * @author      Sav Balac
  * @version     1.0
  */
-public class Test5Delete extends FluentTest {
+public class Test6Delete extends FluentTest {
 
 
     /**
