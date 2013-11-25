@@ -54,154 +54,197 @@
         <br>
         <div class="tab-content">
             <div class="tab-pane active" id="tabDetails">
-                @select(
-                    analystForm("salutation"),
-                    options(utils.Utils.getTitles),
-                    '_label -> "Salutation:"
-                )
 
-                <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
-                @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:", '_showConstraints -> false)
-                @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:", '_showConstraints -> false)
-                <br>
-                <br>
+                <!-- Put the fields into rows of 2 columns 6 units wide -->
+                <div class="container">
 
-                @select(
-                    analystForm("primaryDesk.deskId"),
-                    options(models.Desk.options),
-                    '_label -> "Primary Desk:",
-                    '_showConstraints -> false
-                )
+                    <!-- Row 1 -->
+                    <div class="row">
 
-                <!-- Enable Rank if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @select(
-                        analystForm("rank.id"),
-                        options(models.Rank.options),
-                        '_label -> "Rank:"
-                    )
-                } else {
-                    @select(
-                        analystForm("rank.id"),
-                        options(models.Rank.options),
-                        '_label -> "Rank:",
-                        'disabled -> ""
-                    )
-                }
+                        <!-- Column 1 -->
+                        <div class="col-lg-6">
+                            @select(
+                                analystForm("salutation"),
+                                options(utils.Utils.getTitles),
+                                '_label -> "Salutation:"
+                            )
 
-                <!-- selects need the identifier of the referenced table, e.g. status.statusId -->
-                @select(
-                    analystForm("status.statusId"),
-                    options(models.Status.options),
-                    '_label -> "Status:"
-                )
-                <br>
-                <br>
+                            <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
+                            @inputText(analystForm("firstname"), 'style -> "width: 100%", '_label -> "Forename:", '_showConstraints -> false)
+                            @inputText(analystForm("lastname"), 'style -> "width: 100%", '_label -> "Surname:", '_showConstraints -> false)
+                        </div>
 
-                @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
+                        <!-- Column 2 -->
+                        <div class="col-lg-6">
+                            <!-- Enable Rank if an admin user, manager or staff member -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                                @select(
+                                    analystForm("rank.id"),
+                                    options(models.Rank.options),
+                                    '_label -> "Rank:"
+                                )
+                            } else {
+                                @select(
+                                    analystForm("rank.id"),
+                                    options(models.Rank.options),
+                                    '_label -> "Rank:",
+                                    'disabled -> ""
+                                )
+                            }
 
-                <!-- Show Alternate email if an admin user or manager -->
-                <!-- When hiding fields, use a hidden field to ensure updates work -->
-                @if(user.isAdminOrManager()) {
-                    @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
-                } else {
-                    <input type="hidden" id="emailAlternate" name="emailAlternate"
-                           value='@analystForm.field("emailAlternate").value()' />
-                }
+                            @select(
+                                analystForm("primaryDesk.deskId"),
+                                options(models.Desk.options),
+                                '_label -> "Primary Desk:",
+                                '_showConstraints -> false
+                            )
 
-                <!-- Show PayPal account email if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
-                } else {
-                    <input type="hidden" id="paypalAccountEmail" name="paypalAccountEmail"
-                           value='@analystForm.field("paypalAccountEmail").value()' />
-                }
-                <br>
-                <br>
+                            <!-- selects need the identifier of the referenced table, e.g. status.statusId -->
+                            @select(
+                                analystForm("status.statusId"),
+                                options(models.Status.options),
+                                '_label -> "Status:"
+                            )
+                        </div>
+                    </div>
 
-                @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
+                    <br>
+                    <br>
 
-                <!-- Show Phone if an admin user or manager -->
-                @if(user.isAdminOrManager()) {
-                    @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
-                } else {
-                    <input type="hidden" id="phone" name="phone" value='@analystForm.field("phone").value()' />
-                }
-                <br>
-                <br>
+                    <!-- Row 2 -->
+                    <div class="row">
 
-                <!-- Show address fields if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
-                    @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
-                    @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
-                    @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
-                    @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
-                    @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
-                } else {
-                    <input type="hidden" id="address1" name="address1" value='@analystForm.field("address1").value()' />
-                    <input type="hidden" id="address2" name="address2" value='@analystForm.field("address2").value()' />
-                    <input type="hidden" id="city" name="city" value='@analystForm.field("city").value()' />
-                    <input type="hidden" id="state" name="state" value='@analystForm.field("state").value()' />
-                    <input type="hidden" id="zip" name="zip" value='@analystForm.field("zip").value()' />
-                    <input type="hidden" id="country" name="country" value='@analystForm.field("country").value()' />
-                }
+                        <!-- Column 1 -->
+                        <div class="col-lg-6">
+                            @inputText(analystForm("email"), 'style -> "width: 100%", '_label -> "Email:")
 
-                @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
-                <br>
-                <br>
+                            <!-- Show Alternate email if an admin user or manager -->
+                            <!-- When hiding fields, use a hidden field to ensure updates work -->
+                            @if(user.isAdminOrManager()) {
+                            @inputText(analystForm("emailAlternate"), 'style -> "width: 100%", '_label -> "Alternate email:")
+                            } else {
+                            <input type="hidden" id="emailAlternate" name="emailAlternate"
+                                   value='@analystForm.field("emailAlternate").value()' />
+                            }
 
-                <!-- Enable Email verified if an admin user, manager or staff member -->
-                <!-- Disabled checkboxes always return null, so need a hidden field  -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                     @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
-                 } else {
-                     @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:", 'disabled -> "")
-                     <input type="hidden" id="disEmailverified" name="disEmailverified"
-                            value='@analystForm.field("emailverified").value()' />
-                 }
+                            <!-- Show PayPal account email if an admin user, manager or staff member -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                            @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 100%", '_label -> "PayPal account email:")
+                            } else {
+                            <input type="hidden" id="paypalAccountEmail" name="paypalAccountEmail"
+                                   value='@analystForm.field("paypalAccountEmail").value()' />
+                            }
 
-                <!-- Enable Phone verified if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
-                } else {
-                    @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:", 'disabled -> "")
-                    <input type="hidden" id="disPhoneverified" name="disPhoneverified"
-                           value='@analystForm.field("phoneVerified").value()' />
-                }
+                            <br>
+                            <br>
 
-                <!-- Enable Contract signed if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
-                } else {
-                    @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:", 'disabled -> "")
-                    <input type="hidden" id="disContractSigned" name="disContractSigned"
-                           value='@analystForm.field("contractSigned").value()' />
-                }
-                <br>
-                <br>
+                            @inputText(analystForm("mobile"), 'style -> "width: 100%", '_label -> "Mobile:")
 
-                @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
+                            <!-- Show Phone if an admin user or manager -->
+                            @if(user.isAdminOrManager()) {
+                                @inputText(analystForm("phone"), 'style -> "width: 100%", '_label -> "Phone:")
+                            } else {
+                                <input type="hidden" id="phone" name="phone" value='@analystForm.field("phone").value()' />
+                            }
+                        </div>
 
-                <!-- Enable Wiki username if an admin user, manager or staff member -->
-                @if(user.isAdminOrManagerOrStaff()) {
-                    @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
-                } else {
-                    @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:", 'disabled -> "")
-                }
+                        <!-- Column 2 -->
+                        <div class="col-lg-6">
+                            <!-- Show address fields if an admin user, manager or staff member -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                                @inputText(analystForm("address1"), 'style -> "width: 100%", '_label -> "Address:")
+                                @inputText(analystForm("address2"), 'style -> "width: 100%", '_label -> "")
+                                @inputText(analystForm("city"), 'style -> "width: 100%", '_label -> "City:")
+                                @inputText(analystForm("state"), 'style -> "width: 100%", '_label -> "State:")
+                                @inputText(analystForm("zip"), 'style -> "width: 100%", '_label -> "Zip code:")
+                                @inputText(analystForm("country"), 'style -> "width: 100%", '_label -> "Country:")
+                            } else {
+                                <input type="hidden" id="address1" name="address1" value='@analystForm.field("address1").value()' />
+                                <input type="hidden" id="address2" name="address2" value='@analystForm.field("address2").value()' />
+                                <input type="hidden" id="city" name="city" value='@analystForm.field("city").value()' />
+                                <input type="hidden" id="state" name="state" value='@analystForm.field("state").value()' />
+                                <input type="hidden" id="zip" name="zip" value='@analystForm.field("zip").value()' />
+                                <input type="hidden" id="country" name="country" value='@analystForm.field("country").value()' />
+                            }
 
-                @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
-                <br>
-                <br>
+                            @inputText(analystForm("countryOfResidence"), 'style -> "width: 100%", '_label -> "Country of residence:")
+                        </div>
+                    </div>
 
-                @textarea(analystForm("positionDescription"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Position:")
-                @textarea(analystForm("biography"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Biography:")
-                @textarea(analystForm("academic"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Academic:")
+                    <br>
+                    <br>
 
-                <!-- Notes are hidden because they are managed by the notes tab -->
-                <input type="hidden" id="notes" name="notes" value='@analystForm.field("notes").value()' />
+                    <!-- Row 3 -->
+                    <div class="row">
 
-                @textarea(analystForm("expertise"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Expertise:")
+                        <!-- Column 1 -->
+                        <div class="col-lg-6">
+                            <!-- Enable Email verified if an admin user, manager or staff member -->
+                            <!-- Disabled checkboxes always return null, so need a hidden field  -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                              @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:")
+                            } else {
+                                @checkbox(field = analystForm("emailverified"), '_label -> "Email verified:", 'disabled -> "")
+                                <input type="hidden" id="disEmailverified" name="disEmailverified"
+                                       value='@analystForm.field("emailverified").value()' />
+                            }
+
+                            <!-- Enable Phone verified if an admin user, manager or staff member -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                               @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:")
+                            } else {
+                                @checkbox(field = analystForm("phoneVerified"), '_label -> "Phone verified:", 'disabled -> "")
+                                <input type="hidden" id="disPhoneverified" name="disPhoneverified"
+                                       value='@analystForm.field("phoneVerified").value()' />
+                            }
+
+                            <!-- Enable Contract signed if an admin user, manager or staff member -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                              @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:")
+                            } else {
+                                @checkbox(field = analystForm("contractSigned"), '_label -> "Contract signed:", 'disabled -> "")
+                                <input type="hidden" id="disContractSigned" name="disContractSigned"
+                                       value='@analystForm.field("contractSigned").value()' />
+                            }
+                        </div>
+
+                        <!-- Column 2 -->
+                        <div class="col-lg-6">
+                            @inputText(analystForm("skype"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Skype:")
+
+                            <!-- Enable Wiki username if an admin user, manager or staff member -->
+                            @if(user.isAdminOrManagerOrStaff()) {
+                            @inputText(analystForm("wikiUsername"), 'style -> "width: 100%", '_label -> "Wiki username:")
+                            } else {
+                            @inputText(analystForm("wikiUsername"), 'style -> "width: 100%", '_label -> "Wiki username:", 'disabled -> "")
+                            }
+
+                            @inputText(analystForm("highriseAccount"), 'style -> "width: 100%", '_label -> "Highrise account:")
+                        </div>
+
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <!-- Row 4 -->
+                    <div class="row">
+
+                        <!-- Column 1 -->
+                        <div class="col-lg-12">
+                            @textarea(analystForm("positionDescription"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Position:")
+                            @textarea(analystForm("biography"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Biography:")
+                            @textarea(analystForm("academic"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Academic:")
+
+                            <!-- Notes are hidden because they are managed by the notes tab -->
+                            <input type="hidden" id="notes" name="notes" value='@analystForm.field("notes").value()' />
+
+                            @textarea(analystForm("expertise"), 'style -> "width: 100%", 'rows -> "5", '_label -> "Expertise:")
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
 
             <!-- Display the list of assigned desks and a means to add one -->
