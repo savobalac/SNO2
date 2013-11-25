@@ -97,14 +97,8 @@
         </div>
     </fieldset>
 
-    <!-- This div shows a warning message that the user must be saved first (used for Ajax calls) -->
-    <div class="alert alert-warning alert-dismissable" id="saveWarning">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        Please save the new user first.
-    </div>
-
     <!-- This div shows an error message if there was an error with an Ajax call -->
-    <div class="alert alert-danger alert-dismissable" id="ajaxError">
+    <div class="alert alert-danger alert-dismissable" id="ajaxError" style="display:none">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <span id="ajaxErrorMsg"></span>
     </div>
@@ -134,58 +128,22 @@
 
         // Get embedded html via Ajax after the document has loaded
         $(document).ready(function(){
-            $('#saveWarning').hide();
-            $('#ajaxError').hide();
             getGroups();
         });
 
-        // Get groups
+        // Get groups (getDetail() and changeDetail() are in main.scala.html)
         function getGroups() {
             getDetail("/users/@id/groups", "#divGroups");
         }
 
         // Add a group to the user
         function addGroup() {
-            if(@id==0) {
-                $('#saveWarning').show();
-            } else {
-                $("#ajaxError").hide();
-                var url = "/users/@id/addGroup/" + $("#newGroup").val();
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    dataType: 'html',
-                    traditional: true,
-                    success: function (returnedData) {
-                        if(returnedData=='OK') {
-                            getGroups();
-                        } else {
-                            $("#ajaxErrorMsg").text(returnedData);
-                            $("#ajaxError").show();
-                        }
-                    }
-                });
-            }
+            changeDetail("/users/@id/addGroup/" + $("#newGroup").val(), "/users/@id/groups", "#divGroups");
         }
 
         // Delete a group from the user
-        function delGroup(deskId) {
-            $("#ajaxError").hide();
-            var url = "/users/@id/delGroup/" + deskId;
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    if(returnedData=='OK') {
-                        getGroups();
-                    } else {
-                        $("#ajaxErrorMsg").text(returnedData);
-                        $("#ajaxError").show();
-                    }
-                }
-            });
+        function delGroup(groupId) {
+            changeDetail("/users/@id/delGroup/" + groupId, "/users/@id/groups", "#divGroups");
         }
 
     </script>

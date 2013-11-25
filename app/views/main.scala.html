@@ -112,9 +112,10 @@
         <!-- This script is used to show a loading message (for ajax calls) -->
         <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery.blockUI.js")'></script>
 
+        <!-- Ajax functions used by the edit pages -->
         <script type="text/javascript">
 
-            // Get the detail assigned to the parent record, e.g. Analyst (and prevent caching in IE)
+            // Gets the detail assigned to the parent record, e.g. desks for an Analyst (prevent caching in IE)
             function getDetail(url, div) {
                 $.ajax({
                     type: "GET",
@@ -128,7 +129,54 @@
                 });
             }
 
-            // Replace the inner content of the submitted region (this function needs to be below any calls to it)
+            // Adds or deletes details to/from the parent record, e.g. a desk to/from an Analyst
+            function changeDetail(postUrl, getUrl, div) {
+                $("#ajaxError").hide();
+                $.ajax({
+                    type: "POST",
+                    url: postUrl,
+                    dataType: 'html',
+                    traditional: true,
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            getDetail(getUrl, div); // Get the new detail
+                        } else {
+                            $("#ajaxErrorMsg").text(returnedData);
+                            $("#ajaxError").show();
+                        }
+                    }
+                });
+            }
+
+            // Uploads detail to the parent record, e.g. a profile image to an Analyst
+            function uploadDetail(postUrl, getUrl, div, form, field) {
+
+                // Hide any existing errors
+                $("#ajaxError").hide();
+
+                // Show a loading message
+                $.blockUI({ message: $('#domMessage') });
+
+                $(form)
+                .ajaxSubmit({
+                    url:    postUrl,
+                    type:   "POST",
+                    dataType: "text",
+                    success: function (returnedData) {
+                        if(returnedData=='OK') {
+                            getDetail(getUrl, div); // Get the new detail
+                            $(field).val(""); // Reset the field
+                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
+                        } else {
+                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
+                            $("#ajaxErrorMsg").text(returnedData);
+                            $("#ajaxError").show();
+                        }
+                    }
+                });
+            }
+
+            // Replace the HTML content of the region (this function needs to be below any calls to it)
             function replaceRegionContents(regionId, newContent) {
                 $(regionId).empty();                // Clear
                 $(newContent).appendTo(regionId);   // Repopulate

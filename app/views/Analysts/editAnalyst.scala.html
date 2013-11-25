@@ -62,7 +62,7 @@
                     <div class="row">
 
                         <!-- Column 1 -->
-                        <div class="col-lg-5">
+                        <div class="col-lg-6">
                             @select(
                                 analystForm("salutation"),
                                 options(utils.Utils.getTitles),
@@ -70,18 +70,18 @@
                             )
 
                             <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
-                            @inputText(analystForm("firstname"), 'style -> "width: 75%", '_label -> "Forename:", '_showConstraints -> false)
-                            @inputText(analystForm("lastname"), 'style -> "width: 75%", '_label -> "Surname:", '_showConstraints -> false)
+                            @inputText(analystForm("firstname"), 'style -> "width: 50%", '_label -> "Forename:", '_showConstraints -> false)
+                            @inputText(analystForm("lastname"), 'style -> "width: 50%", '_label -> "Surname:", '_showConstraints -> false)
 
                             <br>
                             <br>
 
-                            @inputText(analystForm("email"), 'style -> "width: 75%", '_label -> "Email:")
+                            @inputText(analystForm("email"), 'style -> "width: 50%", '_label -> "Email:")
 
                             <!-- Show Alternate email if an admin user or manager -->
                             <!-- When hiding fields, use a hidden field to ensure updates work -->
                             @if(user.isAdminOrManager()) {
-                                @inputText(analystForm("emailAlternate"), 'style -> "width: 75%", '_label -> "Alternate email:")
+                                @inputText(analystForm("emailAlternate"), 'style -> "width: 50%", '_label -> "Alternate email:")
                             } else {
                                 <input type="hidden" id="emailAlternate" name="emailAlternate"
                                        value='@analystForm.field("emailAlternate").value()' />
@@ -89,7 +89,7 @@
 
                             <!-- Show PayPal account email if an admin user, manager or staff member -->
                             @if(user.isAdminOrManagerOrStaff()) {
-                                @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 75%", '_label -> "PayPal account email:")
+                                @inputText(analystForm("paypalAccountEmail"), 'style -> "width: 50%", '_label -> "PayPal account email:")
                             } else {
                                 <input type="hidden" id="paypalAccountEmail" name="paypalAccountEmail"
                                        value='@analystForm.field("paypalAccountEmail").value()' />
@@ -98,11 +98,11 @@
                             <br>
                             <br>
 
-                            @inputText(analystForm("mobile"), 'style -> "width: 75%", '_label -> "Mobile:")
+                            @inputText(analystForm("mobile"), 'style -> "width: 50%", '_label -> "Mobile:")
 
                             <!-- Show Phone if an admin user or manager -->
                             @if(user.isAdminOrManager()) {
-                                @inputText(analystForm("phone"), 'style -> "width: 75%", '_label -> "Phone:")
+                                @inputText(analystForm("phone"), 'style -> "width: 50%", '_label -> "Phone:")
                             } else {
                                 <input type="hidden" id="phone" name="phone" value='@analystForm.field("phone").value()' />
                             }
@@ -140,7 +140,7 @@
                         </div>
 
                         <!-- Column 2 -->
-                        <div class="col-lg-5">
+                        <div class="col-lg-6">
                             <!-- Enable Rank if an admin user, manager or staff member -->
                             @if(user.isAdminOrManagerOrStaff()) {
                                 @select(
@@ -176,12 +176,12 @@
 
                             <!-- Show address fields if an admin user, manager or staff member -->
                             @if(user.isAdminOrManagerOrStaff()) {
-                                @inputText(analystForm("address1"), 'style -> "width: 75%", '_label -> "Address:")
-                                @inputText(analystForm("address2"), 'style -> "width: 75%", '_label -> "")
-                                @inputText(analystForm("city"), 'style -> "width: 75%", '_label -> "City:")
-                                @inputText(analystForm("state"), 'style -> "width: 75%", '_label -> "State:")
-                                @inputText(analystForm("zip"), 'style -> "width: 75%", '_label -> "Zip code:")
-                                @inputText(analystForm("country"), 'style -> "width: 75%", '_label -> "Country:")
+                                @inputText(analystForm("address1"), 'style -> "width: 50%", '_label -> "Address:")
+                                @inputText(analystForm("address2"), 'style -> "width: 50%", '_label -> "")
+                                @inputText(analystForm("city"), 'style -> "width: 50%", '_label -> "City:")
+                                @inputText(analystForm("state"), 'style -> "width: 50%", '_label -> "State:")
+                                @inputText(analystForm("zip"), 'style -> "width: 50%", '_label -> "Zip code:")
+                                @inputText(analystForm("country"), 'style -> "width: 50%", '_label -> "Country:")
                             } else {
                                 <input type="hidden" id="address1" name="address1" value='@analystForm.field("address1").value()' />
                                 <input type="hidden" id="address2" name="address2" value='@analystForm.field("address2").value()' />
@@ -191,21 +191,21 @@
                                 <input type="hidden" id="country" name="country" value='@analystForm.field("country").value()' />
                             }
 
-                            @inputText(analystForm("countryOfResidence"), 'style -> "width: 75%", '_label -> "Country of residence:")
+                            @inputText(analystForm("countryOfResidence"), 'style -> "width: 50%", '_label -> "Country of residence:")
 
                             <br>
                             <br>
 
-                            @inputText(analystForm("skype"), 'style -> "width: 75%", 'rows -> "5", '_label -> "Skype:")
+                            @inputText(analystForm("skype"), 'style -> "width: 50%", 'rows -> "5", '_label -> "Skype:")
 
                             <!-- Enable Wiki username if an admin user, manager or staff member -->
                             @if(user.isAdminOrManagerOrStaff()) {
-                               @inputText(analystForm("wikiUsername"), 'style -> "width: 75%", '_label -> "Wiki username:")
+                               @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:")
                             } else {
-                              @inputText(analystForm("wikiUsername"), 'style -> "width: 75%", '_label -> "Wiki username:", 'disabled -> "")
+                              @inputText(analystForm("wikiUsername"), 'style -> "width: 50%", '_label -> "Wiki username:", 'disabled -> "")
                             }
 
-                            @inputText(analystForm("highriseAccount"), 'style -> "width: 75%", '_label -> "Highrise account:")
+                            @inputText(analystForm("highriseAccount"), 'style -> "width: 50%", '_label -> "Highrise account:")
                         </div>
                     </div>
 
@@ -262,14 +262,8 @@
         </div>
     </fieldset>
 
-    <!-- This div shows a warning message that the analyst must be saved first -->
-    <div class="alert alert-warning alert-dismissable" id="saveWarning">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        Please save the new analyst first.
-    </div>
-
     <!-- This div shows an error message if there was an error with an Ajax call -->
-    <div class="alert alert-danger alert-dismissable" id="ajaxError">
+    <div class="alert alert-danger alert-dismissable" id="ajaxError" style="display:none">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <span id="ajaxErrorMsg"></span>
     </div>
@@ -303,17 +297,15 @@
 
     <script type="text/javascript">
 
-        // Get embedded html via Ajax after the document has loaded
+        // Get tab HTML using Ajax after the document has loaded
         $(document).ready(function(){
-            $('#saveWarning').hide();
-            $('#ajaxError').hide();
             getDesks();
             getNotes();
             getProfileImage();
             getCvDocument();
         });
 
-        // Get desks
+        // Get desks (getDetail(), changeDetail() and uploadDetail() are in main.scala.html)
         function getDesks() {
             getDetail("/analysts/@id/desks", "#divDesks");
         }
@@ -335,128 +327,29 @@
 
         // Add a desk to the analyst
         function addDesk() {
-            if(@id==0) {
-                $('#saveWarning').show();
-            } else {
-                $("#ajaxError").hide();
-                var url = "/analysts/@id/addDesk/" + $("#newDesk").val();
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    dataType: 'html',
-                    traditional: true,
-                    success: function (returnedData) {
-                        if(returnedData=='OK') {
-                            getDesks();
-                        } else {
-                            $("#ajaxErrorMsg").text(returnedData);
-                            $("#ajaxError").show();
-                        }
-                    }
-                });
-            }
+            changeDetail("/analysts/@id/addDesk/" + $("#newDesk").val(), "/analysts/@id/desks", "#divDesks");
         }
 
         // Delete a desk from the analyst
         function delDesk(deskId) {
-            $("#ajaxError").hide();
-            var url = "/analysts/@id/delDesk/" + deskId;
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    if(returnedData=='OK') {
-                        getDesks();
-                    } else {
-                        $("#ajaxErrorMsg").text(returnedData);
-                        $("#ajaxError").show();
-                    }
-                }
-            });
+            changeDetail("/analysts/@id/delDesk/" + deskId, "/analysts/@id/desks", "#divDesks");
         }
 
         // Delete a note from the analyst
         function delNote(noteId) {
-            $("#ajaxError").hide();
-            var url = "/analysts/@id/delNote/" + noteId;
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: 'html',
-                traditional: true,
-                success: function (returnedData) {
-                    if(returnedData=='OK') {
-                        getNotes();
-                    } else {
-                        $("#ajaxErrorMsg").text(returnedData);
-                        $("#ajaxError").show();
-                    }
-                }
-            });
+            changeDetail("/analysts/@id/delNote/" + noteId, "/analysts/@id/notes", "#divNotes");
         }
 
         // Upload a profile image
         function uploadProfileImage() {
-            if(@id==0) {
-                $('#saveWarning').show();
-            } else {
-                $("#ajaxError").hide();
-
-                // Show a loading message
-                $.blockUI({ message: $('#domMessage') });
-
-                var url = '/analysts/' + @id + '/uploadProfileImage';
-                $("#analystForm")
-                .ajaxSubmit({
-                    url:    url,
-                    type:   "post",
-                    dataType: "text",
-                    success: function (returnedData) {
-                        if(returnedData=='OK') {
-                            getProfileImage();
-                            $("#profile").val("");
-                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
-                        } else {
-                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
-                            $("#ajaxErrorMsg").text(returnedData);
-                            $("#ajaxError").show();
-                        }
-                    }
-                });
-            }
+            uploadDetail("/analysts/" + @id + "/uploadProfileImage",
+                         "/analysts/@id/profileImage", "#divProfileImage", "#analystForm", "#profile");
         }
 
         // Upload a CV document
         function uploadCvDocument() {
-            if(@id==0) {
-                $('#saveWarning').show();
-            } else {
-                $("#ajaxError").hide();
-
-                // Show a loading message
-                $.blockUI({ message: $('#domMessage') });
-
-                var url = '/analysts/' + @id + '/uploadCvDocument';
-                $("#analystForm")
-                .ajaxSubmit({
-                    url:    url,
-                    type:   "post",
-                    dataType: "text",
-                    success: function (returnedData) {
-                        if(returnedData=='OK') {
-                            getCvDocument();
-                            $("#document").val("");
-                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
-                        } else {
-                            setTimeout($.unblockUI, 500); // Remove the loading message (after 500 ms)
-                            $("#ajaxErrorMsg").text(returnedData);
-                            $("#ajaxError").show();
-                        }
-                    }
-                });
-            }
+            uploadDetail("/analysts/" + @id + "/uploadCvDocument",
+                         "/analysts/@id/cvDocument", "#divCvDocument", "#analystForm", "#document");
         }
 
     </script>
