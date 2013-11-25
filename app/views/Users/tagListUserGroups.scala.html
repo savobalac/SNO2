@@ -10,10 +10,10 @@
 
 @( user: User )
 
-@if(user.id==0) {
+@if(user == null || user.id == 0) {
 
     <div class="well">
-        <em>New user must be saved before groups can be added</em>
+        <em>New user must be saved before groups can be added.</em>
     </div>
 
 } else {
