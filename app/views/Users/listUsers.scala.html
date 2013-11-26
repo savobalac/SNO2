@@ -71,19 +71,25 @@
                 <input type="search" class="form-control" placeholder="Search by name" id="searchbox" name="t" value="@currentSearch">
             </div>
             <div class="form-group">
-                <a class="btn btn-default" href="JAVASCRIPT:frmFilter.submit()" rel="tooltip" title="Search by full name">
+                <a class="btn btn-default" href="JAVASCRIPT:frmFilter.submit()" rel="tooltip" title="Search by full name" role="button">
                     <i class="glyphicon glyphicon-search"></i>
                 </a>
             </div>
 
-            &nbsp;
-            <label for="f">Groups:</label>
-            <select id="f" name="f" onchange="setGroup(); this.form.submit();">
-                <option value="" selected>ALL</option>
-                @for(group <- Group.getAll()) {
-                    <option value="@group.name" @if(group.name==currentFilter){ selected }>@group.name</option>
-                }
-            </select>
+            &nbsp;&nbsp;
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <label for="f">Group</label>
+                </div>
+                <div class="col-sm-9">
+                    <select id="f" name="f" class="form-control" onchange="setGroup(); this.form.submit();">
+                        <option value="" selected>ALL</option>
+                        @for(group <- Group.getAll()) {
+                            <option value="@group.name" @if(group.name==currentFilter){ selected }>@group.name</option>
+                        }
+                    </select>
+                </div>
+            </div>
         </form>
         <br>
     </div>
@@ -144,7 +150,7 @@
 
     }
 
-    <a class="btn btn-success" id="add" href="@routes.Users.create()">New User</a>
+    <a class="btn btn-success" role="button" id="add" href="@routes.Users.create()">New User</a>
 
     <hr>
 

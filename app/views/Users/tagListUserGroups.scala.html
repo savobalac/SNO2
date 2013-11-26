@@ -13,7 +13,7 @@
 @if(user == null || user.id == 0) {
 
     <div class="well">
-        <em>New user must be saved before groups can be added.</em>
+        <em>New user must be saved before groups can be added</em>
     </div>
 
 } else {
@@ -42,21 +42,22 @@
         </div>
     }
 
-    <br>
-
     <!-- Allow a group to be added (addGroup() is in editUser) -->
-    <label for="divAddGroup">Add Group:</label>
-    <div id="divAddGroup" class="col-4">
-        <input type="Hidden" id="userId" name="userId" value="@user.id" />
-        <select id="newGroup" name="newGroup">
-            @for(group <- Group.getAll()) {
-                <option value="@group.id">@group.name</option>
-            }
-        </select>
-        <a class="btn btn-success btn-xs" id="addGroup" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
-            <i class="glyphicon glyphicon-plus icon-white"></i> Add
-        </a>
+    <div class="form-group">
+        <label for="divAddGroup">Add Group</label>
+        <div id="divAddGroup" class="col-4">
+            <input type="Hidden" id="userId" name="userId" value="@user.id" />
+            <div class="col-sm-2">
+                <select id="newGroup" name="newGroup" class="form-control">
+                    @for(group <- Group.getAll()) {
+                        <option value="@group.id">@group.name</option>
+                    }
+                </select>
+            </div>
+            <a class="btn btn-success" id="addGroup" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
+                <i class="glyphicon glyphicon-plus icon-white"></i> Add
+            </a>
+        </div>
     </div>
-    <br>
 
 }

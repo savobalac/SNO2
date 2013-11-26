@@ -33,7 +33,7 @@
     }
     <hr>
 
-    @form(routes.Users.update(id), 'id -> "userForm") {
+    @form(routes.Users.update(id), 'id -> "userForm", 'role -> "form") {
     <fieldset>
         <!-- id needs to be set, otherwise it will be null on update -->
         <input type="Hidden" id="id" name="id" value="@id" />
@@ -56,33 +56,48 @@
             <div class="tab-pane active" id="tabDetails">
 
                 <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
-                @inputText(userForm("fullname"), 'style -> "width: 50%", '_label -> "Name:", '_showConstraints -> false)
-                @inputText(userForm("email"), 'style -> "width: 50%", '_label -> "Email:", '_showConstraints -> false)
+                <div class="form-group">
+                    @inputText(userForm("fullname"), 'class -> "form-control", '_label -> "Name",
+                                                     'style -> "width: 50%", '_showConstraints -> false)
+                </div>
+                <div class="form-group">
+                    @inputText(userForm("email"), 'class -> "form-control", '_label -> "Email",
+                                                  'style -> "width: 50%", '_showConstraints -> false)
+                </div>
 
                 <!-- Hide the username field if the user has been created -->
                 @if(id==0) {
-                    @inputText(userForm("username"), 'style -> "width: 50%", '_label -> "Username:", '_showConstraints -> false)
+                    <div class="form-group">
+                        @inputText(userForm("username"), 'class -> "form-control", '_label -> "Username",
+                                                         'style -> "width: 50%", '_showConstraints -> false)
+                    </div>
                 } else {
-                    <input type="hidden" id="username" name="username" value='@userForm.field("username").value()' />
-                    <br>
-                    <strong>Username:</strong>
-                    <br>
-                    @userForm.field("username").value()
+                    <div class="form-group">
+                        <input type="hidden" id="username" name="username" value='@userForm.field("username").value()' />
+                        <strong>Username</strong>
+                        <br>
+                        @userForm.field("username").value()
+                    </div>
                 }
 
                 <!-- Hide the password field and show a change password button if the user has been created -->
                 @if(id==0) {
-                    @inputPassword(userForm("password"), 'style -> "width: 50%", '_label -> "Password:", '_showConstraints -> false)
-                    @inputPassword(userForm("confirmPassword"), 'style -> "width: 50%",
-                                                                '_label -> "Confirm Password:", '_showConstraints -> false)
+                    <div class="form-group">
+                        @inputPassword(userForm("password"), 'class -> "form-control", '_label -> "Password",
+                                                             'style -> "width: 50%", '_showConstraints -> false)
+                    </div>
+                    <div class="form-group">
+                        @inputPassword(userForm("confirmPassword"), 'class -> "form-control", '_label -> "Confirm Password",
+                                                                    'style -> "width: 50%", '_showConstraints -> false)
+                    </div>
                 } else {
-                    <input type="hidden" id="password" name="password" value='@userForm.field("password").value()' />
-                    <br>
-                    <br>
-                    <a class="btn btn-success btn-xs" href="/users/@id/password"
-                       rel="tooltip" title="Change Password" style="vertical-align:top">
-                        <i class="glyphicon icon-white"></i> Change Password
-                    </a>
+                    <div class="form-group">
+                        <input type="hidden" id="password" name="password" value='@userForm.field("password").value()' />
+                        <a class="btn btn-success btn-xs" href="/users/@id/password"
+                           rel="tooltip" title="Change Password" style="vertical-align:top" role="button">
+                            <i class="glyphicon icon-white"></i> Change Password
+                        </a>
+                    </div>
                 }
             </div>
 
@@ -105,17 +120,17 @@
 
     <hr>
     <div class="actions">
-        <input type="submit" value="Save" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary">Save</button>
         <!-- If an admin user is amending another user, cancel goes to the list page, otherwise to the home page -->
         <a href="@if(user.isAdmin()&&(id!=user.id)){@routes.Users.list()} else {@routes.Application.index()}"
-           class="btn btn-warning">Cancel</a>
+           class="btn btn-warning" role="button">Cancel</a>
     </div>
     }
 
     <!-- Only admin users can delete existing users (and they can't delete themselves) -->
     @if(user.isAdmin()&&(id!=user.id)&&id!=0) {
         @form(routes.Users.delete(id), 'id -> "deleteForm", 'class -> "topRight") {
-            <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
+            <button type="submit" id="DELETE" class="btn btn-danger btn-xs">DELETE</button>
         }
     }
 

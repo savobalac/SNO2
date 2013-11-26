@@ -53,8 +53,8 @@
 
         <hr>
         <div class="actions">
-            <input type="submit" value="Save" class="btn btn-primary">
-            <a href="/analysts/@analystId" class="btn btn-warning">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="/analysts/@analystId" class="btn btn-warning" role="button">Cancel</a>
         </div>
     }
     <hr>
@@ -83,7 +83,7 @@
     <!-- New notes can't be deleted as they haven't been saved yet -->
     @if((noteId!=0)) {
         @form(routes.Analysts.deleteNote(analystId, noteId), 'id -> "deleteForm", 'class -> "topRight") {
-            <input type="submit" value="DELETE" id="DELETE" class="btn btn-danger btn-xs">
+            <button type="submit" id="DELETE" class="btn btn-danger btn-xs">DELETE</button>
         }
     }
 

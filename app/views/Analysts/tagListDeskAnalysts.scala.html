@@ -13,7 +13,7 @@
 @if(analyst == null || analyst.analystId == 0) {
 
     <div class="well">
-        <em>New analyst must be saved before desks can be added.</em>
+        <em>New analyst must be saved before desks can be added</em>
     </div>
 
 } else {
@@ -42,21 +42,22 @@
         </div>
     }
 
-    <br>
-
     <!-- Allow a desk to be added (addDesk() is in editAnalyst) -->
-    <label for="divAddDesk">Add Desk:</label>
-    <div id="divAddDesk" class="col-4">
-        <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
-        <select id="newDesk" name="newDesk">
-            @for(desk <- Desk.getAll()) {
-                <option value="@desk.deskId">@desk.name</option>
-            }
-        </select>
-        <a class="btn btn-success btn-xs" id="addDesk" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
-            <i class="glyphicon glyphicon-plus icon-white"></i> Add
-        </a>
+    <div class="form-group">
+        <label for="divAddDesk">Add Desk</label>
+        <div id="divAddDesk" class="col-4">
+            <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
+            <div class="col-sm-4">
+                <select id="newDesk" name="newDesk" class="form-control">
+                    @for(desk <- Desk.getAll()) {
+                        <option value="@desk.deskId">@desk.name</option>
+                    }
+                </select>
+            </div>
+            <a class="btn btn-success" id="addDesk" href="#" rel="tooltip" title="Add Desk" style="vertical-align:top" onclick="addDesk();">
+                <i class="glyphicon glyphicon-plus icon-white"></i> Add
+            </a>
+        </div>
     </div>
-    <br>
 
 }
