@@ -101,7 +101,9 @@ public class Test5Fields extends FluentTest {
                 findFirst("#phoneVerified").isEnabled() &&
                 findFirst("#contractSigned").isEnabled() &&
                 findFirst("#wikiUsername").isEnabled()) {
-                System.out.println("Staff Test passed");
+                System.out.println("Staff Test passed.");
+            } else {
+                System.out.println("Staff Test FAILED.");                
             }
 
             // Other users shouldn't see Alternate email, PayPal account email, Phone and Address fields
@@ -143,7 +145,9 @@ public class Test5Fields extends FluentTest {
                   findFirst("#phoneVerified").isEnabled() &&
                   findFirst("#contractSigned").isEnabled() &&
                   findFirst("#wikiUsername").isEnabled())) {
-                System.out.println("User Test passed");
+                System.out.println("User Test passed.");
+            } else {
+                System.out.println("User Test FAILED.");
             }
         }
     }
@@ -188,7 +192,9 @@ public class Test5Fields extends FluentTest {
             findFirst("#phoneVerified").isEnabled() &&
             findFirst("#contractSigned").isEnabled() &&
             findFirst("#wikiUsername").isEnabled()) {
-            System.out.println(group + " Test passed");
+            System.out.println(group + " Test passed.");
+        } else {
+            System.out.println(group + " Test FAILED.");            
         }
     }
 
