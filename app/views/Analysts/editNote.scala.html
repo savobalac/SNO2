@@ -40,15 +40,21 @@
 
     <hr>
 
-    @form(routes.Analysts.updateNote(analystId, noteId), 'id -> "notesForm") {
+    @form(routes.Analysts.updateNote(analystId, noteId), 'id -> "notesForm", 'role -> "form") {
         <fieldset>
             <!-- The note id needs to be set, otherwise it will be null on update -->
             <input type="hidden" id="noteId" name="noteId" value="@noteId" />
 
-            <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
-            @inputText(noteForm("title"), 'style -> "width: 75%", '_label -> "Subject:", '_showConstraints -> false)
-            <br>
-            @textarea(noteForm("content"), 'style -> "width: 100%", 'rows -> "15", '_label -> "Content:", '_showConstraints -> false)
+            <div class="form-group">
+                <!-- Setting showConstraints to false will prevent "Required" from being displayed -->
+                @inputText(noteForm("title"), 'class -> "form-control", 'style -> "width: 75%",
+                                              '_label -> "Subject", '_showConstraints -> false)
+            </div>
+            <div class="form-group">
+                <!-- Bootstrap shows 80% of the rows declared, so multiply 10 by 1.25 -->
+                @textarea(noteForm("content"), 'class -> "form-control", 'style -> "width: 100%",
+                                               'rows -> "13", '_label -> "Content", '_showConstraints -> false)
+            </div>
         </fieldset>
 
         <hr>

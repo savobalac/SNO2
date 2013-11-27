@@ -45,7 +45,7 @@
     <!-- Allow a group to be added (addGroup() is in editUser) -->
     <div class="form-group">
         <label for="divAddGroup">Add Group</label>
-        <div id="divAddGroup" class="col-4">
+        <div id="divAddGroup" class="col-4"">
             <input type="Hidden" id="userId" name="userId" value="@user.id" />
             <div class="col-sm-2">
                 <select id="newGroup" name="newGroup" class="form-control">
@@ -54,7 +54,7 @@
                     }
                 </select>
             </div>
-            <a class="btn btn-success" id="addGroup" href="#" rel="tooltip" title="Add Group" style="vertical-align:top" onclick="addGroup();">
+            <a class="btn btn-success btn-xs" id="addGroup" href="#" rel="tooltip" title="Add Group" onclick="addGroup();">
                 <i class="glyphicon glyphicon-plus icon-white"></i> Add
             </a>
         </div>
