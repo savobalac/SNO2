@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Tests a user can be created using a browser (via Selenium and FluentLenium API).
@@ -40,11 +40,10 @@ public class Test1Create extends FluentTest {
 
         // Check that the New User page is showing
         goTo("http://localhost:9000/users/new");
-        assertThat(title().contentEquals("New User"));
-        assertThat(find("#newUser").contains("New User")); // Check the main heading
+        assertTrue("Title not equal to new user", title().contentEquals("New User"));
 
         // Add the required fields and save
-        fill("#fullname").with("New User Created by Testing");
+        fill("#fullname").with("A New User Created by Testing");
         fill("#email").with("newuser@testing.com");
         fill("#username").with("newuser");
         fill("#password").with("password");
@@ -52,8 +51,8 @@ public class Test1Create extends FluentTest {
         submit("#userForm");
 
         // Check that we're on the list users page and that a new user has been created
-        assertThat(url().contentEquals("http://localhost:9000/users"));
-        assertThat(pageSource().contains("User: New User Created by Testing has been created."));
+        assertTrue("URL not the list users page", url().contentEquals("http://localhost:9000/users"));
+        assertTrue("User not created", pageSource().contains("User: A New User Created by Testing has been created."));
     }
 
 

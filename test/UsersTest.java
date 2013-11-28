@@ -5,6 +5,7 @@ import org.junit.Test;
 import play.libs.WS;
 import play.mvc.Result;
 
+import static org.junit.Assert.*;
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
@@ -41,8 +42,8 @@ public class UsersTest {
                 Result res = route(fakeRequest("GET", "/users")
                         .withSession("message", "SNO2")
                         .withSession("user", "savbalac"));
-                assert(contentAsString(res).contains("Users"));
-                assert(contentAsString(res).contains("<a id=\"1\" class=\"id\" href=\"/users/1\">")); // user id = 1
+                assertThat(contentAsString(res).contains("Users"));
+                assertThat(contentAsString(res).contains("<a id=\"1\" class=\"id\" href=\"/users/1\">")); // user id = 1
             }
         });
     }
@@ -55,7 +56,7 @@ public class UsersTest {
     public void testListUsersInServer() {
         running(testServer(3333), new Runnable() {
             public void run() {
-                assertThat(WS.url("http://localhost:3333/users").get().get(2000).getStatus()).isEqualTo(OK); // 2000ms timeout
+                assertEquals(OK, WS.url("http://localhost:3333/users").get().get(2000).getStatus()); // 2000ms timeout
                 assertThat(WS.url("http://localhost:3333/users").get().get(2000).getBody().contains("<h2 id=\"homeTitle\">Users"));
             }
         });

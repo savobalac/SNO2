@@ -3,7 +3,7 @@ package browser.Application;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Tests the login and index pages using a browser (via Selenium and FluentLenium API).
@@ -26,10 +26,10 @@ public class ApplicationTest extends FluentTest {
         fill("#username").with("savbalac");
         fill("#password").with("h0tsp0t");
         submit("#signIn");
-        assertThat(url().contentEquals("http://localhost:9000/")); // The home (index) page
-        assertThat(title().contentEquals("SNO2"));
-        assertThat(pageSource().contains("Home"));
-        assertThat(pageSource().contains("Savo Balac"));
+        assertTrue("URL not equal to the home page", url().contentEquals("http://localhost:9000/")); // The home (index) page
+        assertTrue("Title not equal to SNO2", title().contentEquals("SNO2"));
+        assertTrue("Not the Home page", pageSource().contains("Hom"));
+        assertTrue("User is not Savo Balac", pageSource().contains("Savo Balac"));
     }
 
 
@@ -39,10 +39,10 @@ public class ApplicationTest extends FluentTest {
     @Test
     public void testSignOut() {
         goTo("http://localhost:9000/logout");
-        assertThat(url().contentEquals("http://localhost:9000/login")); // The sign in page
-        assertThat(title().contentEquals("Sign in to SNO2"));
-        assertThat(pageSource().contains("Sign in to SNO2"));
-        assertThat(pageSource().contains("You have signed out."));
+        assertTrue("URL not equal to the sign in page", url().contentEquals("http://localhost:9000/login")); // The sign in page
+        assertTrue("Title not equal to Sign in to SNO2", title().contentEquals("Sign in to SNO2"));
+        assertTrue("Not the Sign in page", pageSource().contains("Sign in to SNO2"));
+        assertTrue("No signed out message displayed", pageSource().contains("You have signed out."));
     }
 
 

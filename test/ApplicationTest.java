@@ -4,6 +4,7 @@ import play.libs.WS;
 import play.mvc.*;
 import play.test.*;
 import play.libs.F.*;
+import static org.junit.Assert.*;
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.*;
 
@@ -36,7 +37,7 @@ public class ApplicationTest {
         running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
                 browser.goTo("http://localhost:3333");
-                assertThat(browser.pageSource()).contains("Sign in to SNO2");
+                assertTrue(browser.pageSource().contains("Sign in to SNO2"));
             }
         });
     }
@@ -53,8 +54,7 @@ public class ApplicationTest {
                 Result res = route(fakeRequest("GET", "/")
                                 .withSession("message", "SNO2")
                                 .withSession("user", "savbalac"));
-                assert(contentAsString(res).contains("Home"));
-                assert(contentAsString(res).contains("Savo Balac"));
+                assertThat(contentAsString(res).contains("Savo Balac"));
             }
         });
     }
@@ -66,7 +66,7 @@ public class ApplicationTest {
     @Test
     public void testBadRoute() {
         Result result = route(fakeRequest(GET, "/xx/Kiki"));
-        assertThat(result).isNull();
+        assertNull(result);
     }
 
 
@@ -77,8 +77,8 @@ public class ApplicationTest {
     public void testInServer() {
         running(testServer(3333), new Runnable() {
             public void run() {
-                assertThat(WS.url("http://localhost:3333").get().get(2000).getStatus()).isEqualTo(OK); // 2000ms timeout
-                assertThat(WS.url("http://localhost:3333").get().get(2000).getBody().contains("Sign in to SNO2"));
+                assertEquals("Status not OK", OK, WS.url("http://localhost:3333").get().get(2000).getStatus()); // 2000ms timeout
+                assertTrue("Not the Sign in page", WS.url("http://localhost:3333").get().get(2000).getBody().contains("Sign in to SNO2"));
             }
         });
     }

@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import utils.Utils;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 /**
@@ -46,47 +46,43 @@ public class Test4Notes extends FluentTest {
         goTo("http://localhost:9000/analysts");
 
         // Get the id of the newly-created analyst
-        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("Created by Testing, New Analyst"));
+        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("A New Analyst, Created by Testing"));
         String id;
         if (newAnalystLinks.size() == 1) { // There should only be one analyst with that name
             id = newAnalystLinks.first().getId();
             goTo("http://localhost:9000/analysts/" + id);
 
             // Check we are editing the new analyst
-            assertThat(title().contentEquals("New Analyst Created by Testing"));
-            assertThat(find("#analystName").contains("Analyst: New Analyst Created by Testing")); // Check the main heading
+            assertTrue("Page title not the new analyst", title().contentEquals("Created by Testing A New Analyst"));
 
             // Go to the add note page
             goTo("http://localhost:9000/analysts/" + id + "/note/new");
 
             // Check that the New Note page is showing with the correct analyst name
-            assertThat(title().contentEquals("New Note"));
-            assertThat(find("#newNote").contains("New Note")); // Check the heading
-            assertThat(find("#analystName").contains("Analyst: New Analyst Created by Testing")); // Check the heading
+            assertTrue("Page title not the new note", title().contentEquals("New Note"));
 
             // Add the required fields and save
-            fill("#title").with("New Subject Created by Testing");
-            fill("#content").with("New Content Created by Testing");
+            fill("#title").with("A New Subject Created by Testing");
+            fill("#content").with("A New Content Created by Testing");
             submit("#notesForm");
 
             // Check that we're on the edit analyst page and that the note was added
-            assertThat(url().contentEquals("http://localhost:9000/analysts/" + id));
-            assertThat(pageSource().contains("Note: New Subject Created by Testing has been created."));
+            assertTrue("URL not the edit analyst page", url().contentEquals("http://localhost:9000/analysts/" + id));
+            assertTrue("New note not created", pageSource().contains("Note: A New Subject Created by Testing has been created."));
 
             // Go to the notes page directly (html in tabs isn't available in the edit analyst page)
             goTo("http://localhost:9000/analysts/" + id + "/notes");
 
             // Get the id of the newly-created note
-            FluentList<FluentWebElement> newNoteLinks = find(".noteId", withText("New Subject Created by Testing"));
+            FluentList<FluentWebElement> newNoteLinks = find(".noteId", withText("A New Subject Created by Testing"));
             String noteId;
             if (newNoteLinks.size() == 1) { // There should only be one analyst with that name
+
                 noteId = newNoteLinks.first().getId();
                 goTo("http://localhost:9000/analysts/" + id + "/note/" + noteId);
 
                 // Check we are editing the new note
-                assertThat(title().contentEquals("New Subject Created by Testing"));
-                assertThat(find("#noteName").contains("New Subject Created by Testing")); // Check the heading
-                assertThat(find("#analystName").contains("Analyst: New Analyst Created by Testing")); // Check the heading
+                assertTrue("Title not the new note", title().contentEquals("A New Subject Created by Testing"));
 
                 // Edit the content field (with the current date and time) and save
                 String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
@@ -94,22 +90,22 @@ public class Test4Notes extends FluentTest {
                 submit("#notesForm");
 
                 // Check that we're on the edit analyst page and that the note was updated
-                assertThat(url().contentEquals("http://localhost:9000/analysts/" + id));
-                assertThat(pageSource().contains("Note: New Subject Created by Testing successfully updated."));
+                assertTrue("URL not the edit analyst page", url().contentEquals("http://localhost:9000/analysts/" + id));
+                assertTrue("New note not updated", pageSource().contains("Note: A New Subject Created by Testing successfully updated."));
 
                 // Check the content field was updated
                 goTo("http://localhost:9000/analysts/" + id + "/note/" + noteId);
-                assertThat(find("#content").contains(currentDateTime));
+                assertTrue("Content not updated", find("#content").getValue().equals(currentDateTime));
 
                 // Delete the note from its edit page
                 goTo("http://localhost:9000/analysts/" + id + "/note/" + noteId);
                 submit("#deleteForm");
 
                 // Check that we're on the edit analyst page and that the note is no longer in the list
-                assertThat(url().contentEquals("http://localhost:9000/analysts/" + id));
-                assertThat(pageSource().contains("Note: New Subject Created by Testing deleted."));
+                assertTrue("URL not the edit analyst page", url().contentEquals("http://localhost:9000/analysts/" + id));
+                assertTrue("Note not deleted", pageSource().contains("Note: A New Subject Created by Testing deleted."));
                 goTo("http://localhost:9000/analysts/" + id + "/notes");
-                assertThat(pageSource().contains("No notes"));
+                assertTrue("Note list not empty", pageSource().contains("No notes"));
             }
         }
     }

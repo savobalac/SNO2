@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Tests an analyst can be created using a browser (via Selenium and FluentLenium API).
@@ -40,17 +40,16 @@ public class Test1Create extends FluentTest {
 
         // Check that the New Analyst page is showing
         goTo("http://localhost:9000/analysts/new");
-        assertThat(title().contentEquals("New Analyst"));
-        assertThat(find("#newAnalyst").contains("New Analyst")); // Check the main heading
+        assertTrue("Title not equal to New Analyst", title().contentEquals("New Analyst"));
 
         // Add the required fields and save
-        fill("#firstname").with("New Analyst");
-        fill("#lastname").with("Created by Testing");
+        fill("#firstname").with("Created by Testing");
+        fill("#lastname").with("A New Analyst");
         submit("#analystForm");
 
         // Check that we're on the list analysts page and that a new analyst has been created
-        assertThat(url().contentEquals("http://localhost:9000/analysts"));
-        assertThat(pageSource().contains("Analyst: New Analyst Created by Testing has been created."));
+        assertTrue("URL not equal to the list analyst page", url().contentEquals("http://localhost:9000/analysts"));
+        assertTrue("Analyst not created", pageSource().contains("Analyst: Created by Testing A New Analyst has been created."));
     }
 
 

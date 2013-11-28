@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import utils.Utils;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 /**
@@ -47,15 +47,14 @@ public class Test3Update extends FluentTest {
         goTo("http://localhost:9000/users");
 
         // Get the id of the newly-created user
-        FluentList<FluentWebElement> newUserLinks = find(".userId", withText().contains("New User Created by Testing"));
+        FluentList<FluentWebElement> newUserLinks = find(".userId", withText().contains("A New User Created by Testing"));
         String id;
         if (newUserLinks.size() == 1) { // There should only be one user with that name
             id = newUserLinks.first().getId();
             goTo("http://localhost:9000/users/" + id);
 
             // Check we are editing the new user
-            assertThat(title().contentEquals("New User Created by Testing"));
-            assertThat(find("#usersName").contains("User: New User Created by Testing")); // Check the main heading
+            assertTrue("Page title not the new user", title().contentEquals("A New User Created by Testing"));
 
             // Edit the email field (with the current date and time) and save
             String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
@@ -63,12 +62,12 @@ public class Test3Update extends FluentTest {
             submit("#userForm");
 
             // Check that we're on the list users page and that the user was updated
-            assertThat(url().contentEquals("http://localhost:9000/users"));
-            assertThat(pageSource().contains("Analyst: New User Created by Testing successfully updated."));
+            assertTrue("URL not the list users page", url().contentEquals("http://localhost:9000/users"));
+            assertTrue("User not updated", pageSource().contains("User: A New User Created by Testing successfully updated."));
 
             // Check the email field was updated
             goTo("http://localhost:9000/users/" + id);
-            assertThat(find("#email").contains(currentDateTime));
+            assertTrue("Email field not updated", find("#email").getValue().equals(currentDateTime));
 
             // Change the user's password
             goTo("http://localhost:9000/users/" + id + "/password");
@@ -77,8 +76,8 @@ public class Test3Update extends FluentTest {
             submit("#userForm");
 
             // Check that we're on the user's page and that the password was updated
-            assertThat(url().contentEquals("http://localhost:9000/users/" + id));
-            assertThat(pageSource().contains("Password successfully updated."));
+            assertTrue("URL not the user's page", url().contentEquals("http://localhost:9000/users/" + id));
+            assertTrue("Password not updated", pageSource().contains("Password successfully updated."));
 
             // Log out and sign in using the new password
             goTo("http://localhost:9000/logout");
@@ -87,10 +86,10 @@ public class Test3Update extends FluentTest {
             submit("#signIn");
 
             // Check that the user is logged in
-            assertThat(url().contentEquals("http://localhost:9000/")); // The home (index) page
-            assertThat(title().contentEquals("SNO2"));
-            assertThat(pageSource().contains("Home"));
-            assertThat(pageSource().contains("New User Created by Testing"));
+            assertTrue("User not logged in", url().contentEquals("http://localhost:9000/")); // The home (index) page
+            assertTrue("Page title not the home page", title().contentEquals("SNO2"));
+            assertTrue("Page doesn't contain Home", pageSource().contains("Home"));
+            assertTrue("User name not in page", pageSource().contains("A New User Created by Testing"));
         }
     }
 

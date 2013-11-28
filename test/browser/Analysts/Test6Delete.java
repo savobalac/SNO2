@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 /**
@@ -45,7 +45,7 @@ public class Test6Delete extends FluentTest {
         goTo("http://localhost:9000/analysts");
 
         // Get the id of the newly-created analyst
-        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("Created by Testing, New Analyst"));
+        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("A New Analyst, Created by Testing"));
         String id;
         if (newAnalystLinks.size() == 1) { // There should only be one analyst with that name
             id = newAnalystLinks.first().getId();
@@ -53,13 +53,12 @@ public class Test6Delete extends FluentTest {
             submit("#deleteForm");
 
             // Check that we're on the list analysts page
-            assertThat(url().contentEquals("http://localhost:9000/analysts"));
-            assertThat(title().contentEquals("Analysts"));
-            assertThat(find("#homeTitle").contains("Analysts")); // Check the main heading
+            assertTrue("URL not the list analysts page", url().contentEquals("http://localhost:9000/analysts"));
+            assertTrue("Title not Analysts", title().contentEquals("Analysts"));
 
             // Check that the analyst is no longer in the list
-            assertThat(pageSource().contains("Analyst: New Analyst Created by Testing deleted."));
-            assertThat(!pageSource().contains("Created by Testing, New Analyst"));
+            assertTrue("Analyst not deleted", pageSource().contains("Analyst: Created by Testing A New Analyst deleted."));
+            assertFalse("Analyst still in the list", pageSource().contains("A New Analyst, Created by Testing"));
         }
     }
 

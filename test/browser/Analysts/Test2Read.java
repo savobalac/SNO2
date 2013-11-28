@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Tests the list analyst page using a browser (via Selenium and FluentLenium API).
@@ -40,12 +40,11 @@ public class Test2Read extends FluentTest {
 
         // Check we're on the analysts page
         goTo("http://localhost:9000/analysts");
-        assertThat(url().contentEquals("http://localhost:9000/analysts"));
-        assertThat(title().contentEquals("Analysts"));
-        assertThat(find("#homeTitle").contains("Analysts")); // Check the main heading
+        assertTrue("URL not equal to the analysts page", url().contentEquals("http://localhost:9000/analysts"));
+        assertTrue("Page title not Analysts", title().contentEquals("Analysts"));
 
         // Check that the new analyst is in the list
-        assertThat(pageSource().contains("Created by Testing, New Analyst"));
+        assertTrue("New analyst not in the list", pageSource().contains("A New Analyst, Created by Testing"));
     }
 
 

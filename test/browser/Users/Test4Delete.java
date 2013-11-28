@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 /**
@@ -45,7 +45,7 @@ public class Test4Delete extends FluentTest {
         goTo("http://localhost:9000/users");
 
         // Get the id of the newly-created user
-        FluentList<FluentWebElement> newUserLinks = find(".userId", withText("New User Created by Testing"));
+        FluentList<FluentWebElement> newUserLinks = find(".userId", withText("A New User Created by Testing"));
         String id;
         if (newUserLinks.size() == 1) { // There should only be one user with that name
             id = newUserLinks.first().getId();
@@ -53,13 +53,13 @@ public class Test4Delete extends FluentTest {
             submit("#deleteForm");
 
             // Check the user is no longer in the list
-            assertThat(url().contentEquals("http://localhost:9000/users"));
-            assertThat(title().contentEquals("Users"));
-            assertThat(find("#homeTitle").contains("Users")); // Check the main heading
+            assertTrue("URL not the list users page", url().contentEquals("http://localhost:9000/users"));
+            assertTrue("Title not Users", title().contentEquals("Users"));
 
             // Check that the user is no longer in the list
-            assertThat(pageSource().contains("User: New User Created by Testing deleted."));
-            assertThat(!pageSource().contains("New User Created by Testing"));
+            assertTrue("User not deleted", pageSource().contains("User: A New User Created by Testing deleted."));
+            newUserLinks = find(".userId", withText("A New User Created by Testing"));
+            assertEquals("User still in the list", 0, newUserLinks.size());
         }
     }
 

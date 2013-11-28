@@ -8,9 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import utils.Utils;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 /**
@@ -48,15 +46,14 @@ public class Test3Update extends FluentTest {
         goTo("http://localhost:9000/analysts");
 
         // Get the id of the newly-created analyst
-        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("Created by Testing, New Analyst"));
+        FluentList<FluentWebElement> newAnalystLinks = find(".analystId", withText("A New Analyst, Created by Testing"));
         String id;
         if (newAnalystLinks.size() == 1) { // There should only be one analyst with that name
             id = newAnalystLinks.first().getId();
             goTo("http://localhost:9000/analysts/" + id);
 
             // Check we are editing the new analyst
-            assertThat(title().contentEquals("New Analyst Created by Testing"));
-            assertThat(find("#analystName").contains("Analyst: New Analyst Created by Testing")); // Check the main heading
+            assertTrue("Page title not the new analyst", title().contentEquals("Created by Testing A New Analyst"));
 
             // Edit the expertise field (with the current date and time) and save
             String currentDateTime = Utils.formatUpdatedTimestamp(Utils.getCurrentDateTime());
@@ -64,12 +61,12 @@ public class Test3Update extends FluentTest {
             submit("#analystForm");
 
             // Check that we're on the list analysts page and that the analyst was updated
-            assertThat(url().contentEquals("http://localhost:9000/analysts"));
-            assertThat(pageSource().contains("Analyst: New Analyst Created by Testing successfully updated."));
+            assertTrue("URL not list analysts", url().contentEquals("http://localhost:9000/analysts"));
+            assertTrue("Analyst not updated", pageSource().contains("Analyst: Created by Testing A New Analyst successfully updated."));
 
             // Check the expertise field was updated
             goTo("http://localhost:9000/analysts/" + id);
-            assertThat(find("#expertise").contains(currentDateTime));
+            assertTrue("Expertise field not updated", find("#expertise").getValue().equals(currentDateTime));
         }
     }
 
