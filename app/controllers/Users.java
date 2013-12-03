@@ -138,9 +138,9 @@ public class Users extends AbstractController {
                     String fullName = userForm.get().fullname;
                     String msg;
                     if (id == 0) {
-                        msg = "User: " + fullName + " has been created.";
+                        msg = "User: " + fullName + " created.";
                     } else {
-                        msg = "User: " + fullName + " successfully updated.";
+                        msg = "User: " + fullName + " updated.";
                     }
                     flash(Utils.FLASH_KEY_SUCCESS, msg);
 
@@ -330,7 +330,7 @@ public class Users extends AbstractController {
 
                     // Update the user and show a message
                     user.saveOrUpdate();
-                    flash(Utils.FLASH_KEY_SUCCESS, "Password successfully updated.");
+                    flash(Utils.FLASH_KEY_SUCCESS, "Password updated.");
 
                     // Redirect to the edit user page
                     return redirect(controllers.routes.Users.edit(id));

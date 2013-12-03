@@ -106,14 +106,21 @@ public class Analysts extends AbstractController {
                     a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
                 }
 
+                // Check if the status has changed and, if so, do some processing (to be defined)
+                Analyst existingData = Analyst.find.byId(id);
+                if (a.status != existingData.status) {
+                    System.out.println("***** Status id changed from: " + existingData.status.statusId +
+                                                                " to: " + a.status.statusId);
+                }
+
                 // Save if a new analyst, otherwise update, and show a message
                 a.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
                 String msg;
                 if (id == 0) {
-                    msg = "Analyst: " + fullName + " has been created.";
+                    msg = "Analyst: " + fullName + " created.";
                 } else {
-                    msg = "Analyst: " + fullName + " successfully updated.";
+                    msg = "Analyst: " + fullName + " updated.";
                 }
                 flash(Utils.FLASH_KEY_SUCCESS, msg);
 
@@ -277,7 +284,7 @@ public class Analysts extends AbstractController {
                 }
                 analyst.update();
                 flash(Utils.FLASH_KEY_SUCCESS,
-                      "File: " + fileName + " successfully uploaded to analyst: " + analyst.getFullName());
+                      "File: " + fileName + " uploaded to analyst: " + analyst.getFullName());
                 return ok("OK"); // The Ajax call from editAnalyst checks for "OK"
             } else { // File not found
                 return ok("Please select a file.");
@@ -437,14 +444,14 @@ public class Analysts extends AbstractController {
                     note.createdDt = now;
                     note.save();
                     analyst.addNote(note);
-                    msg = "Note: " + note.title + " has been created.";
+                    msg = "Note: " + note.title + " created.";
                 } else { // Get the currently-stored note
                     Note existingNote = Note.find.byId(nId);
                     note.createdDt = existingNote.createdDt; // Ensure the created datetime isn't overwritten
                     note.updatedBy = loggedInUser;
                     note.updatedDt = now;
                     note.update();
-                    msg = "Note: " + note.title + " successfully updated.";
+                    msg = "Note: " + note.title + " updated.";
                 }
                 flash(Utils.FLASH_KEY_SUCCESS, msg);
 
