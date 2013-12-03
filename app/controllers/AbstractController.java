@@ -1,7 +1,10 @@
 package controllers;
 
 import models.User;
-import play.mvc.Controller;
+import play.api.libs.json.Json;
+import play.api.templates.Html;
+import play.api.templates.Template1;
+import play.mvc.*;
 import utils.Utils;
 
 /**
@@ -35,5 +38,18 @@ public abstract class AbstractController extends Controller {
         flash(Utils.FLASH_KEY_ERROR, msg);
     }
 
+    /*<T> Result htmlOrJson(T resource, Template1<T, Html> html) {
+        if (resource == null) {
+            return notFound();
+        }
+
+        if (request().accepts("text/html")) {
+            return ok(html.apply(resource));
+        } else if (request().accepts("application/json")) {
+            return ok(Json.toJson(resource));
+        } else {
+            return badRequest();
+        }
+    }*/
 
 }
