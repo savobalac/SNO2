@@ -1,10 +1,19 @@
 package models;
 
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
+import scala.util.parsing.json.JSONArray;
 import utils.Utils;
 
 import javax.persistence.Entity;
@@ -12,7 +21,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Model class that maps to DB table user.
@@ -277,6 +288,28 @@ public class User extends Model {
     public static User authenticate(String username, String password) throws NoSuchAlgorithmException {
         return find.where().eq("username", username)
                            .eq("password", Utils.hashString(password)).findUnique();
+    }
+
+
+    public ObjectNode toJson() {
+        ObjectNode result = Json.newObject();
+        result.put("id", id.toString());
+        result.put("username", username);
+        result.put("password", password);
+        result.put("email", email);
+        result.put("fullname", fullname);
+        if (lastlogin != null) {
+            result.put("lastlogin", Utils.formatTimestamp(lastlogin));
+        }
+        if (getNumGroups() > 0) {
+            ArrayNode groupNodes = result.arrayNode();
+            for (Group group : groups) {
+                ObjectNode groupResult = group.toJson();
+                groupNodes.add(groupResult);
+            }
+            result.put("groups", groupNodes);
+        }
+        return result;
     }
 
 

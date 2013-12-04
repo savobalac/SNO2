@@ -12,7 +12,8 @@ object ApplicationBuild extends Build {
         "mysql" % "mysql-connector-java" % "5.1.21",
         "org.reflections" % "reflections" % "0.9.8",
         javaCore, javaJdbc, javaEbean,
-        "com.amazonaws" % "aws-java-sdk" % "1.3.11"
+        "com.amazonaws" % "aws-java-sdk" % "1.3.11",
+        "net.sf.flexjson" % "flexjson" % "2.1"
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(

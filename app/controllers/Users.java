@@ -9,6 +9,8 @@ import play.mvc.Security;
 import utils.Utils;
 import views.html.Users.*;
 import views.html.*;
+import static play.libs.Json.toJson;
+import flexjson.JSONSerializer;
 
 /**
  * Users controller with methods to list, create, edit, update and delete.
@@ -84,13 +86,27 @@ public class Users extends AbstractController {
         User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
+
             // New users have id 0
+            User user;
             if (id <= 0L) {
-                userForm = Form.form(User.class).fill(new User());
+                user = new User();
             } else {
-                userForm = Form.form(User.class).fill(User.find.byId(id));
+                user = User.find.byId(id);
             }
-            return ok(editUser.render(((id<0)?(0L):(id)), userForm, loggedInUser));
+            userForm = Form.form(User.class).fill(user);
+
+            // Return data in the requested format
+            if (request().accepts("text/html")) {
+                return ok(editUser.render(((id<0)?(0L):(id)), userForm, loggedInUser));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                //JSONSerializer serializer = new JSONSerializer().include("username").exclude("*").prettyPrint(true);
+                //serializer.serialize(user);
+                //return ok(toJson(user));
+                return ok(user.toJson());
+            } else {
+                return badRequest();
+            }
         } else {
             return accessDenied(loggedInUser);
         }
