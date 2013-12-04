@@ -48,16 +48,7 @@ public class Analysts extends AbstractController {
 
         // Get a page of analysts and render the list page
         Page<Analyst> pageAnalysts = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        if (request().accepts("text/html")) {
-            return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, getLoggedInUser()));
-        } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            Map<String, String> analyst = new HashMap<String,String>();
-            analyst.put("firstname", pageAnalysts.getList().get(0).firstname);
-            analyst.put("lastname", pageAnalysts.getList().get(0).lastname);
-            return ok(toJson(analyst));
-        } else {
-            return badRequest();
-        }
+        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, getLoggedInUser()));
     }
 
 
