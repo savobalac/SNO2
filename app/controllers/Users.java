@@ -1,16 +1,20 @@
 package controllers;
 
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
 import models.Group;
+import play.api.data.Field;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
 import utils.Utils;
 import views.html.Users.*;
 import views.html.*;
-import static play.libs.Json.toJson;
-import flexjson.JSONSerializer;
+
+import java.util.List;
 
 /**
  * Users controller with methods to list, create, edit, update and delete.
@@ -42,8 +46,23 @@ public class Users extends AbstractController {
         // Get a page of users and render the list page
         User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser()) { // Check if an admin user
-            Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-            return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
+                return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                List<User> users = User.find.all();
+                ObjectNode result = Json.newObject();
+                ArrayNode userNodes = result.arrayNode();
+                for (User user : users) {
+                    ObjectNode userResult = user.toJson();
+                    userNodes.add(userResult);
+                }
+                result.put("users", userNodes);
+                return ok(result);
+            } else {
+                return badRequest();
+            }
         } else {
             return accessDenied(loggedInUser);
         }
@@ -57,8 +76,18 @@ public class Users extends AbstractController {
      * @return Result
      */
     private static Result accessDenied(User loggedInUser) {
-        flash(Utils.FLASH_KEY_INFO, "Only admin users can see user pages.");
-        return ok(accessDenied.render(loggedInUser));
+        // Return data in HTML or JSON as requested
+        String msg = "Only admin users can see user pages.";
+        if (request().accepts("text/html")) {
+            flash(Utils.FLASH_KEY_INFO, msg);
+            return ok(accessDenied.render(loggedInUser));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            ObjectNode result = Json.newObject();
+            result.put("message", msg);
+            return ok(result);
+        } else {
+            return badRequest();
+        }
     }
 
 
@@ -96,13 +125,10 @@ public class Users extends AbstractController {
             }
             userForm = Form.form(User.class).fill(user);
 
-            // Return data in the requested format
+            // Return data in HTML or JSON as requested
             if (request().accepts("text/html")) {
                 return ok(editUser.render(((id<0)?(0L):(id)), userForm, loggedInUser));
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                //JSONSerializer serializer = new JSONSerializer().include("username").exclude("*").prettyPrint(true);
-                //serializer.serialize(user);
-                //return ok(toJson(user));
                 return ok(user.toJson());
             } else {
                 return badRequest();
@@ -124,10 +150,18 @@ public class Users extends AbstractController {
         User loggedInUser = getLoggedInUser();
         boolean isLoggedInUser = id.equals(loggedInUser.id);
         if (Secured.isAdminUser() || isLoggedInUser) {
-            Form<User> userForm = Form.form(User.class).bindFromRequest(); // Get the form data
+            Form<User> userForm = null;
             try {
-                if (userForm.hasErrors()) { // Return to the editUser page
-                    return badRequest(editUser.render(id, userForm, loggedInUser));
+                userForm = Form.form(User.class).bindFromRequest(); // Get the form data
+                if (userForm.hasErrors()) {
+                    // Return data in HTML or JSON as requested
+                    if (request().accepts("text/html")) {
+                        return badRequest(editUser.render(id, userForm, loggedInUser)); // Return to the editUser page
+                    } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                        return ok(userForm.errorsAsJson());
+                    } else {
+                        return badRequest();
+                    }
                 } else {
                     User newUser = userForm.get(); // Get the user data
                     String confirmPassword = userForm.field("confirmPassword").value(); // Not part of the user model
@@ -162,17 +196,41 @@ public class Users extends AbstractController {
 
                     // If updating the logged-in user redirect to the home page,
                     // Otherwise redirect to the list page (and remove the user from the query string)
-                    if (isLoggedInUser) {
-                        return redirect(controllers.routes.Application.index());
+                    // Return data in HTML or JSON as requested
+                    if (request().accepts("text/html")) {
+                        if (isLoggedInUser) {
+                            return redirect(controllers.routes.Application.index());
+                        } else {
+                            return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                        }
+                    } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                        ObjectNode result = Json.newObject();
+                        result.put("message", msg);
+                        return ok(result);
                     } else {
-                        return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                        return badRequest();
                     }
                 }
             } catch (Exception e) {
-                // Log an error, show a message and return to the editUser page
-                Utils.eHandler("Users.update(" + id + ")", e);
-                showSaveError(e); // Method in AbstractController
-                return badRequest(editUser.render(id, userForm, loggedInUser));
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    // Log an error, show a message and return to the editUser page
+                    Utils.eHandler("Users.update(" + id + ")", e);
+                    showSaveError(e); // Method in AbstractController
+                    return badRequest(editUser.render(id, userForm, loggedInUser));
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    ObjectNode result = Json.newObject();
+                    String message;
+                    if (id == 0) {
+                        message = "User not created.";
+                    } else {
+                        message = "User: " + id + " not updated.";
+                    }
+                    result.put("message", message + " (check all fields were submitted). Error: " + e.getMessage());
+                    return ok(result);
+                } else {
+                    return badRequest();
+                }
             }
         } else {
             return accessDenied(loggedInUser);

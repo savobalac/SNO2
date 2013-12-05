@@ -1,8 +1,10 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
 import java.security.NoSuchAlgorithmException;
 import play.api.mvc.Call;
+import play.libs.Json;
 import play.mvc.Security;
 
 import play.mvc.Result;
@@ -59,8 +61,18 @@ public class Application extends AbstractController {
             return badRequest(login.render(loginForm));
         } else {
             session().clear();
-            session("username", loginForm.get().username);
-            return redirect(controllers.routes.Application.index());
+            String username = loginForm.get().username;
+            session("username", username);
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                return redirect(controllers.routes.Application.index());
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                ObjectNode result = Json.newObject();
+                result.put("message", "You have signed in " + username + ".");
+                return ok(result);
+            } else {
+                return badRequest();
+            }
         }
     }
 
@@ -71,8 +83,18 @@ public class Application extends AbstractController {
      */
     public static Result logout() {
         session().clear();
-        flash("success", "You have signed out.");
-        return redirect(controllers.routes.Application.login());
+        // Return data in HTML or JSON as requested
+        String msg = "You have signed out.";
+        if (request().accepts("text/html")) {
+            flash("success", msg);
+            return redirect(controllers.routes.Application.login());
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            ObjectNode result = Json.newObject();
+            result.put("message", msg);
+            return ok(result);
+        } else {
+            return badRequest();
+        }
     }
 
 

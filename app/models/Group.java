@@ -5,7 +5,6 @@ import play.libs.Json;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
-import utils.Utils;
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
@@ -67,6 +66,10 @@ public class Group extends Model {
     }
 
 
+    /**
+     * Converts the group to JSON.
+     * @return ObjectNode  The group as a JSON object node.
+     */
     public ObjectNode toJson() {
         ObjectNode result = Json.newObject();
         result.put("id", id);

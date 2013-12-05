@@ -3,17 +3,11 @@ package models;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonManagedReference;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
 import play.libs.Json;
-import scala.util.parsing.json.JSONArray;
 import utils.Utils;
 
 import javax.persistence.Entity;
@@ -21,9 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
+import static play.libs.Json.toJson;
 
 /**
  * Model class that maps to DB table user.
@@ -291,8 +285,16 @@ public class User extends Model {
     }
 
 
+    /**
+     * Converts the user and its groups to JSON. Users-groups is a many-many relationship.
+     * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
+     * @return ObjectNode  The user as a JSON object node.
+     */
     public ObjectNode toJson() {
         ObjectNode result = Json.newObject();
+        if (id == null) {
+            return result;
+        }
         result.put("id", id.toString());
         result.put("username", username);
         result.put("password", password);
@@ -301,14 +303,14 @@ public class User extends Model {
         if (lastlogin != null) {
             result.put("lastlogin", Utils.formatTimestamp(lastlogin));
         }
-        if (getNumGroups() > 0) {
-            ArrayNode groupNodes = result.arrayNode();
-            for (Group group : groups) {
-                ObjectNode groupResult = group.toJson();
-                groupNodes.add(groupResult);
-            }
-            result.put("groups", groupNodes);
+
+        // Add the groups
+        ArrayNode groupNodes = result.arrayNode();
+        for (Group group : groups) {
+            ObjectNode groupResult = group.toJson();
+            groupNodes.add(groupResult);
         }
+        result.put("groups", groupNodes);
         return result;
     }
 
