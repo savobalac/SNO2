@@ -1,18 +1,14 @@
 package controllers;
 
 import com.avaje.ebean.Page;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
 import models.Group;
 import play.data.Form;
-import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
 import utils.Utils;
 import views.html.Users.*;
 import views.html.*;
-
-import java.util.List;
 
 /**
  * Users controller with methods to list, create, edit, update and delete.
@@ -142,7 +138,7 @@ public class Users extends AbstractController {
         if (request().accepts("text/html")) {
             return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            return ok(getMessageAsJson("User: " + id + " does not exist."));
+            return ok(getErrorAsJson("User: " + id + " does not exist."));
         } else {
             return badRequest();
         }
@@ -242,7 +238,7 @@ public class Users extends AbstractController {
                         msg = "User: " + id + " not updated.";
                     }
                     msg += " Error: " + e.getMessage();
-                    return ok(getMessageAsJson(msg));
+                    return ok(getErrorAsJson(msg));
                 } else {
                     return badRequest();
                 }
@@ -293,7 +289,7 @@ public class Users extends AbstractController {
                     showSaveError(e);
                     return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
                 } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                    return ok(getMessageAsJson(msg));
+                    return ok(getErrorAsJson(msg));
                 } else {
                     return badRequest();
                 }
@@ -312,7 +308,17 @@ public class Users extends AbstractController {
     public static Result editGroups(Long id) {
         if (Secured.isAdminUser()) { // Check if an admin user
             User user = User.find.byId(id);
-            return ok(tagListUserGroups.render(user));
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                return ok(tagListUserGroups.render(user)); // This template handles null users
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                if (user == null) {
+                    return nullUser(id);
+                }
+                return ok(user.getGroupsAsJson());
+            } else {
+                return badRequest();
+            }
         } else {
             return accessDenied(getLoggedInUser());
         }

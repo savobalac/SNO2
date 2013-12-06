@@ -67,9 +67,7 @@ public class Application extends AbstractController {
             if (request().accepts("text/html")) {
                 return redirect(controllers.routes.Application.index());
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                ObjectNode result = Json.newObject();
-                result.put("message", "You have signed in " + username + ".");
-                return ok(result);
+                return ok(getMessageAsJson("You have signed in " + username + "."));
             } else {
                 return badRequest();
             }
@@ -89,9 +87,7 @@ public class Application extends AbstractController {
             flash("success", msg);
             return redirect(controllers.routes.Application.login());
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            ObjectNode result = Json.newObject();
-            result.put("message", msg);
-            return ok(result);
+            return ok(getMessageAsJson(msg));
         } else {
             return badRequest();
         }

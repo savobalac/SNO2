@@ -46,8 +46,29 @@ public abstract class AbstractController extends Controller {
      * @return ObjectNode  The message as a JSON object node.
      */
     static ObjectNode getMessageAsJson(String msg) {
+        return getJson("message", msg);
+    }
+
+    /**
+     * Gets the error as JSON.
+     *
+     * @param  msg  The error.
+     * @return ObjectNode  The error as a JSON object node.
+     */
+    static ObjectNode getErrorAsJson(String msg) {
+        return getJson("error", msg);
+    }
+
+    /**
+     * Gets the key-value pair as JSON.
+     *
+     * @param  key    The key.
+     * @param  value  The value.
+     * @return ObjectNode  The key-value pair as a JSON object node.
+     */
+    static ObjectNode getJson(String key, String value) {
         ObjectNode result = Json.newObject();
-        result.put("message", msg);
+        result.put(key, value);
         return result;
     }
 

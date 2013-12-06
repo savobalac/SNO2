@@ -287,37 +287,6 @@ public class User extends Model {
 
 
     /**
-     * Converts the user and its groups to JSON. Users-groups is a many-many relationship.
-     * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
-     *
-     * @return ObjectNode  The user as a JSON object node.
-     */
-    public ObjectNode toJson() {
-        ObjectNode result = Json.newObject();
-        if (id == null) {
-            return result;
-        }
-        result.put("id", id.toString());
-        result.put("username", username);
-        result.put("password", password);
-        result.put("email", email);
-        result.put("fullname", fullname);
-        if (lastlogin != null) {
-            result.put("lastlogin", Utils.formatTimestamp(lastlogin));
-        }
-
-        // Add the groups
-        ArrayNode groupNodes = result.arrayNode();
-        for (Group group : groups) {
-            ObjectNode groupResult = group.toJson();
-            groupNodes.add(groupResult);
-        }
-        result.put("groups", groupNodes);
-        return result;
-    }
-
-
-    /**
      * Gets all users as JSON.
      *
      * @return ObjectNode  The users as a JSON object node.
@@ -332,6 +301,57 @@ public class User extends Model {
         }
         result.put("users", userNodes);
         return result;
+    }
+
+    /**
+     * Gets the user's groups as JSON.
+     *
+     * @return ObjectNode  The user's groups as a JSON object node.
+     */
+    public ObjectNode getGroupsAsJson() {
+        ObjectNode groupNodes = Json.newObject();
+        groupNodes.put("groups", getGroupsAsJsonArray(groupNodes));
+        return groupNodes;
+    }
+
+
+    /**
+     * Converts the user and its groups to JSON. Users-groups is a many-many relationship.
+     * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
+     *
+     * @return ObjectNode  The user as a JSON object node.
+     */
+    public ObjectNode toJson() {
+        ObjectNode userNode = Json.newObject();
+        if (id == null) {
+            return userNode;
+        }
+        userNode.put("id", id.toString());
+        userNode.put("username", username);
+        userNode.put("password", password);
+        userNode.put("email", email);
+        userNode.put("fullname", fullname);
+        if (lastlogin != null) {
+            userNode.put("lastlogin", Utils.formatTimestamp(lastlogin));
+        }
+        userNode.put("groups", getGroupsAsJsonArray(userNode));
+        return userNode;
+    }
+
+
+    /**
+     * Gets the user's groups as a JSON array node.
+     *
+     * @param  userNode   The user as a JSON ObjectNode
+     * @return ArrayNode  The user's groups as a JSON array node.
+     */
+    private ArrayNode getGroupsAsJsonArray(ObjectNode userNode) {
+        ArrayNode groupNodes = userNode.arrayNode();
+        for (Group group : groups) {
+            ObjectNode groupNode = group.toJson();
+            groupNodes.add(groupNode);
+        }
+        return groupNodes;
     }
 
 
