@@ -348,40 +348,68 @@ public class Users extends AbstractController {
 
 
     /**
-     * Adds or deletes a group to/from the user.
-     * @param id       Id of the user
-     * @param groupId  Id of the group
-     * @param action   "add" or "delete"
-     * @return Result
+     * Checks if the user can update a group and calls the updateGroup method.
+     * @param id       Id of the user.
+     * @param groupId  Id of the group.
+     * @param action   "add" or "delete".
+     * @return String  If an error occurred or "OK" if successful
      */
     private static Result changeGroup(Long id, Long groupId, String action) {
         if (Secured.isAdminUser()) { // Check if an admin user
-            User user = User.find.byId(id);
-            Group group = Group.find.byId(groupId);
-            try {
-                if (user == null) {
-                    return ok("ERROR: User not found. Changes not saved.");
-                }
-                if (group == null) {
-                    return ok("ERROR: Group not found. Changes not saved.");
+            // Return data as text or JSON as requested (browser calls use Ajax and test if OK)
+            String result = updateGroup(id, groupId, action);
+            if (request().accepts("text/html")) {
+                return ok(result);
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                if (result.startsWith("ERROR")) {
+                    return ok(getErrorAsJson(result));
                 } else {
-                    // Add, delete or return an error
-                    if (action.equals("add")) {
-                        user.addGroup(group);
-                    } else if (action.equals("delete")) {
-                        user.delGroup(group);
-                    } else {
-                        return ok("ERROR: incorrect action, use add or delete");
-                    }
-                    return ok("OK"); // "OK" is used by the calling Ajax function
+                    return ok(getMessageAsJson(result));
                 }
-            }
-            catch (Exception e) {
-                Utils.eHandler("Users.changeGroup(" + id + ", " + groupId + ", " + action + ")", e);
-                return ok("ERROR: " + e.getMessage());
+            } else {
+                return badRequest();
             }
         } else {
             return accessDenied(getLoggedInUser());
+        }
+    }
+
+
+    /**
+     * Adds or deletes a group to/from the user.
+     * @param id       Id of the user.
+     * @param groupId  Id of the group.
+     * @param action   "add" or "delete".
+     * @return String  If an error occurred or "OK" if successful
+     */
+    private static String updateGroup(Long id, Long groupId, String action) {
+        User user = User.find.byId(id);
+        Group group = Group.find.byId(groupId);
+        try {
+            if (user == null) {
+                return "ERROR: User not found. Changes not saved.";
+            }
+            if (group == null) {
+                return "ERROR: Group not found. Changes not saved.";
+            } else {
+                // Add, delete or return an error
+                if (action.equals("add")) {
+                    user.addGroup(group);
+                } else if (action.equals("delete")) {
+                    user.delGroup(group);
+                } else {
+                    return "ERROR: incorrect action, use add or delete";
+                }
+                if (request().accepts("text/html")) {
+                    return "OK"; // "OK" is used by the calling Ajax function
+                } else {
+                    return "User: " + id + ", " + action + " group: " + groupId + " was successful."; // for JSON
+                }
+            }
+        }
+        catch (Exception e) {
+            Utils.eHandler("Users.changeGroup(" + id + ", " + groupId + ", " + action + ")", e);
+            return "ERROR: " + e.getMessage();
         }
     }
 
@@ -395,8 +423,13 @@ public class Users extends AbstractController {
         // Check if an admin user or if editing the logged-in user
         User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
+            // Check user exists and return if not
+            User user = User.find.byId(id);
+            if (user == null) {
+                return nullUser(id);
+            }
             Form<User> userForm;
-            userForm = Form.form(User.class).fill(User.find.byId(id));
+            userForm = Form.form(User.class).fill(user);
             return ok(editPassword.render(id, userForm, loggedInUser));
         } else {
             return accessDenied(loggedInUser);

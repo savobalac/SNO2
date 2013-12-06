@@ -243,7 +243,7 @@ public class User extends Model {
                 saveManyToManyAssociations("groups"); // Update the database
                 update();
             } else {
-                throw new Exception("Error: Group " + group.id + ", " + group.name + " not assigned to the user.");
+                throw new Exception("Group: " + group.name + ", id: " + group.id + " not assigned to the user.");
             }
         }
         catch (Exception e) {
