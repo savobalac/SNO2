@@ -1,9 +1,8 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
-import play.api.libs.json.Json;
-import play.api.templates.Html;
-import play.api.templates.Template1;
+import play.libs.Json;
 import play.mvc.*;
 import utils.Utils;
 
@@ -21,7 +20,8 @@ public abstract class AbstractController extends Controller {
 
     /**
      * Returns the logged-in user.
-     * @return User
+     *
+     * @return User  The logged-in user.
      */
     static User getLoggedInUser() {
         return User.find.where().eq("username", request().username()).findUnique();
@@ -31,25 +31,25 @@ public abstract class AbstractController extends Controller {
     /**
      * Shows a "Changes not saved" error.
      *
-     * @param e  The exception that caused the error
+     * @param e  The exception that caused the error.
      */
     static void showSaveError(Exception e) {
         String msg = String.format("%s. Changes not saved.", e.getMessage());
         flash(Utils.FLASH_KEY_ERROR, msg);
     }
 
-    /*<T> Result htmlOrJson(T resource, Template1<T, Html> html) {
-        if (resource == null) {
-            return notFound();
-        }
 
-        if (request().accepts("text/html")) {
-            return ok(html.apply(resource));
-        } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(resource));
-        } else {
-            return badRequest();
-        }
-    }*/
+    /**
+     * Gets the message as JSON.
+     *
+     * @param  msg  The message.
+     * @return ObjectNode  The message as a JSON object node.
+     */
+    static ObjectNode getMessageAsJson(String msg) {
+        ObjectNode result = Json.newObject();
+        result.put("message", msg);
+        return result;
+    }
+
 
 }

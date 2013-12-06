@@ -17,8 +17,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.List;
 
-import static play.libs.Json.toJson;
-
 /**
  * Model class that maps to DB table user.
  * Contains methods to list/save/update, check if a user is in a group, add/remove groups and authenticate the user.
@@ -33,9 +31,10 @@ import static play.libs.Json.toJson;
 public class User extends Model {
 
     // Instance variables
+    @Constraints.Required                     // A required constraint will ensure form fields are entered
     @Id public Long                 id;
 
-    @Constraints.Required                     // A required constraint will ensure form fields are entered
+    @Constraints.Required
     @Formats.NonEmpty                         // A non-empty format will convert spaces to null and ensure validation
     public String                   username;
 
@@ -66,13 +65,13 @@ public class User extends Model {
     /**
      * Returns a page of users.
      *
-     * @param page          Page to display
-     * @param pageSize      Number of users per page
-     * @param sortBy        User property used for sorting
-     * @param order         Sort order (either or asc or desc)
-     * @param filter        Filter applied on group name
-     * @param search        Search applied on fullname
-     * @return Page<User>
+     * @param page          Page to display.
+     * @param pageSize      Number of users per page.
+     * @param sortBy        User property used for sorting.
+     * @param order         Sort order (either or asc or desc).
+     * @param filter        Filter applied on group name.
+     * @param search        Search applied on fullname.
+     * @return Page<User>   The page of users.
      */
     public static Page<User> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
 
@@ -104,7 +103,8 @@ public class User extends Model {
 
     /**
      * Saves or updates the user.
-     * @throws Exception If there was a problem updating the DB
+     *
+     * @throws Exception  If there was a problem updating the DB.
      */
     public void saveOrUpdate() throws Exception {
         // The id should be 0 for a new record
@@ -124,8 +124,8 @@ public class User extends Model {
     /**
      * Checks if the user is an admin user. This static method is called from static controller methods.
      *
-     * @param username  The username to be checked
-     * @return  boolean
+     * @param username  The username to be checked.
+     * @return boolean  True if the user is an admin user, else returns false.
      */
     public static boolean isAdminUser(String username) {
         return find.where()
@@ -138,7 +138,7 @@ public class User extends Model {
     /**
      * Checks if this user is an admin user, a manager or a staff member.
      *
-     * @return  boolean
+     * @return boolean  True if the user is an admin user, a manager or a staff member, else returns false.
      */
     public boolean isAdminOrManagerOrStaff() {
         return isAdminOrManager() || isStaff();
@@ -148,7 +148,7 @@ public class User extends Model {
     /**
      * Checks if this user is an admin user or a manager.
      *
-     * @return  boolean
+     * @return boolean  True if the user is an admin user, a manager or a staff member, else returns false.
      */
     public boolean isAdminOrManager() {
         return isAdmin() || isManager();
@@ -158,7 +158,7 @@ public class User extends Model {
     /**
      * Checks if this user is an admin user.
      *
-     * @return  boolean
+     * @return boolean  True if the user is an admin user, else returns false.
      */
     public boolean isAdmin() {
         return find.where()
@@ -171,7 +171,7 @@ public class User extends Model {
     /**
      * Checks if this user is a manager.
      *
-     * @return  boolean
+     * @return boolean  True if the user is an admin user, else returns false.
      */
     public boolean isManager() {
         return find.where()
@@ -184,7 +184,7 @@ public class User extends Model {
     /**
      * Checks if this user is a staff member.
      *
-     * @return  boolean
+     * @return boolean  True if the user is a staff member, else returns false.
      */
     public boolean isStaff() {
         return find.where()
@@ -196,7 +196,7 @@ public class User extends Model {
 
     /**
      * Returns the number of groups a user is assigned to (groups could be null).
-     * @return      int
+     * @return int  The number of groups a user is assigned to.
      */
     public int getNumGroups() {
         if (groups != null) {
@@ -210,9 +210,8 @@ public class User extends Model {
     /**
      * Assigns a group to the user.
      *
-     * @param group  The group to be added
-     * @return       boolean
-     * @throws       Exception    If there was a problem updating the DB
+     * @param group  The group to be added.
+     * @throws       Exception  If there was a problem updating the DB.
      */
     public void addGroup(Group group) throws Exception {
         try {
@@ -233,8 +232,8 @@ public class User extends Model {
     /**
      * Deletes a group from the user.
      *
-     * @param group  The group to be deleted
-     * @throws       Exception    If there was a problem updating the DB
+     * @param group  The group to be deleted.
+     * @throws       Exception  If there was a problem updating the DB.
      */
     public void delGroup(Group group) throws Exception {
         try {
@@ -256,7 +255,8 @@ public class User extends Model {
 
     /**
      * Deletes all groups from the user.
-     * @throws Exception    If there was a problem updating the DB
+     *
+     * @throws Exception  If there was a problem updating the DB.
      */
     public void delAllGroups() throws Exception {
         try {
@@ -274,10 +274,11 @@ public class User extends Model {
 
     /**
      * Checks the user's password. The hashed password is 64 characters long.
-     * @param username Username
-     * @param password Password to be hashed before checking
-     * @return User
-     * @throws NoSuchAlgorithmException    If the hashing algorithm doesn't exist
+     *
+     * @param  username  Username.
+     * @param  password  Password to be hashed before checking.
+     * @return User      The authenticated user.
+     * @throws NoSuchAlgorithmException    If the hashing algorithm doesn't exist.
      */
     public static User authenticate(String username, String password) throws NoSuchAlgorithmException {
         return find.where().eq("username", username)
@@ -288,6 +289,7 @@ public class User extends Model {
     /**
      * Converts the user and its groups to JSON. Users-groups is a many-many relationship.
      * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
+     *
      * @return ObjectNode  The user as a JSON object node.
      */
     public ObjectNode toJson() {
@@ -311,6 +313,24 @@ public class User extends Model {
             groupNodes.add(groupResult);
         }
         result.put("groups", groupNodes);
+        return result;
+    }
+
+
+    /**
+     * Gets all users as JSON.
+     *
+     * @return ObjectNode  The users as a JSON object node.
+     */
+    public static ObjectNode getAllUsersAsJson() {
+        List<User> users = User.find.all();
+        ObjectNode result = Json.newObject();
+        ArrayNode userNodes = result.arrayNode();
+        for (User user : users) {
+            ObjectNode userResult = user.toJson();
+            userNodes.add(userResult);
+        }
+        result.put("users", userNodes);
         return result;
     }
 

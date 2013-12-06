@@ -1,11 +1,9 @@
 package controllers;
 
 import com.avaje.ebean.Page;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
 import models.Group;
-import play.api.data.Field;
 import play.data.Form;
 import play.libs.Json;
 import play.mvc.Result;
@@ -43,23 +41,16 @@ public class Users extends AbstractController {
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
 
-        // Get a page of users and render the list page
         User loggedInUser = getLoggedInUser();
         if (Secured.isAdminUser()) { // Check if an admin user
+
             // Return data in HTML or JSON as requested
             if (request().accepts("text/html")) {
+                // Get a page of users and render the list page
                 Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
                 return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                List<User> users = User.find.all();
-                ObjectNode result = Json.newObject();
-                ArrayNode userNodes = result.arrayNode();
-                for (User user : users) {
-                    ObjectNode userResult = user.toJson();
-                    userNodes.add(userResult);
-                }
-                result.put("users", userNodes);
-                return ok(result);
+                return ok(User.getAllUsersAsJson());
             } else {
                 return badRequest();
             }
@@ -77,14 +68,12 @@ public class Users extends AbstractController {
      */
     private static Result accessDenied(User loggedInUser) {
         // Return data in HTML or JSON as requested
-        String msg = "Only admin users can see user pages.";
+        String msg = "Only admin users can see user data.";
         if (request().accepts("text/html")) {
             flash(Utils.FLASH_KEY_INFO, msg);
             return ok(accessDenied.render(loggedInUser));
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            ObjectNode result = Json.newObject();
-            result.put("message", msg);
-            return ok(result);
+            return ok(getMessageAsJson(msg)); // Method in AbstractController
         } else {
             return badRequest();
         }
@@ -116,12 +105,16 @@ public class Users extends AbstractController {
         if (Secured.isAdminUser() || id.equals(loggedInUser.id)) {
             Form<User> userForm;
 
-            // New users have id 0
+            // New users have id 0 and don't exist
             User user;
             if (id <= 0L) {
                 user = new User();
             } else {
+                // Check user exists and return if not
                 user = User.find.byId(id);
+                if (user == null) {
+                    return nullUser(id);
+                }
             }
             userForm = Form.form(User.class).fill(user);
 
@@ -140,6 +133,23 @@ public class Users extends AbstractController {
 
 
     /**
+     * Returns either the list page or a JSON message when the user doesn't exist.
+     * @param  id  Id of the user.
+     * @return Result  The list page or a JSON message.
+     */
+    private static Result nullUser(Long id) {
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getMessageAsJson("User: " + id + " does not exist."));
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
      * Updates the user from the form.
      * @param id Id of the user to update
      * @return Result
@@ -153,6 +163,7 @@ public class Users extends AbstractController {
             Form<User> userForm = null;
             try {
                 userForm = Form.form(User.class).bindFromRequest(); // Get the form data
+                // Check if there are errors
                 if (userForm.hasErrors()) {
                     // Return data in HTML or JSON as requested
                     if (request().accepts("text/html")) {
@@ -168,19 +179,24 @@ public class Users extends AbstractController {
 
                     // If a new user, check that the confirmation password has been entered (other fields have validation)
                     if (id == 0) {
-                        if (confirmPassword.trim().isEmpty()) {
+                        if (confirmPassword == null || confirmPassword.trim().isEmpty()) {
                             throw new Exception("Please enter a value for the confirmation password");
                         }
                         // Check that the new and confirmation passwords are the same
                         if (!newUser.password.equals(confirmPassword)) {
                             throw new Exception("The new and confirmation passwords do not match");
                         }
-                    }
-
-                    // Hash the password when creating a new user or if the password has changed
-                    User existingUser = User.find.byId(id);
-                    if (id == 0 || (!newUser.password.equals(existingUser.password))) {
-                        newUser.password = Utils.hashString(newUser.password);
+                        newUser.password = Utils.hashString(newUser.password); // Hash the password
+                    } else {
+                        // Check user exists and return if not
+                        User existingUser = User.find.byId(id);
+                        if (existingUser == null) {
+                            return nullUser(id);
+                        }
+                        // Hash the password if the password has changed
+                        if (!newUser.password.equals(existingUser.password)) {
+                            newUser.password = Utils.hashString(newUser.password);
+                        }
                     }
 
                     // Save if a new user, otherwise update, and show a message
@@ -192,42 +208,41 @@ public class Users extends AbstractController {
                     } else {
                         msg = "User: " + fullName + " updated.";
                     }
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
 
-                    // If updating the logged-in user redirect to the home page,
-                    // Otherwise redirect to the list page (and remove the user from the query string)
                     // Return data in HTML or JSON as requested
                     if (request().accepts("text/html")) {
+                        // If updating the logged-in user redirect to the home page,
+                        // Otherwise redirect to the list page (and remove the user from the query string)
+                        flash(Utils.FLASH_KEY_SUCCESS, msg);
                         if (isLoggedInUser) {
                             return redirect(controllers.routes.Application.index());
                         } else {
                             return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
                         }
                     } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                        ObjectNode result = Json.newObject();
-                        result.put("message", msg);
-                        return ok(result);
+                        return ok(getMessageAsJson(msg));
                     } else {
                         return badRequest();
                     }
                 }
             } catch (Exception e) {
+                // Log an error
+                Utils.eHandler("Users.update(" + id + ")", e);
+
                 // Return data in HTML or JSON as requested
                 if (request().accepts("text/html")) {
-                    // Log an error, show a message and return to the editUser page
-                    Utils.eHandler("Users.update(" + id + ")", e);
+                    // Show a message and return to the editUser page
                     showSaveError(e); // Method in AbstractController
                     return badRequest(editUser.render(id, userForm, loggedInUser));
                 } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                    ObjectNode result = Json.newObject();
-                    String message;
+                    String msg;
                     if (id == 0) {
-                        message = "User not created.";
+                        msg = "User not created.";
                     } else {
-                        message = "User: " + id + " not updated.";
+                        msg = "User: " + id + " not updated.";
                     }
-                    result.put("message", message + " (check all fields were submitted). Error: " + e.getMessage());
-                    return ok(result);
+                    msg += " Error: " + e.getMessage();
+                    return ok(getMessageAsJson(msg));
                 } else {
                     return badRequest();
                 }
@@ -246,23 +261,42 @@ public class Users extends AbstractController {
     public static Result delete(Long id) {
         if (Secured.isAdminUser()) { // Check if an admin user
             try {
-                // Find the user record
+                // Check user exists and return if not
                 User user = User.find.byId(id);
+                if (user == null) {
+                    return nullUser(id);
+                }
                 String fullName = user.fullname;
 
                 // Delete groups
                 user.delAllGroups(); // Many-many
 
-                // Delete the user and show a message
+                // Delete the user
                 user.delete();
-                flash(Utils.FLASH_KEY_SUCCESS, "User: " + fullName + " deleted.");
+                String msg = "User: " + fullName + " deleted.";
+
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                    return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getMessageAsJson(msg));
+                } else {
+                    return badRequest();
+                }
             } catch (Exception e) {
-                // Log an error and show a message
+                // Log an error
                 Utils.eHandler("Users.delete(" + id + ")", e);
-                showSaveError(e); // Method in AbstractController
-            } finally {
-                // Redirect to remove user from query string
-                return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                String msg = "User: " + id + " not deleted. Error: " + e.getMessage();
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    showSaveError(e);
+                    return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getMessageAsJson(msg));
+                } else {
+                    return badRequest();
+                }
             }
         } else {
             return accessDenied(getLoggedInUser());
