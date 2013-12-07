@@ -25,7 +25,8 @@ import views.html.*;
 public class Application extends AbstractController {
 
     // Constants
-    public static final int RECORDS_PER_PAGE = 10;
+    public  static final int RECORDS_PER_PAGE = 10;
+    private static final String AUTHENTICATION_ERROR_MSG = "Invalid username or password.";
 
     // Add a constant here when creating a new list page
     public static final int PAGE_TYPE_ANALYSTS  =  1;
@@ -56,9 +57,17 @@ public class Application extends AbstractController {
      * @return Result
      */
     public static Result authenticate() {
-        Form<Login> loginForm = form(Login.class).bindFromRequest();
+        Form<Login> loginForm = form(Login.class).bindFromRequest(); // Get the form data
+        // Check if there are errors
         if (loginForm.hasErrors()) {
-            return badRequest(login.render(loginForm));
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                return badRequest(login.render(loginForm));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(getErrorAsJson(AUTHENTICATION_ERROR_MSG));
+            } else {
+                return badRequest();
+            }
         } else {
             session().clear();
             String username = loginForm.get().username;
@@ -135,8 +144,8 @@ public class Application extends AbstractController {
          * @throws NoSuchAlgorithmException     If the algorithm doesn't exist
          */
         public String validate() throws NoSuchAlgorithmException {
-            if (User.authenticate(username, password) == null) {
-                return "Invalid username or password.";
+            if (username == null || password == null || User.authenticate(username, password) == null) {
+                return AUTHENTICATION_ERROR_MSG;
             }
             return null;
         }
