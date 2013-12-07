@@ -1,10 +1,8 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
 import java.security.NoSuchAlgorithmException;
 import play.api.mvc.Call;
-import play.libs.Json;
 import play.mvc.Security;
 
 import play.mvc.Result;
@@ -35,7 +33,8 @@ public class Application extends AbstractController {
 
     /**
      * Renders the index page.
-     * @return Result
+     *
+     * @return Result  The home page.
      */
     @Security.Authenticated(Secured.class) // Will require the user to be logged in
     public static Result index() {
@@ -45,7 +44,8 @@ public class Application extends AbstractController {
 
     /**
      * Renders the login page.
-     * @return Result
+     *
+     * @return Result  The login page.
      */
     public static Result login() {
         return ok(login.render(form(Login.class)));
@@ -54,7 +54,8 @@ public class Application extends AbstractController {
 
     /**
      * Authenticates the user and goes the index page.
-     * @return Result
+     *
+     * @return Result  The home page if logged in.
      */
     public static Result authenticate() {
         Form<Login> loginForm = form(Login.class).bindFromRequest(); // Get the form data
@@ -76,7 +77,7 @@ public class Application extends AbstractController {
             if (request().accepts("text/html")) {
                 return redirect(controllers.routes.Application.index());
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                return ok(getMessageAsJson("You have signed in " + username + "."));
+                return ok(getSuccessAsJson("You have signed in " + username + "."));
             } else {
                 return badRequest();
             }
@@ -86,7 +87,8 @@ public class Application extends AbstractController {
 
     /**
      * Logs the user out and goes to the login page.
-     * @return Result
+     *
+     * @return Result  The login page.
      */
     public static Result logout() {
         session().clear();
@@ -96,7 +98,7 @@ public class Application extends AbstractController {
             flash("success", msg);
             return redirect(controllers.routes.Application.login());
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            return ok(getMessageAsJson(msg));
+            return ok(getSuccessAsJson(msg));
         } else {
             return badRequest();
         }
@@ -105,14 +107,15 @@ public class Application extends AbstractController {
 
     /**
      * When a (pagination) link is clicked, return the required list page.
-     * @param pageType           The type of page, e.g. Analysts
-     * @param page               The current page
-     * @param sortBy             The sort column
-     * @param sortOrder          Ascending or descending
-     * @param filter1            The first search filter
-     * @param filter2            The second search filter
-     * @param filterNum          A numeric search filter
-     * @return Call
+     *
+     * @param pageType           The type of page, e.g. Analysts.
+     * @param page               The current page.
+     * @param sortBy             The sort column.
+     * @param sortOrder          Ascending or descending.
+     * @param filter1            The first search filter.
+     * @param filter2            The second search filter.
+     * @param filterNum          A numeric search filter.
+     * @return Call  The requested list page.
      */
     public static Call getLink(int pageType, int page, String sortBy, String sortOrder,
                                             String filter1, String filter2, Long filterNum) {
@@ -140,8 +143,9 @@ public class Application extends AbstractController {
 
         /**
          * Calls a method to authenticate the user.
-         * @return String                       An error message if not authenticated
-         * @throws NoSuchAlgorithmException     If the algorithm doesn't exist
+         *
+         * @return String                       An error message if not authenticated, else null.
+         * @throws NoSuchAlgorithmException     If the algorithm doesn't exist.
          */
         public String validate() throws NoSuchAlgorithmException {
             if (username == null || password == null || User.authenticate(username, password) == null) {

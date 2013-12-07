@@ -1,10 +1,15 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
+import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.*;
 import utils.Utils;
+
+import java.util.*;
 
 /**
  * Top-level controller providing common fields and methods.
@@ -40,24 +45,91 @@ public abstract class AbstractController extends Controller {
 
 
     /**
-     * Gets the message as JSON.
+     * Gets the form validation errors as JSON with a key of "error".
+     *
+     * @param  node  The form validation errors.
+     * @return ObjectNode  The errors as a JSON object node with a key of "error".
+     */
+    static ObjectNode getErrorsAsJson(JsonNode node) {
+        String errors = "";
+        Iterator<JsonNode> nodeIt = node.iterator();
+        while (nodeIt.hasNext()) {
+            JsonNode errorNode = nodeIt.next();
+            errors += errorNode.toString() + " ";
+        }
+        return getErrorAsJson(node.toString());
+    }
+
+    /**
+     * Gets the form validation errors as JSON with a key of "error", for example, { "error": "password required" }.
+     * Using the form's standard errorAsJson method returns, for example, { "password": [ "This field is required" ] }.
+     *
+     * @param  form  The form.
+     * @return ObjectNode  The errors as a JSON object node with a key of "error".
+     */
+    static ObjectNode getErrorsAsJson(Form form) {
+
+        // Get the form validation errors
+        String errors = "";
+        Map<String,List<ValidationError>> errorsMap = form.errors();
+
+        // There is one key per field in error
+        Set<String> keys = errorsMap.keySet();
+        Iterator keyIt = keys.iterator();
+        while (keyIt.hasNext()) {
+            String key = (String) keyIt.next();
+
+            // Get the validation error (should only be one per field)
+            List<ValidationError> valErrors = errorsMap.get(key);
+            Iterator entryIt = valErrors.iterator();
+            while (entryIt.hasNext()) {
+                ValidationError error = (ValidationError) entryIt.next();
+                String message;
+                if (error.message().startsWith("error.")) {
+                    message = error.message().replace("error.", ""); // Remove text "error." from the message
+                } else {
+                    message = error.message();
+                }
+                errors += error.key() + " " + message + ". "; // Build one error string
+            }
+        }
+        return getErrorAsJson(errors);
+    }
+
+
+
+    /**
+     * Gets the success message as JSON.
      *
      * @param  msg  The message.
      * @return ObjectNode  The message as a JSON object node.
      */
-    static ObjectNode getMessageAsJson(String msg) {
-        return getJson("message", msg);
+    static ObjectNode getSuccessAsJson(String msg) {
+        return getJson("success", msg);
     }
 
+
     /**
-     * Gets the error as JSON.
+     * Gets the information message as JSON.
      *
-     * @param  msg  The error.
+     * @param  msg  The message.
+     * @return ObjectNode  The message as a JSON object node.
+     */
+    static ObjectNode getInfoAsJson(String msg) {
+        return getJson("information", msg);
+    }
+
+
+    /**
+     * Gets the error message as JSON.
+     *
+     * @param  msg  The message.
      * @return ObjectNode  The error as a JSON object node.
      */
     static ObjectNode getErrorAsJson(String msg) {
         return getJson("error", msg);
     }
+
 
     /**
      * Gets the key-value pair as JSON.

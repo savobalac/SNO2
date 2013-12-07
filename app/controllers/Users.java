@@ -28,12 +28,12 @@ public class Users extends AbstractController {
     /**
      * Displays a paginated list of users.
      *
-     * @param page          Current page number (starts from 0)
-     * @param sortBy        Column to be sorted
-     * @param order         Sort order (either asc or desc)
-     * @param filter        Filter applied on group name
-     * @param search        Search applied on full name
-     * @return Result
+     * @param page          Current page number (starts from 0).
+     * @param sortBy        Column to be sorted.
+     * @param order         Sort order (either asc or desc).
+     * @param filter        Filter applied on group name.
+     * @param search        Search applied on full name.
+     * @return Result  The list page.
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
 
@@ -59,8 +59,8 @@ public class Users extends AbstractController {
     /**
      * Show an error and the Access Denied page. In case the URL is set manually and the user doesn't have access.
      *
-     * @param loggedInUser  The logged-in user
-     * @return Result
+     * @param loggedInUser  The logged-in user.
+     * @return Result  The access denied page.
      */
     private static Result accessDenied(User loggedInUser) {
         // Return data in HTML or JSON as requested
@@ -69,7 +69,7 @@ public class Users extends AbstractController {
             flash(Utils.FLASH_KEY_INFO, msg);
             return ok(accessDenied.render(loggedInUser));
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            return ok(getMessageAsJson(msg)); // Method in AbstractController
+            return ok(getInfoAsJson(msg)); // Method in AbstractController
         } else {
             return badRequest();
         }
@@ -78,7 +78,8 @@ public class Users extends AbstractController {
 
     /**
      * Creates a new user.
-     * @return Result
+     *
+     * @return Result  The edit page.
      */
     public static Result create() {
         if (Secured.isAdminUser()) { // Check if an admin user
@@ -91,8 +92,9 @@ public class Users extends AbstractController {
 
     /**
      * Displays a form to create a new or edit an existing user.
-     * @param id Id of the user to edit
-     * @return Result
+     *
+     * @param id Id of the user to edit.
+     * @return Result  The edit page.
      */
     public static Result edit(Long id) {
 
@@ -130,6 +132,7 @@ public class Users extends AbstractController {
 
     /**
      * Returns either the list page or a JSON message when the user doesn't exist.
+     *
      * @param  id  Id of the user.
      * @return Result  The list page or a JSON message.
      */
@@ -147,8 +150,9 @@ public class Users extends AbstractController {
 
     /**
      * Updates the user from the form.
-     * @param id Id of the user to update
-     * @return Result
+     *
+     * @param id  Id of the user to update.
+     * @return Result  The list page, or the home page if updating the logged-in user.
      */
     public static Result update(Long id) {
 
@@ -165,7 +169,7 @@ public class Users extends AbstractController {
                     if (request().accepts("text/html")) {
                         return badRequest(editUser.render(id, userForm, loggedInUser)); // Return to the editUser page
                     } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                        return ok(userForm.errorsAsJson());
+                        return ok(getErrorsAsJson(userForm));
                     } else {
                         return badRequest();
                     }
@@ -216,7 +220,7 @@ public class Users extends AbstractController {
                             return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
                         }
                     } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                        return ok(getMessageAsJson(msg));
+                        return ok(getSuccessAsJson(msg));
                     } else {
                         return badRequest();
                     }
@@ -251,8 +255,9 @@ public class Users extends AbstractController {
 
     /**
      * Deletes the user.
-     * @param id Id of the user to delete
-     * @return Result
+     *
+     * @param id  Id of the user to delete.
+     * @return Result  The list page.
      */
     public static Result delete(Long id) {
         if (Secured.isAdminUser()) { // Check if an admin user
@@ -276,7 +281,7 @@ public class Users extends AbstractController {
                     flash(Utils.FLASH_KEY_SUCCESS, msg);
                     return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
                 } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                    return ok(getMessageAsJson(msg));
+                    return ok(getSuccessAsJson(msg));
                 } else {
                     return badRequest();
                 }
@@ -302,8 +307,9 @@ public class Users extends AbstractController {
 
     /**
      * Displays a (usually embedded) form to display the groups a user is assigned to.
-     * @param id Id of the user
-     * @return Result
+     *
+     * @param id  Id of the user.
+     * @return Result  The user groups page.
      */
     public static Result editGroups(Long id) {
         if (Secured.isAdminUser()) { // Check if an admin user
@@ -327,8 +333,9 @@ public class Users extends AbstractController {
 
     /**
      * Assigns the user to a group.
-     * @param id       Id of the user
-     * @param groupId  Id of the group
+     *
+     * @param id       Id of the user.
+     * @param groupId  Id of the group.
      * @return Result
      */
     public static Result addGroup(Long id, Long groupId) {
@@ -338,9 +345,10 @@ public class Users extends AbstractController {
 
     /**
      * Deletes a group from the user.
-     * @param id       Id of the user
-     * @param groupId  Id of the group
-     * @return Result
+     *
+     * @param id       Id of the user.
+     * @param groupId  Id of the group.
+     * @return Result  If an error occurred or "OK" if successful.
      */
     public static Result delGroup(Long id, Long groupId) {
         return changeGroup(id, groupId, "delete");
@@ -349,14 +357,15 @@ public class Users extends AbstractController {
 
     /**
      * Checks if the user can update a group and calls the updateGroup method.
+     *
      * @param id       Id of the user.
      * @param groupId  Id of the group.
      * @param action   "add" or "delete".
-     * @return String  If an error occurred or "OK" if successful
+     * @return String  If an error occurred or "OK" if successful.
      */
     private static Result changeGroup(Long id, Long groupId, String action) {
         if (Secured.isAdminUser()) { // Check if an admin user
-            // Return data as text or JSON as requested (browser calls use Ajax and test if OK)
+            // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
             String result = updateGroup(id, groupId, action);
             if (request().accepts("text/html")) {
                 return ok(result);
@@ -364,7 +373,7 @@ public class Users extends AbstractController {
                 if (result.startsWith("ERROR")) {
                     return ok(getErrorAsJson(result));
                 } else {
-                    return ok(getMessageAsJson(result));
+                    return ok(getSuccessAsJson(result));
                 }
             } else {
                 return badRequest();
@@ -377,10 +386,11 @@ public class Users extends AbstractController {
 
     /**
      * Adds or deletes a group to/from the user.
+     *
      * @param id       Id of the user.
      * @param groupId  Id of the group.
      * @param action   "add" or "delete".
-     * @return String  If an error occurred or "OK" if successful
+     * @return String  If an error occurred or "OK" if successful.
      */
     private static String updateGroup(Long id, Long groupId, String action) {
         User user = User.find.byId(id);
@@ -416,8 +426,9 @@ public class Users extends AbstractController {
 
     /**
      * Displays a form to edit the user's password.
-     * @param id Id of the user to edit
-     * @return Result
+     *
+     * @param id  Id of the user to edit.
+     * @return Result  The edit password page.
      */
     public static Result editPassword(Long id) {
         // Check if an admin user or if editing the logged-in user
@@ -439,8 +450,9 @@ public class Users extends AbstractController {
 
     /**
      * Updates the user's password from the form.
-     * @param id Id of the user to update
-     * @return Result
+     *
+     * @param id  Id of the user to update.
+     * @return Result  The edit user page.
      */
     public static Result updatePassword(Long id) {
 
@@ -448,22 +460,38 @@ public class Users extends AbstractController {
         User loggedInUser = getLoggedInUser();
         boolean isLoggedInUser = id.equals(loggedInUser.id);
         if (Secured.isAdminUser() || isLoggedInUser) {
-            Form<User> userForm = Form.form(User.class).bindFromRequest(); // Get the form data
+
+            // Check user exists and return if not
+            User user = User.find.byId(id);
+            if (user == null) {
+                return nullUser(id);
+            }
+
+            Form<User> userForm = null;
             try {
-                if (userForm.hasErrors()) { // Return to the editPassword page
-                    return badRequest(editPassword.render(id, userForm, loggedInUser));
+                userForm = Form.form(User.class).bindFromRequest(); // Get the form data
+                // Check if there are errors
+                if (userForm.hasErrors()) {
+                    // Return data in HTML or JSON as requested
+                    if (request().accepts("text/html")) {
+                        return badRequest(editPassword.render(id, userForm, loggedInUser)); // Return to editPassword
+                    } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                        return ok(getErrorsAsJson(userForm));
+                    } else {
+                        return badRequest();
+                    }
                 } else {
                     // Get the user data
-                    User user = userForm.get();
+                    user = userForm.get();
 
                     String newPassword = userForm.field("newPassword").value();
                     String confirmPassword = userForm.field("confirmPassword").value();
 
                     // Check that the new and confirmation passwords have been entered
-                    if (newPassword.trim().isEmpty()) {
+                    if (newPassword == null || newPassword.trim().isEmpty()) {
                         throw new Exception("Please enter a value for the new password");
                     }
-                    if (confirmPassword.trim().isEmpty()) {
+                    if (confirmPassword == null || confirmPassword.trim().isEmpty()) {
                         throw new Exception("Please enter a value for the confirmation password");
                     }
 
@@ -475,21 +503,40 @@ public class Users extends AbstractController {
                     // Hash the new password
                     user.password = Utils.hashString(newPassword);
 
-                    // Update the user and show a message
+                    // Update the user
                     user.saveOrUpdate();
-                    flash(Utils.FLASH_KEY_SUCCESS, "Password updated.");
+                    String msg = "Password updated.";
 
-                    // Redirect to the edit user page
-                    return redirect(controllers.routes.Users.edit(id));
+                    // Return data in HTML or JSON as requested
+                    if (request().accepts("text/html")) {
+                        flash(Utils.FLASH_KEY_SUCCESS, msg);
+                        return redirect(controllers.routes.Users.edit(id)); // Redirect to the edit user page
+                    } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                        return ok(getSuccessAsJson(msg));
+                    } else {
+                        return badRequest();
+                    }
                 }
             } catch (Exception e) {
-                // Log an error, show a message and return to the editPassword page
+                // Log an error
                 Utils.eHandler("Users.updatePassword(" + id + ")", e);
-                showSaveError(e); // Method in AbstractController
-                return badRequest(editPassword.render(id, userForm, loggedInUser));
+                String msg = "Password for user: " + id + " not updated. Error: " + e.getMessage();
+                e.printStackTrace();
+
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    showSaveError(e);
+                    return badRequest(editPassword.render(id, userForm, loggedInUser));
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getErrorAsJson(msg));
+                } else {
+                    return badRequest();
+                }
             }
         } else {
             return accessDenied(loggedInUser);
         }
     }
+
+
 }
