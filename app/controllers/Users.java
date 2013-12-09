@@ -111,7 +111,7 @@ public class Users extends AbstractController {
                 // Check user exists and return if not
                 user = User.find.byId(id);
                 if (user == null) {
-                    return nullUser(id);
+                    return noUser(id);
                 }
             }
             userForm = Form.form(User.class).fill(user);
@@ -136,7 +136,7 @@ public class Users extends AbstractController {
      * @param  id  Id of the user.
      * @return Result  The list page or a JSON message.
      */
-    private static Result nullUser(Long id) {
+    private static Result noUser(Long id) {
         // Return data in HTML or JSON as requested
         if (request().accepts("text/html")) {
             return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
@@ -191,7 +191,12 @@ public class Users extends AbstractController {
                         // Check user exists and return if not
                         User existingUser = User.find.byId(id);
                         if (existingUser == null) {
-                            return nullUser(id);
+                            return noUser(id);
+                        }
+                        // Check id supplied by the form is the same as the id parameter (only possible via JSON)
+                        if (!newUser.id.equals(existingUser.id)) {
+                            return ok(getErrorAsJson("User id in the data (" + newUser.id + ") " +
+                                                     "does not match the user id in the URL (" + id + ")."));
                         }
                         // Hash the password if the password has changed
                         if (!newUser.password.equals(existingUser.password)) {
@@ -265,7 +270,7 @@ public class Users extends AbstractController {
                 // Check user exists and return if not
                 User user = User.find.byId(id);
                 if (user == null) {
-                    return nullUser(id);
+                    return noUser(id);
                 }
                 String fullName = user.fullname;
 
@@ -319,7 +324,7 @@ public class Users extends AbstractController {
                 return ok(tagListUserGroups.render(user)); // This template handles null users
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
                 if (user == null) {
-                    return nullUser(id);
+                    return noUser(id);
                 }
                 return ok(user.getGroupsAsJson());
             } else {
@@ -437,7 +442,7 @@ public class Users extends AbstractController {
             // Check user exists and return if not
             User user = User.find.byId(id);
             if (user == null) {
-                return nullUser(id);
+                return noUser(id);
             }
             Form<User> userForm;
             userForm = Form.form(User.class).fill(user);
@@ -464,7 +469,7 @@ public class Users extends AbstractController {
             // Check user exists and return if not
             User user = User.find.byId(id);
             if (user == null) {
-                return nullUser(id);
+                return noUser(id);
             }
 
             Form<User> userForm = null;
@@ -483,6 +488,12 @@ public class Users extends AbstractController {
                 } else {
                     // Get the user data
                     user = userForm.get();
+
+                    // Check id supplied by the form is the same as the id parameter (only possible via JSON)
+                    if (!user.id.equals(id)) {
+                        return ok(getErrorAsJson("User id in the data (" + user.id + ") " +
+                                                 "does not match the user id in the URL (" + id + ")."));
+                    }
 
                     String newPassword = userForm.field("newPassword").value();
                     String confirmPassword = userForm.field("confirmPassword").value();
