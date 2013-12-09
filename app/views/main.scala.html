@@ -72,19 +72,19 @@
 
             <!-- Show any flash messages above the main content -->
             <div class="container">
-                @if(flash.containsKey(utils.Utils.FLASH_KEY_ERROR)) {
+                @if(flash.containsKey(utils.Utils.KEY_ERROR)) {
                     <div class="alert alert-danger">
-                        <strong>ERROR: </strong>@flash.get(utils.Utils.FLASH_KEY_ERROR)
+                        <strong>ERROR: </strong>@flash.get(utils.Utils.KEY_ERROR)
                     </div>
                 }
-                @if(flash.containsKey(utils.Utils.FLASH_KEY_INFO)) {
+                @if(flash.containsKey(utils.Utils.KEY_INFO)) {
                     <div class="alert alert-info">
-                        @flash.get(utils.Utils.FLASH_KEY_INFO)
+                        @flash.get(utils.Utils.KEY_INFO)
                     </div>
                 }
-                @if(flash.containsKey(utils.Utils.FLASH_KEY_SUCCESS)) {
+                @if(flash.containsKey(utils.Utils.KEY_SUCCESS)) {
                     <div class="alert alert-success">
-                        <p>@flash.get(utils.Utils.FLASH_KEY_SUCCESS)</p>
+                        <p>@flash.get(utils.Utils.KEY_SUCCESS)</p>
                     </div>
                 }
 

@@ -126,7 +126,7 @@ public class Analysts extends AbstractController {
                 } else {
                     msg = "Analyst: " + fullName + " updated.";
                 }
-                flash(Utils.FLASH_KEY_SUCCESS, msg);
+                flash(Utils.KEY_SUCCESS, msg);
 
                 // Redirect to the list page and remove the analyst from the query string
                 return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
@@ -165,7 +165,7 @@ public class Analysts extends AbstractController {
 
             // Delete the analyst and show a message
             analyst.delete();
-            flash(Utils.FLASH_KEY_SUCCESS, "Analyst: " + fullName + " deleted.");
+            flash(Utils.KEY_SUCCESS, "Analyst: " + fullName + " deleted.");
         } catch (Exception e) {
             // Log an error and show a message
             Utils.eHandler("Analysts.delete(" + id + ")", e);
@@ -287,7 +287,7 @@ public class Analysts extends AbstractController {
                     analyst.cvDocument = s3File;
                 }
                 analyst.update();
-                flash(Utils.FLASH_KEY_SUCCESS,
+                flash(Utils.KEY_SUCCESS,
                       "File: " + fileName + " uploaded to analyst: " + analyst.getFullName());
                 return ok("OK"); // The Ajax call from editAnalyst checks for "OK"
             } else { // File not found
@@ -457,7 +457,7 @@ public class Analysts extends AbstractController {
                     note.update();
                     msg = "Note: " + note.title + " updated.";
                 }
-                flash(Utils.FLASH_KEY_SUCCESS, msg);
+                flash(Utils.KEY_SUCCESS, msg);
 
                 // Redirect to the edit analyst page
                 return redirect(controllers.routes.Analysts.edit(aId));
@@ -516,7 +516,7 @@ public class Analysts extends AbstractController {
             // Remove the note from the analyst, delete it and show a message
             analyst.delNote(note);
             note.delete();
-            flash(Utils.FLASH_KEY_SUCCESS, "Note: " + title + " deleted.");
+            flash(Utils.KEY_SUCCESS, "Note: " + title + " deleted.");
         } catch (Exception e) {
             // Log an error and show a message
             Utils.eHandler("Analysts.deleteNote(" + aId + ", " + noteId + ")", e);

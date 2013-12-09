@@ -8,6 +8,7 @@ import play.mvc.Security;
 import play.mvc.Result;
 import play.data.*;
 import static play.data.Form.*;
+import utils.Utils;
 import views.html.*;
 
 /**
@@ -48,7 +49,14 @@ public class Application extends AbstractController {
      * @return Result  The login page.
      */
     public static Result login() {
-        return ok(login.render(form(Login.class)));
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(login.render(form(Login.class)));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getInfoAsJson("Please sign in with a username and password."));
+        } else {
+            return badRequest();
+        }
     }
 
 
@@ -95,7 +103,7 @@ public class Application extends AbstractController {
         // Return data in HTML or JSON as requested
         String msg = "You have signed out.";
         if (request().accepts("text/html")) {
-            flash("success", msg);
+            flash(Utils.KEY_SUCCESS, msg);
             return redirect(controllers.routes.Application.login());
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
             return ok(getSuccessAsJson(msg));

@@ -66,7 +66,7 @@ public class Users extends AbstractController {
         // Return data in HTML or JSON as requested
         String msg = "Only admin users can see user data.";
         if (request().accepts("text/html")) {
-            flash(Utils.FLASH_KEY_INFO, msg);
+            flash(Utils.KEY_INFO, msg);
             return ok(accessDenied.render(loggedInUser));
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
             return ok(getInfoAsJson(msg)); // Method in AbstractController
@@ -213,7 +213,7 @@ public class Users extends AbstractController {
                     if (request().accepts("text/html")) {
                         // If updating the logged-in user redirect to the home page,
                         // Otherwise redirect to the list page (and remove the user from the query string)
-                        flash(Utils.FLASH_KEY_SUCCESS, msg);
+                        flash(Utils.KEY_SUCCESS, msg);
                         if (isLoggedInUser) {
                             return redirect(controllers.routes.Application.index());
                         } else {
@@ -278,7 +278,7 @@ public class Users extends AbstractController {
 
                 // Return data in HTML or JSON as requested
                 if (request().accepts("text/html")) {
-                    flash(Utils.FLASH_KEY_SUCCESS, msg);
+                    flash(Utils.KEY_SUCCESS, msg);
                     return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
                 } else if (request().accepts("application/json") || request().accepts("text/json")) {
                     return ok(getSuccessAsJson(msg));
@@ -509,7 +509,7 @@ public class Users extends AbstractController {
 
                     // Return data in HTML or JSON as requested
                     if (request().accepts("text/html")) {
-                        flash(Utils.FLASH_KEY_SUCCESS, msg);
+                        flash(Utils.KEY_SUCCESS, msg);
                         return redirect(controllers.routes.Users.edit(id)); // Redirect to the edit user page
                     } else if (request().accepts("application/json") || request().accepts("text/json")) {
                         return ok(getSuccessAsJson(msg));

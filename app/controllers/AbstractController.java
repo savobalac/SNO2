@@ -40,7 +40,7 @@ public abstract class AbstractController extends Controller {
      */
     static void showSaveError(Exception e) {
         String msg = String.format("%s. Changes not saved.", e.getMessage());
-        flash(Utils.FLASH_KEY_ERROR, msg);
+        flash(Utils.KEY_ERROR, msg);
     }
 
 
@@ -105,7 +105,7 @@ public abstract class AbstractController extends Controller {
      * @return ObjectNode  The message as a JSON object node.
      */
     static ObjectNode getSuccessAsJson(String msg) {
-        return getJson("success", msg);
+        return getJson(Utils.KEY_SUCCESS, msg);
     }
 
 
@@ -116,7 +116,7 @@ public abstract class AbstractController extends Controller {
      * @return ObjectNode  The message as a JSON object node.
      */
     static ObjectNode getInfoAsJson(String msg) {
-        return getJson("information", msg);
+        return getJson(Utils.KEY_INFO, msg);
     }
 
 
@@ -127,7 +127,7 @@ public abstract class AbstractController extends Controller {
      * @return ObjectNode  The error as a JSON object node.
      */
     static ObjectNode getErrorAsJson(String msg) {
-        return getJson("error", msg);
+        return getJson(Utils.KEY_ERROR, msg);
     }
 
 

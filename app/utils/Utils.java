@@ -31,9 +31,9 @@ public class Utils {
     public static final int LOG_TYPE_ERROR   = -1;
     public static final int LOG_TYPE_GENERAL =  0;
 
-    public static final String FLASH_KEY_INFO    = "info";
-    public static final String FLASH_KEY_ERROR   = "error";
-    public static final String FLASH_KEY_SUCCESS = "success";
+    public static final String KEY_INFO    = "info";
+    public static final String KEY_ERROR   = "error";
+    public static final String KEY_SUCCESS = "success";
 
 
     /**
