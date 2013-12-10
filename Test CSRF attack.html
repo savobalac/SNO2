@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Test CSRF</title>
+    </head>
+
+    <body>
+	<form action="http://localhost:9000/users/411/delete" method="POST"> 
+	    <button type="submit">Will this link delete user 411?</button>
+	</form>
+	<br>
+	<form action="http://localhost:9000/users/411/addGroup/1" method="POST"> 
+	    <button type="submit">Will this link add group 1 to user 411?</button>
+	</form>
+    </body>
+
+</html>
