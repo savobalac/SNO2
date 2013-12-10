@@ -444,9 +444,17 @@ public class Users extends AbstractController {
             if (user == null) {
                 return noUser(id);
             }
-            Form<User> userForm;
-            userForm = Form.form(User.class).fill(user);
-            return ok(editPassword.render(id, userForm, loggedInUser));
+
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                Form<User> userForm;
+                userForm = Form.form(User.class).fill(user);
+                return ok(editPassword.render(id, userForm, loggedInUser));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(user.toJson());
+            } else {
+                return badRequest();
+            }
         } else {
             return accessDenied(loggedInUser);
         }
