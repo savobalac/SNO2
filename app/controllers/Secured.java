@@ -4,6 +4,9 @@ import play.mvc.*;
 import play.mvc.Http.*;
 
 import models.*;
+import utils.Utils;
+
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Ensures pages have an authenticated user.
@@ -25,7 +28,33 @@ public class Secured extends Security.Authenticator {
      */
     @Override
     public String getUsername(Context ctx) {
-        return ctx.session().get("username");
+
+        // Get the username from the cookie
+        // Requests from the JSON API may include the username and password to avoid logging in first
+        if (ctx.session().get("username") != null) {
+            return ctx.session().get("username");
+        } else {
+            if (ctx.request().accepts("application/json") || ctx.request().accepts("text/json")) {
+                String username = ctx.request().getHeader("username");
+                String password = ctx.request().getHeader("password");
+                Application.Login login = new Application.Login();
+                login.username = username;
+                login.password = password;
+                try {
+                    if (login.validate() == null) {
+                        return username;
+                    } else {
+                        return null;
+                    }
+                } catch (NoSuchAlgorithmException ex) {
+                    // Log an error
+                    Utils.eHandler("Secured.getUsername()", ex);
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
     }
 
 

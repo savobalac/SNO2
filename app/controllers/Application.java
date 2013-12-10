@@ -53,7 +53,7 @@ public class Application extends AbstractController {
         if (request().accepts("text/html")) {
             return ok(login.render(form(Login.class)));
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            return ok(getInfoAsJson("Please sign in with a username and password."));
+            return ok(getInfoAsJson("Please sign in with a valid username and password."));
         } else {
             return badRequest();
         }
