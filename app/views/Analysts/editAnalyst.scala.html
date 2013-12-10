@@ -36,6 +36,8 @@
 
     @form(routes.Analysts.update(id), 'id -> "analystForm", 'enctype -> "multipart/form-data", 'role -> "form") {
     <fieldset>
+        @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
+
         <!-- analystId needs to be set, otherwise it will be null on update -->
         <input type="Hidden" id="analystId" name="analystId" value="@id" />
 
@@ -382,6 +384,7 @@
     <!-- New analysts can't be deleted as they haven't been saved yet -->
     @if(!(id==0)) {
         @form(routes.Analysts.delete(id), 'id -> "deleteForm", 'class -> "topRight") {
+            @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
             <button type="submit" id="DELETE" class="btn btn-danger btn-xs">DELETE</button>
         }
     }

@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
         "org.reflections" % "reflections" % "0.9.8",
         javaCore, javaJdbc, javaEbean,
         "com.amazonaws" % "aws-java-sdk" % "1.3.11",
-        "net.sf.flexjson" % "flexjson" % "2.1"
+        filters
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(

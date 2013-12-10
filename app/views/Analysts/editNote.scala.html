@@ -42,6 +42,8 @@
 
     @form(routes.Analysts.updateNote(analystId, noteId), 'id -> "notesForm", 'role -> "form") {
         <fieldset>
+            @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
+
             <!-- The note id needs to be set, otherwise it will be null on update -->
             <input type="hidden" id="noteId" name="noteId" value="@noteId" />
 
@@ -89,6 +91,7 @@
     <!-- New notes can't be deleted as they haven't been saved yet -->
     @if((noteId!=0)) {
         @form(routes.Analysts.deleteNote(analystId, noteId), 'id -> "deleteForm", 'class -> "topRight") {
+            @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
             <button type="submit" id="DELETE" class="btn btn-danger btn-xs">DELETE</button>
         }
     }

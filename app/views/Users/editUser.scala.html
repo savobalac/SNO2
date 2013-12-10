@@ -35,6 +35,8 @@
 
     @form(routes.Users.update(id), 'id -> "userForm", 'role -> "form") {
     <fieldset>
+        @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
+
         <!-- id needs to be set, otherwise it will be null on update -->
         <input type="Hidden" id="id" name="id" value="@id" />
 
@@ -130,6 +132,7 @@
     <!-- Only admin users can delete existing users (and they can't delete themselves) -->
     @if(user.isAdmin()&&(id!=user.id)&&id!=0) {
         @form(routes.Users.delete(id), 'id -> "deleteForm", 'class -> "topRight") {
+            @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
             <button type="submit" id="DELETE" class="btn btn-danger btn-xs">DELETE</button>
         }
     }

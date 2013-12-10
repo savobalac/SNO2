@@ -36,6 +36,7 @@
         <div class="container">
 
         @helper.form(routes.Application.authenticate, 'id -> "signIn") {
+            @CSRF.formField <!-- Need a hidden CSRF token to protect against CSRF -->
 
             <h2 class="form-signin-heading">Sign in to SNO2</h2>
             <br>
