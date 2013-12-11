@@ -152,7 +152,7 @@ public class Users extends AbstractController {
      * Updates the user from the form.
      *
      * @param id  Id of the user to update.
-     * @return Result  The list page, or the home page if updating the logged-in user.
+     * @return Result  The list page, the home page if updating the logged-in user, or the edit page if in error.
      */
     public static Result update(Long id) {
 
@@ -194,7 +194,7 @@ public class Users extends AbstractController {
                             return noUser(id);
                         }
                         // Check id supplied by the form is the same as the id parameter (only possible via JSON)
-                        if (!newUser.id.equals(existingUser.id)) {
+                        if (!newUser.id.equals(id)) {
                             return ok(getErrorAsJson("User id in the data (" + newUser.id + ") " +
                                                      "does not match the user id in the URL (" + id + ")."));
                         }

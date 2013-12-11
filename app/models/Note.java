@@ -80,16 +80,18 @@ public class Note extends Model {
         result.put("title", title);
         result.put("content", content);
         if (user != null) { // Non-required fields may be null
-            result.put("user", user.id.toString());
+            result.put("user", user.toJson());
         }
         if (createdDt != null) {
-            result.put("createdDt", Utils.formatTimestamp(createdDt));
+            //result.put("createdDt", Utils.formatTimestamp(createdDt));
+            result.put("createdDt", createdDt.toString());
         }
         if (updatedBy != null) {
-            result.put("updatedBy", updatedBy.id.toString());
+            result.put("updatedBy", updatedBy.toJson());
         }
         if (updatedDt != null) {
-            result.put("updatedDt", Utils.formatTimestamp(updatedDt));
+            //result.put("updatedDt", Utils.formatTimestamp(updatedDt));
+            result.put("updatedDt", updatedDt.toString());
         }
         return result;
     }

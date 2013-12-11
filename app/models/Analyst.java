@@ -29,10 +29,11 @@ import utils.Utils;
 public class Analyst extends Model {
 
     // Instance variables (Play! generates getters and setters)
+    @Constraints.Required                      // A required constraint will ensure form fields are entered
     @Id public Long                 analystId;
     public String                   salutation;
 
-    @Constraints.Required                      // A required constraint will ensure form fields are entered
+    @Constraints.Required
     @Formats.NonEmpty                          // A non-empty format will convert spaces to null and ensure validation
     public String                   firstname;
 
@@ -40,9 +41,11 @@ public class Analyst extends Model {
     @Formats.NonEmpty
     public String                   lastname;
 
+    @Constraints.Required
     @OneToOne @JoinColumn(name="status_id")
     public Status                   status; // "status_id" is the name of the column in table analyst
 
+    @Constraints.Required
     @OneToOne @JoinColumn(name="rank")
     public Rank                     rank;
 

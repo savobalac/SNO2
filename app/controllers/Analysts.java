@@ -37,11 +37,11 @@ public class Analysts extends AbstractController {
     /**
      * Displays a paginated list of analysts.
      *
-     * @param page          Current page number (starts from 0)
-     * @param sortBy        Column to be sorted
-     * @param order         Sort order (either asc or desc)
-     * @param filter        Filter applied on primary desk name
-     * @param search        Search applied on last name
+     * @param page          Current page number (starts from 0).
+     * @param sortBy        Column to be sorted.
+     * @param order         Sort order (either asc or desc).
+     * @param filter        Filter applied on primary desk name.
+     * @param search        Search applied on last name.
      * @return Result  The list page or all analysts as JSON.
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
@@ -61,7 +61,8 @@ public class Analysts extends AbstractController {
 
     /**
      * Creates a new analyst.
-     * @return Result
+     *
+     * @return Result  The edit page.
      */
     public static Result create() {
         return edit(0L);
@@ -82,7 +83,7 @@ public class Analysts extends AbstractController {
         if (id <= 0L) {
             analyst = new Analyst();
         } else {
-            // Check user exists and return if not
+            // Check analyst exists and return if not
             analyst = Analyst.find.byId(id);
             if (analyst == null) {
                 return noAnalyst(id);
@@ -121,45 +122,72 @@ public class Analysts extends AbstractController {
 
     /**
      * Updates the analyst from the form.
-     * @param id Id of the analyst to update
-     * @return Result
+     *
+     * @param id  Id of the analyst to update.
+     * @return Result  The list page or the edit page if in error.
      */
     public static Result update(Long id) {
-        Form<Analyst> analystForm = Form.form(Analyst.class).bindFromRequest(); // Get the form data
         User loggedInUser = getLoggedInUser();
+        Form<Analyst> analystForm = null;
         try {
-            if (analystForm.hasErrors()) { // Return to the editAnalyst page
-                return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
+            analystForm = Form.form(Analyst.class).bindFromRequest(); // Get the form data
+            // Check if there are errors
+            if (analystForm.hasErrors()) {
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    return badRequest(editAnalyst.render(id, analystForm, loggedInUser)); // Return to the editAnalyst page
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getErrorsAsJson(analystForm));
+                } else {
+                    return badRequest();
+                }
             } else {
-                Analyst a = analystForm.get(); // Get the analyst data
+                Analyst newAnalyst = analystForm.get(); // Get the analyst data
 
                 // Disabled checkboxes have an associated disabled field with its original value
                 // Checkboxes, if unchecked or disabled, return null
                 if (analystForm.field("disEmailverified").value() != null) {
-                    a.emailverified = (analystForm.field("disEmailverified").value().equals("true"));
+                    newAnalyst.emailverified = (analystForm.field("disEmailverified").value().equals("true"));
                 } else {
-                    a.emailverified = (analystForm.field("emailverified").value() == null) ? (false) : (a.emailverified);
+                    newAnalyst.emailverified =
+                            (analystForm.field("emailverified").value() == null) ? (false) : (newAnalyst.emailverified);
                 }
                 if (analystForm.field("disPhoneverified").value() != null) {
-                    a.phoneVerified = (analystForm.field("disPhoneverified").value().equals("true"));
+                    newAnalyst.phoneVerified = (analystForm.field("disPhoneverified").value().equals("true"));
                 } else {
-                    a.phoneVerified = (analystForm.field("phoneVerified").value() == null) ? (false) : (a.phoneVerified);
+                    newAnalyst.phoneVerified =
+                            (analystForm.field("phoneVerified").value() == null) ? (false) : (newAnalyst.phoneVerified);
                 }
                 if (analystForm.field("disContractSigned").value() != null) {
-                    a.contractSigned = (analystForm.field("disContractSigned").value().equals("true"));
+                    newAnalyst.contractSigned = (analystForm.field("disContractSigned").value().equals("true"));
                 } else {
-                    a.contractSigned = (analystForm.field("contractSigned").value() == null) ? (false) : (a.contractSigned);
+                    newAnalyst.contractSigned =
+                            (analystForm.field("contractSigned").value() == null) ? (false) : (newAnalyst.contractSigned);
                 }
 
-                // Check if the status has changed and, if so, do some processing (to be defined)
-                Analyst existingData = Analyst.find.byId(id);
-                if (a.status != existingData.status) {
-                    System.out.println("***** Status id changed from: " + existingData.status.statusId +
-                                                                " to: " + a.status.statusId);
+                // Updates have a non-zero id
+                if (id != 0) {
+                    // Check analyst exists and return if not
+                    Analyst existingAnalyst = Analyst.find.byId(id);
+                    if (existingAnalyst == null) {
+                        return noAnalyst(id);
+                    }
+
+                    // Check id supplied by the form is the same as the id parameter (only possible via JSON)
+                    if (!newAnalyst.analystId.equals(id)) {
+                        return ok(getErrorAsJson("Analyst id in the data (" + newAnalyst.analystId + ") " +
+                                                 "does not match the analyst id in the URL (" + id + ")."));
+                    }
+
+                    // Check if the status has changed and, if so, do some processing (yet to be defined)
+                    if (!newAnalyst.status.equals(existingAnalyst.status)) {
+                        System.out.println("***** Status id changed from: " + existingAnalyst.status.statusId +
+                                                                    " to: " + newAnalyst.status.statusId);
+                    }
                 }
 
                 // Save if a new analyst, otherwise update, and show a message
-                a.saveOrUpdate();
+                newAnalyst.saveOrUpdate();
                 String fullName = analystForm.get().firstname + " " + analystForm.get().lastname;
                 String msg;
                 if (id == 0) {
@@ -167,16 +195,39 @@ public class Analysts extends AbstractController {
                 } else {
                     msg = "Analyst: " + fullName + " updated.";
                 }
-                flash(Utils.KEY_SUCCESS, msg);
 
-                // Redirect to the list page and remove the analyst from the query string
-                return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    // Redirect to the list page and remove the analyst from the query string
+                    flash(Utils.KEY_SUCCESS, msg);
+                    return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getSuccessAsJson(msg));
+                } else {
+                    return badRequest();
+                }
             }
         } catch (Exception e) {
-            // Log an error, show a message and return to the editAnalyst page
+            // Log an error
             Utils.eHandler("Analysts.update(" + id + ")", e);
-            showSaveError(e); // Method in AbstractController
-            return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
+
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                // Show a message and return to the editAnalyst page
+                showSaveError(e); // Method in AbstractController
+                return badRequest(editAnalyst.render(id, analystForm, loggedInUser));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                String msg;
+                if (id == 0) {
+                    msg = "Analyst not created.";
+                } else {
+                    msg = "Analyst: " + id + " not updated.";
+                }
+                msg += " Error: " + e.getMessage();
+                return ok(getErrorAsJson(msg));
+            } else {
+                return badRequest();
+            }
         }
     }
 
