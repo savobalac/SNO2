@@ -63,18 +63,52 @@ public class Analysts extends AbstractController {
 
     /**
      * Displays a form to create a new or edit an existing analyst.
-     * @param id Id of the analyst to edit
-     * @return Result
+     *
+     * @param id  Id of the analyst to edit.
+     * @return Result  The edit page or the analyst as JSON.
      */
     public static Result edit(Long id) {
+
+        // New analysts have id 0 and don't exist
         Form<Analyst> analystForm;
-        // New analysts have id 0
+        Analyst analyst;
         if (id <= 0L) {
-            analystForm = Form.form(Analyst.class).fill(new Analyst());
+            analyst = new Analyst();
         } else {
-            analystForm = Form.form(Analyst.class).fill(Analyst.find.byId(id));
+            // Check user exists and return if not
+            analyst = Analyst.find.byId(id);
+            if (analyst == null) {
+                return noAnalyst(id);
+            }
         }
-        return ok(editAnalyst.render(((id<0)?(0L):(id)), analystForm, getLoggedInUser()));
+        analystForm = Form.form(Analyst.class).fill(analyst);
+
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(editAnalyst.render(((id<0)?(0L):(id)), analystForm, getLoggedInUser()));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(analyst.toJson(getLoggedInUser()));
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Returns either the list page or a JSON message when the analyst doesn't exist.
+     *
+     * @param  id  Id of the analyst.
+     * @return Result  The list page or a JSON message.
+     */
+    private static Result noAnalyst(Long id) {
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getErrorAsJson("Analyst: " + id + " does not exist."));
+        } else {
+            return badRequest();
+        }
     }
 
 

@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
 
 /**
  * Model class that maps to DB table status.
@@ -45,6 +48,21 @@ public class Status extends Model {
             options.put(status.statusId.toString(), status.statusName);
         }
         return options;
+    }
+
+
+    /**
+     * Converts the status to JSON.
+     *
+     * @return ObjectNode  The status as a JSON object node.
+     */
+    public ObjectNode toJson() {
+        ObjectNode result = Json.newObject();
+        result.put("statusId", statusId.toString());
+        if (statusName != null) { // Non-required fields may be null
+            result.put("statusName", statusName);
+        }
+        return result;
     }
 
 

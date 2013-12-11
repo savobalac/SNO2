@@ -1,7 +1,9 @@
 package models;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,7 +37,8 @@ public class Rank extends Model {
 
     /**
      * Returns a map of all ranks typically used in a select.
-     * @return Map<String,String>
+     *
+     * @return Map<String,String>  All ranks with key: id and value: name.
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
@@ -44,6 +47,21 @@ public class Rank extends Model {
             options.put(rank.id.toString(), rank.name);
         }
         return options;
+    }
+
+
+    /**
+     * Converts the rank to JSON.
+     *
+     * @return ObjectNode  The rank as a JSON object node.
+     */
+    public ObjectNode toJson() {
+        ObjectNode result = Json.newObject();
+        result.put("id", id.toString());
+        if (name != null) { // Non-required fields may be null
+            result.put("name", name);
+        }
+        return result;
     }
 
 

@@ -44,8 +44,9 @@ public class Group extends Model {
 
 
     /**
-     * Returns a list of all groups
-     * @return List<Group>
+     * Returns a list of all groups.
+     *
+     * @return List<Group>  List of all groups.
      */
     public static List<Group> getAll() {
         return Group.find.where().orderBy("name").findList();
@@ -53,8 +54,9 @@ public class Group extends Model {
 
 
     /**
-     * Returns a map of all groups typically used in a select
-     * @return Map<String,String>
+     * Returns a map of all groups typically used in a select.
+     *
+     * @return Map<String,String>  All groups with key: id and value: name.
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
@@ -72,7 +74,7 @@ public class Group extends Model {
      */
     public ObjectNode toJson() {
         ObjectNode result = Json.newObject();
-        result.put("id", id);
+        result.put("id", id.toString());
         result.put("name", name);
         return result;
     }

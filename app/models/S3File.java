@@ -2,9 +2,11 @@ package models;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.Logger;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
 import plugins.S3Plugin;
 
 import javax.persistence.*;
@@ -48,8 +50,9 @@ public class S3File extends Model {
 
     /**
      * Gets the URL.
-     * @return URL
-     * @throws MalformedURLException
+     *
+     * @return URL  The URL.
+     * @throws MalformedURLException  If the URL is malformed.
      */
     public URL getUrl() throws MalformedURLException {
         return new URL("https://s3.amazonaws.com/" + bucket + "/" + getActualFileName());
@@ -58,7 +61,8 @@ public class S3File extends Model {
 
     /**
      * Gets the file name.
-     * @return String
+     *
+     * @return String  The file name.
      */
     private String getActualFileName() {
         return id + "/" + name;
@@ -99,6 +103,21 @@ public class S3File extends Model {
             S3Plugin.amazonS3.deleteObject(bucket, getActualFileName());
             super.delete();
         }
+    }
+
+
+    /**
+     * Converts the S3File to JSON.
+     *
+     * @return ObjectNode  The S3File as a JSON object node.
+     */
+    public ObjectNode toJson() {
+        ObjectNode result = Json.newObject();
+        result.put("id", id.toString());
+        if (name != null) { // Non-required fields may be null
+            result.put("name", name);
+        }
+        return result;
     }
 
 

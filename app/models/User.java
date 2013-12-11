@@ -316,7 +316,7 @@ public class User extends Model {
 
 
     /**
-     * Converts the user and its groups to JSON. Users-groups is a many-many relationship.
+     * Converts the user and its groups to JSON. User-group is a many-many relationship.
      * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
      *
      * @return ObjectNode  The user as a JSON object node.
@@ -331,7 +331,7 @@ public class User extends Model {
         userNode.put("password", password);
         userNode.put("email", email);
         userNode.put("fullname", fullname);
-        if (lastlogin != null) {
+        if (lastlogin != null) { // Non-required fields may be null
             userNode.put("lastlogin", Utils.formatTimestamp(lastlogin));
         }
         userNode.put("groups", getGroupsAsJsonArray(userNode));

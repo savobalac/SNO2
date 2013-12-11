@@ -5,10 +5,13 @@ import java.sql.Timestamp;
 import java.util.List;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
 import utils.Utils;
 
 /**
@@ -312,6 +315,146 @@ public class Analyst extends Model {
             Utils.eHandler("Analyst.delAllNotes()", e);
             throw e;
         }
+    }
+
+    
+    /**
+     * Converts the analyst and its desks to JSON. Analyst-desk is a many-many relationship.
+     * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
+     *
+     * @return ObjectNode  The analyst as a JSON object node.
+     */
+    public ObjectNode toJson(User loggedInUser) {
+        ObjectNode analystNode = Json.newObject();
+        if (analystId == null) {
+            return analystNode;
+        }
+
+        analystNode.put("analystId", analystId.toString());
+        if (salutation != null) { // Non-required fields may be null
+            analystNode.put("salutation", salutation);
+        }
+        analystNode.put("firstname", firstname);
+        analystNode.put("lastname", lastname);
+        if (rank != null) {
+            analystNode.put("rank", rank.toJson());
+        }
+        analystNode.put("primaryDesk", primaryDesk.toJson());
+        if (status != null) {
+            analystNode.put("status", status.toJson());
+        }
+        if (mobile != null) {
+            analystNode.put("mobile", mobile);
+        }
+        if (phone != null && loggedInUser.isAdminOrManager()) { // Include if admin user or manager
+            analystNode.put("phone", phone);
+        }
+        if (email != null) {
+            analystNode.put("email", email);
+        }
+        if (emailAlternate != null && loggedInUser.isAdminOrManager()) { // Include if admin user or manager
+            analystNode.put("emailAlternate", emailAlternate);
+        }
+        if (paypalAccountEmail != null && loggedInUser.isAdminOrManagerOrStaff()) { // Include if admin user, manager or staff
+            analystNode.put("paypalAccountEmail", paypalAccountEmail);
+        }
+        if (emailverified != null) {
+            analystNode.put("emailverified", emailverified.toString());
+        }
+        if (phoneVerified != null) {
+            analystNode.put("phoneVerified", phoneVerified.toString());
+        }
+        if (contractSigned != null) {
+            analystNode.put("contractSigned", contractSigned.toString());
+        }
+        if (wikiUsername != null) {
+            analystNode.put("wikiUsername", wikiUsername);
+        }
+        if (skype != null) {
+            analystNode.put("skype", skype);
+        }
+        if (highriseAccount != null) {
+            analystNode.put("highriseAccount", highriseAccount);
+        }
+        if (loggedInUser.isAdminOrManagerOrStaff()) { // Include address fields if admin user, manager or staff
+            if (address1 != null) {
+                analystNode.put("address1", address1);
+            }
+            if (address2 != null) {
+                analystNode.put("address2", address2);
+            }
+            if (city != null) {
+                analystNode.put("city", city);
+            }
+            if (state != null) {
+                analystNode.put("state", state);
+            }
+            if (zip != null) {
+                analystNode.put("zip", zip);
+            }
+            if (country != null) {
+                analystNode.put("country", country);
+            }
+            if (countryOfResidence != null) {
+                analystNode.put("countryOfResidence", countryOfResidence);
+            }
+        }
+        if (positionDescription != null) {
+            analystNode.put("positionDescription", positionDescription);
+        }
+        if (academic != null) {
+            analystNode.put("academic", academic);
+        }
+        if (expertise != null) {
+            analystNode.put("expertise", expertise);
+        }
+        if (biography != null) {
+            analystNode.put("biography", biography);
+        }
+        if (createOn != null) {
+            analystNode.put("createOn", Utils.formatTimestamp(createOn));
+        }
+        analystNode.put("desks", getDesksAsJsonArray(analystNode));
+        analystNode.put("noteList", getNotesAsJsonArray(analystNode));
+        if (profileImage != null) {
+            analystNode.put("profileImage", profileImage.toJson());
+        }
+        if (cvDocument != null) {
+            analystNode.put("cvDocument", cvDocument.toJson());
+        }
+        return analystNode;
+    }
+
+
+    /**
+     * Gets the analyst's desks as a JSON array node.
+     *
+     * @param  analystNode  The analyst as a JSON ObjectNode
+     * @return ArrayNode  The analyst's desks as a JSON array node.
+     */
+    private ArrayNode getDesksAsJsonArray(ObjectNode analystNode) {
+        ArrayNode deskNodes = analystNode.arrayNode();
+        for (Desk desk : desks) {
+            ObjectNode deskNode = desk.toJson();
+            deskNodes.add(deskNode);
+        }
+        return deskNodes;
+    }
+
+
+    /**
+     * Gets the analyst's notes as a JSON array node.
+     *
+     * @param  analystNode  The analyst as a JSON ObjectNode
+     * @return ArrayNode  The analyst's notes as a JSON array node.
+     */
+    private ArrayNode getNotesAsJsonArray(ObjectNode analystNode) {
+        ArrayNode noteNodes = analystNode.arrayNode();
+        for (Note note : noteList) {
+            ObjectNode noteNode = note.toJson();
+            noteNodes.add(noteNode);
+        }
+        return noteNodes;
     }
 
 

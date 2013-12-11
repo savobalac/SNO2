@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
 
 /**
  * Model class that maps to DB table desk.
@@ -43,8 +45,9 @@ public class Desk extends Model {
 
 
     /**
-     * Returns a list of all desks
-     * @return List<Desk>
+     * Returns a list of all desks.
+     *
+     * @return List<Desk>  A list of all desks.
      */
     public static List<Desk> getAll() {
         return Desk.find.where().orderBy("name").findList();
@@ -52,8 +55,9 @@ public class Desk extends Model {
 
 
     /**
-     * Returns a map of all desks typically used in a select
-     * @return Map<String,String>
+     * Returns a map of all desks typically used in a select.
+     *
+     * @return Map<String,String>  All desks with key: id and value: name.
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
@@ -63,5 +67,22 @@ public class Desk extends Model {
         }
         return options;
     }
+
+
+    /**
+     * Converts the desk to JSON.
+     *
+     * @return ObjectNode  The desk as a JSON object node.
+     */
+    public ObjectNode toJson() {
+        ObjectNode result = Json.newObject();
+        result.put("deskId", deskId.toString());
+        result.put("name", name);
+        if (coordinator != null) { // Non-required fields may be null
+            result.put("coordinator", coordinator.toString());
+        }
+        return result;
+    }
+
 
 }

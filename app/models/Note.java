@@ -1,9 +1,11 @@
 package models;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
+import play.libs.Json;
 import utils.Utils;
 
 import javax.persistence.*;
@@ -54,7 +56,8 @@ public class Note extends Model {
 
     /**
      * Saves or updates the note.
-     * @throws Exception If there was a problem updating the DB
+     *
+     * @throws Exception  If there was a problem updating the DB.
      */
     public void saveOrUpdate() throws Exception {
         // The note id should be 0 for a new record
@@ -63,6 +66,32 @@ public class Note extends Model {
         } else {
             update();
         }
+    }
+
+
+    /**
+     * Converts the note to JSON.
+     *
+     * @return ObjectNode  The note as a JSON object node.
+     */
+    public ObjectNode toJson() {
+        ObjectNode result = Json.newObject();
+        result.put("noteId", noteId.toString());
+        result.put("title", title);
+        result.put("content", content);
+        if (user != null) { // Non-required fields may be null
+            result.put("user", user.id.toString());
+        }
+        if (createdDt != null) {
+            result.put("createdDt", Utils.formatTimestamp(createdDt));
+        }
+        if (updatedBy != null) {
+            result.put("updatedBy", updatedBy.id.toString());
+        }
+        if (updatedDt != null) {
+            result.put("updatedDt", Utils.formatTimestamp(updatedDt));
+        }
+        return result;
     }
 
 

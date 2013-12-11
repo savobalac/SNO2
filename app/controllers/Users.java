@@ -93,8 +93,8 @@ public class Users extends AbstractController {
     /**
      * Displays a form to create a new or edit an existing user.
      *
-     * @param id Id of the user to edit.
-     * @return Result  The edit page.
+     * @param id  Id of the user to edit.
+     * @return Result  The edit page or the user as JSON.
      */
     public static Result edit(Long id) {
 
