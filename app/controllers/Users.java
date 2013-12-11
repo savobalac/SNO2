@@ -19,7 +19,7 @@ import views.html.*;
  * Time:        12:14
  *
  * @author      Sav Balac
- * @version     1.0
+ * @version     1.1
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Users extends AbstractController {
@@ -46,7 +46,7 @@ public class Users extends AbstractController {
                 Page<User> pageUsers = User.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
                 return ok(listUsers.render(pageUsers, sortBy, order, filter, search, loggedInUser));
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                return ok(User.getAllUsersAsJson());
+                return ok(User.getAllAsJson());
             } else {
                 return badRequest();
             }

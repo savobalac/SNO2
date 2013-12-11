@@ -25,7 +25,7 @@ import java.util.List;
  * Time: 12:59
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 @Entity
 public class User extends Model {
@@ -291,7 +291,7 @@ public class User extends Model {
      *
      * @return ObjectNode  The users as a JSON object node.
      */
-    public static ObjectNode getAllUsersAsJson() {
+    public static ObjectNode getAllAsJson() {
         List<User> users = User.find.all();
         ObjectNode result = Json.newObject();
         ArrayNode userNodes = result.arrayNode();
@@ -301,17 +301,6 @@ public class User extends Model {
         }
         result.put("users", userNodes);
         return result;
-    }
-
-    /**
-     * Gets the user's groups as JSON.
-     *
-     * @return ObjectNode  The user's groups as a JSON object node.
-     */
-    public ObjectNode getGroupsAsJson() {
-        ObjectNode groupNodes = Json.newObject();
-        groupNodes.put("groups", getGroupsAsJsonArray(groupNodes));
-        return groupNodes;
     }
 
 
@@ -336,6 +325,18 @@ public class User extends Model {
         }
         userNode.put("groups", getGroupsAsJsonArray(userNode));
         return userNode;
+    }
+
+
+    /**
+     * Gets the user's groups as JSON.
+     *
+     * @return ObjectNode  The user's groups as a JSON object node.
+     */
+    public ObjectNode getGroupsAsJson() {
+        ObjectNode groupNodes = Json.newObject();
+        groupNodes.put("groups", getGroupsAsJsonArray(groupNodes));
+        return groupNodes;
     }
 
 

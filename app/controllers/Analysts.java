@@ -28,7 +28,7 @@ import static play.libs.Json.toJson;
  * Time:        13:35
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Analysts extends AbstractController {
@@ -42,13 +42,20 @@ public class Analysts extends AbstractController {
      * @param order         Sort order (either asc or desc)
      * @param filter        Filter applied on primary desk name
      * @param search        Search applied on last name
-     * @return Result
+     * @return Result  The list page or all analysts as JSON.
      */
     public static Result list(int page, String sortBy, String order, String filter, String search) {
 
-        // Get a page of analysts and render the list page
-        Page<Analyst> pageAnalysts = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
-        return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, getLoggedInUser()));
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            // Get a page of analysts and render the list page
+            Page<Analyst> pageAnalysts = Analyst.page(page, Application.RECORDS_PER_PAGE, sortBy, order, filter, search);
+            return ok(listAnalysts.render(pageAnalysts, sortBy, order, filter, search, getLoggedInUser()));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(Analyst.getAllAsJson(getLoggedInUser()));
+        } else {
+            return badRequest();
+        }
     }
 
 

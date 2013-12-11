@@ -317,7 +317,25 @@ public class Analyst extends Model {
         }
     }
 
-    
+
+    /**
+     * Gets all analysts as JSON.
+     *
+     * @return ObjectNode  The analysts as a JSON object node.
+     */
+    public static ObjectNode getAllAsJson(User loggedInUser) {
+        List<Analyst> analysts = Analyst.find.all();
+        ObjectNode result = Json.newObject();
+        ArrayNode analystNodes = result.arrayNode();
+        for (Analyst analyst : analysts) {
+            ObjectNode userResult = analyst.toJson(loggedInUser);
+            analystNodes.add(userResult);
+        }
+        result.put("analysts", analystNodes);
+        return result;
+    }
+
+
     /**
      * Converts the analyst and its desks to JSON. Analyst-desk is a many-many relationship.
      * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
