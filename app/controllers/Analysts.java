@@ -144,27 +144,6 @@ public class Analysts extends AbstractController {
             } else {
                 Analyst newAnalyst = analystForm.get(); // Get the analyst data
 
-                // Disabled checkboxes have an associated disabled field with its original value
-                // Checkboxes, if unchecked or disabled, return null
-                if (analystForm.field("disEmailverified").value() != null) {
-                    newAnalyst.emailverified = (analystForm.field("disEmailverified").value().equals("true"));
-                } else {
-                    newAnalyst.emailverified =
-                            (analystForm.field("emailverified").value() == null) ? (false) : (newAnalyst.emailverified);
-                }
-                if (analystForm.field("disPhoneverified").value() != null) {
-                    newAnalyst.phoneVerified = (analystForm.field("disPhoneverified").value().equals("true"));
-                } else {
-                    newAnalyst.phoneVerified =
-                            (analystForm.field("phoneVerified").value() == null) ? (false) : (newAnalyst.phoneVerified);
-                }
-                if (analystForm.field("disContractSigned").value() != null) {
-                    newAnalyst.contractSigned = (analystForm.field("disContractSigned").value().equals("true"));
-                } else {
-                    newAnalyst.contractSigned =
-                            (analystForm.field("contractSigned").value() == null) ? (false) : (newAnalyst.contractSigned);
-                }
-
                 // Updates have a non-zero id
                 if (id != 0) {
                     // Check analyst exists and return if not
@@ -183,6 +162,58 @@ public class Analysts extends AbstractController {
                     if (!newAnalyst.status.equals(existingAnalyst.status)) {
                         System.out.println("***** Status id changed from: " + existingAnalyst.status.statusId +
                                                                     " to: " + newAnalyst.status.statusId);
+                    }
+
+                    // If updating from HTML, disabled checkboxes have an associated disabled field with the original value
+                    // Checkboxes, if unchecked or disabled, return null
+                    if (request().accepts("text/html")) {
+                        if (analystForm.field("disEmailverified").value() != null) {
+                            newAnalyst.emailverified = (analystForm.field("disEmailverified").value().equals("true"));
+                        } else {
+                            newAnalyst.emailverified =
+                                (analystForm.field("emailverified").value() == null) ? (false) : (newAnalyst.emailverified);
+                        }
+                        if (analystForm.field("disPhoneverified").value() != null) {
+                            newAnalyst.phoneVerified = (analystForm.field("disPhoneverified").value().equals("true"));
+                        } else {
+                            newAnalyst.phoneVerified =
+                                (analystForm.field("phoneVerified").value() == null) ? (false) : (newAnalyst.phoneVerified);
+                        }
+                        if (analystForm.field("disContractSigned").value() != null) {
+                            newAnalyst.contractSigned = (analystForm.field("disContractSigned").value().equals("true"));
+                        } else {
+                            newAnalyst.contractSigned =
+                                (analystForm.field("contractSigned").value() == null) ? (false) : (newAnalyst.contractSigned);
+                        }
+
+                    // Updating from JSON. The following fields are invisible or disabled, so ignore the form values
+                    } else {
+
+                        // If the logged-in user is not an admin user or manager,
+                        //     phone and emailAlternate are invisible.
+                        if (!loggedInUser.isAdminOrManager()) {
+                            newAnalyst.phone            = existingAnalyst.phone;
+                            newAnalyst.emailAlternate   = existingAnalyst.emailAlternate;
+
+                            // If the logged-in user is not an admin user, manager or staff,
+                            //     paypalAccountEmail and all address fields are invisible;
+                            //     rank, emailverified, phoneVerified, contractSigned and wikiUsername are disabled.
+                            if (!loggedInUser.isStaff()) {
+                                newAnalyst.paypalAccountEmail   = existingAnalyst.paypalAccountEmail;
+                                newAnalyst.address1             = existingAnalyst.address1;
+                                newAnalyst.address2             = existingAnalyst.address2;
+                                newAnalyst.city                 = existingAnalyst.city;
+                                newAnalyst.state                = existingAnalyst.state;
+                                newAnalyst.zip                  = existingAnalyst.zip;
+                                newAnalyst.country              = existingAnalyst.country;
+                                newAnalyst.countryOfResidence   = existingAnalyst.countryOfResidence;
+                                newAnalyst.rank                 = existingAnalyst.rank;
+                                newAnalyst.emailverified        = existingAnalyst.emailverified;
+                                newAnalyst.phoneVerified        = existingAnalyst.phoneVerified;
+                                newAnalyst.contractSigned       = existingAnalyst.contractSigned;
+                                newAnalyst.wikiUsername         = existingAnalyst.wikiUsername;
+                            }
+                        }
                     }
                 }
 
