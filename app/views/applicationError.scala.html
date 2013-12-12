@@ -1,0 +1,57 @@
+@**********************************************************
+* Page:         Application Error                         *
+* Author:       Sav Balac                                 *
+* Date:         12/12/13                                  *
+* Version:      1.0                                       *
+* Description:  Shown when an application error occurs    *
+*                                                         *
+* @param error  The error                                 *
+**********************************************************@
+
+@(error: Throwable)
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Application Error</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=9" /> <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Recommended by Bootstrap 3 - remove the above line? -->
+
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/signin.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.9.2.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.8.23.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-demo-docs-theme.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    </head>
+
+    <body>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h2>Application Error</h2>
+                    <br>
+                    <p><strong>An application error has occurred:</strong></p>
+                    <p>@error.getMessage()</p>
+                    <br>
+                </div>
+            </div>
+        </div> <!-- /container -->
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="//code.jquery.com/jquery.js"></script>
+
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.min.js")'></script>
+
+    </body>
+
+</html>

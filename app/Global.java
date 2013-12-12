@@ -11,6 +11,15 @@ import play.GlobalSettings;
 import play.api.mvc.EssentialFilter;
 import play.filters.csrf.CSRFFilter;
 
+import play.*;
+import play.mvc.*;
+import play.mvc.Http.*;
+import play.libs.F.*;
+import views.*;
+
+import static play.mvc.Results.*;
+
+
 /**
  * Provides a global Cross Site Request Forgery (CSRF) filter to all requests.
  * All forms have a hidden CSRF token that will be checked.
@@ -66,6 +75,34 @@ public class Global extends GlobalSettings {
             }
 
         });
+    }
+
+
+    /*
+     * Return the custom application error page if an internal server error occurs.
+     */
+    public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {
+        return Promise.<SimpleResult>pure(internalServerError(
+                views.html.applicationError.render(t)
+        ));
+    }
+
+
+    /*
+     * Return the custom page not found page if the URI is not found.
+     */
+    public Promise<SimpleResult> onHandlerNotFound(RequestHeader request) {
+        return Promise.<SimpleResult>pure(notFound(
+                views.html.pageNotFound.render(request.uri())
+        ));
+    }
+
+
+    /*
+     * Return a bad request message if it wasn't possible to bind the request parameters.
+     */
+    public Promise<SimpleResult> onBadRequest(RequestHeader request, String error) {
+        return Promise.<SimpleResult>pure(badRequest("Don't try to hack the URI!"));
     }
 
 

@@ -273,8 +273,11 @@ public class Analysts extends AbstractController {
      */
     public static Result delete(Long id) {
         try {
-            // Find the analyst record
+            // Check analyst exists and return if not
             Analyst analyst = Analyst.find.byId(id);
+            if (analyst == null) {
+                return noAnalyst(id);
+            }
             String fullName = analyst.getFullName();
 
             // Delete desks and notes
@@ -289,16 +292,32 @@ public class Analysts extends AbstractController {
                 S3File.find.byId(analyst.cvDocument.id).delete();
             }
 
-            // Delete the analyst and show a message
+            // Delete the analyst
             analyst.delete();
-            flash(Utils.KEY_SUCCESS, "Analyst: " + fullName + " deleted.");
+            String msg = "Analyst: " + fullName + " deleted.";
+
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                flash(Utils.KEY_SUCCESS, msg);
+                return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(getSuccessAsJson(msg));
+            } else {
+                return badRequest();
+            }
         } catch (Exception e) {
-            // Log an error and show a message
+            // Log an error
             Utils.eHandler("Analysts.delete(" + id + ")", e);
-            showSaveError(e); // Method in AbstractController
-        } finally {
-            // Redirect to remove the analyst from query string
-            return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+            String msg = "Analyst: " + id + " not deleted. Error: " + e.getMessage();
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                showSaveError(e);
+                return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(getErrorAsJson(msg));
+            } else {
+                return badRequest();
+            }
         }
     }
 
