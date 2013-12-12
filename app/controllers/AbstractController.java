@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
 import play.data.Form;
@@ -43,22 +42,6 @@ public abstract class AbstractController extends Controller {
         flash(Utils.KEY_ERROR, msg);
     }
 
-
-    /**
-     * Gets the form validation errors as JSON with a key of "error".
-     *
-     * @param  node  The form validation errors.
-     * @return ObjectNode  The errors as a JSON object node with a key of "error".
-     */
-    static ObjectNode getErrorsAsJson(JsonNode node) {
-        String errors = "";
-        Iterator<JsonNode> nodeIt = node.iterator();
-        while (nodeIt.hasNext()) {
-            JsonNode errorNode = nodeIt.next();
-            errors += errorNode.toString() + " ";
-        }
-        return getErrorAsJson(node.toString());
-    }
 
     /**
      * Gets the form validation errors as JSON with a key of "error", for example, { "error": "password required" }.

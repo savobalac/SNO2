@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Desk;
@@ -14,6 +15,7 @@ import utils.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
+import org.joda.time.DateTime;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,6 +128,7 @@ public class Analysts extends AbstractController {
      * @param id  Id of the analyst to update.
      * @return Result  The list page or the edit page if in error.
      */
+    @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
         User loggedInUser = getLoggedInUser();
         Form<Analyst> analystForm = null;
@@ -561,7 +564,7 @@ public class Analysts extends AbstractController {
                 Note note = noteForm.get();
 
                 // Get the current date and time
-                Timestamp now = Utils.getCurrentDateTime();
+                DateTime now = Utils.getCurrentDateTime();
 
                 // Save if a new note, otherwise update, add the note to the analyst and show a message
                 String msg;

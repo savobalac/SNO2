@@ -1,12 +1,12 @@
 package models;
 
 import com.avaje.ebean.Page;
-import java.sql.Timestamp;
 import java.util.List;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.joda.time.DateTime;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
@@ -79,7 +79,8 @@ public class Analyst extends Model {
     @Lob @Column(name="notes", length = Utils.MYSQL_TEXT_BYTES)
     public String                   notes;
 
-    public Timestamp                createOn;
+    @JodaDateTime
+    public DateTime                 createOn;
 
     public String                   skype;
 

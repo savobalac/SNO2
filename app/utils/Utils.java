@@ -1,5 +1,6 @@
 package utils;
 
+import org.joda.time.DateTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -35,11 +36,14 @@ public class Utils {
     public static final String KEY_ERROR   = "error";
     public static final String KEY_SUCCESS = "success";
 
+    public static final String DATETIME_FORMAT = "dd-MMM-yyyy HH:mm";
+
 
     /**
      * Logs caught exceptions.
-     * @param module The module the exception occurred in
-     * @param e      The exception thrown
+     *
+     * @param module The module the exception occurred in.
+     * @param e      The exception thrown.
      */
     public static void eHandler(String module, Exception e) {
         String msg = "ERROR in " + module + ": " + e.getMessage() + " (" + e.getClass() + ")";
@@ -49,8 +53,9 @@ public class Utils {
 
     /**
      * Logs application errors.
-     * @param module  The module the error occurred in
-     * @param message The error message
+     *
+     * @param module  The module the error occurred in.
+     * @param message The error message.
      */
     public static void errorHandler(String module, String message) {
         String msg = "ERROR in " + module + ": " + message;
@@ -60,8 +65,9 @@ public class Utils {
 
     /**
      * Logs application information.
-     * @param module  The module the event occurred in
-     * @param message The information message
+     *
+     * @param module  The module the event occurred in.
+     * @param message The information message.
      */
     public static void logEvent(String module, String message) {
         String msg = module + ": " + message;
@@ -71,9 +77,10 @@ public class Utils {
 
     /**
      * Logs a message. Log level and type to be implemented.
-     * @param logLevel  0 = Normal, 1 = Debug, 2 = Verbose
-     * @param logType  -1 = Error, 0 = General
-     * @param msg      Description of the message
+     *
+     * @param logLevel  0 = Normal, 1 = Debug, 2 = Verbose.
+     * @param logType  -1 = Error, 0 = General.
+     * @param msg      Description of the message.
      */
     public static void addLogMsg(int logLevel, int logType, String msg) {
         System.out.println("");
@@ -84,9 +91,10 @@ public class Utils {
 
     /**
      * Returns a list of Integers based on start and end values.
-     * @param start    Start value
-     * @param end      End value
-     * @return List<Integer>
+     *
+     * @param start    Start value.
+     * @param end      End value.
+     * @return List<Integer>  A list of integers.
      */
     public static List<Integer> getIntegers(int start, int end) {
         int numIntegers = end - start + 1;
@@ -101,7 +109,8 @@ public class Utils {
 
     /**
      * Returns titles typically used in a select.
-     * @return Map<String,String>
+     *
+     * @return Map<String,String>  The titles (key and value are the same).
      */
     public static Map<String,String> getTitles() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
@@ -122,8 +131,9 @@ public class Utils {
 
     /**
      * Returns a friendly "Created on <date> at <time>" string.
-     * @param datetime Timestamp
-     * @return String
+     *
+     * @param datetime  Input Timestamp.
+     * @return String  The formatted string.
      */
     public static String formatCreatedTimestamp(Timestamp datetime) {
         return "Created on " + formatTimestampVerbose(datetime);
@@ -131,51 +141,89 @@ public class Utils {
 
 
     /**
-     * Returns a friendly "Last updated on <date> at <time>" string.
-     * @param datetime Timestamp
-     * @return String
+     * Returns a friendly "Created on <date> at <time>" string.
+     *
+     * @param datetime  Input DateTime.
+     * @return String  The formatted string.
      */
-    public static String formatUpdatedTimestamp(Timestamp datetime) {
+    public static String formatCreatedTimestamp(DateTime datetime) {
+        return "Created on " + formatTimestampVerbose(datetime);
+    }
+
+
+    /**
+     * Returns a friendly "Last updated on <date> at <time>" string.
+     *
+     * @param datetime  Input DateTime.
+     * @return String  The formatted string.
+     */
+    public static String formatUpdatedTimestamp(DateTime datetime) {
         return "Last updated on " + formatTimestampVerbose(datetime);
     }
 
 
     /**
-     * Formats a timestamp as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34
-     * @param datetime Timestamp
-     * @return String
+     * Formats a timestamp as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34.
+     *
+     * @param datetime  The input Timestamp.
+     * @return String  The formatted timestamp.
      */
     public static String formatTimestampVerbose(Timestamp datetime) {
         return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
-                   "" + new SimpleDateFormat("HH:mm").format(datetime);
+                "" + new SimpleDateFormat("HH:mm").format(datetime);
     }
 
 
     /**
-     * Formats a timestamp as "<date> <time>", e.g. 21-Oct-2013 12:34
-     * @param datetime Timestamp
-     * @return String
+     * Formats a datetime as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34.
+     *
+     * @param datetime  The input DateTime.
+     * @return String  The formatted datetime.
+     */
+    public static String formatTimestampVerbose(DateTime datetime) {
+        return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime.toDate()) + " at " +
+                   "" + new SimpleDateFormat("HH:mm").format(datetime.toDate());
+    }
+
+
+    /**
+     * Formats a timestamp as "<date> <time>", e.g. 21-Oct-2013 12:34.
+     *
+     * @param datetime  The input Timestamp.
+     * @return String  The timestamp as a string.
      */
     public static String formatTimestamp(Timestamp datetime) {
-        return new SimpleDateFormat("dd-MMM-yyyy HH:mm").format(datetime);
+        return new SimpleDateFormat(DATETIME_FORMAT).format(datetime);
     }
 
 
     /**
-     * Returns the current date time as a Timestamp.
-     * @return Timestamp
+     * Formats a datetime as "<date> <time>", e.g. 21-Oct-2013 12:34.
+     *
+     * @param datetime  The input DateTime.
+     * @return String  The datetime as a string.
      */
-    public static Timestamp getCurrentDateTime() {
-        Date date= new Date();
-        return new Timestamp(date.getTime());
+    public static String formatTimestamp(DateTime datetime) {
+        return new SimpleDateFormat(DATETIME_FORMAT).format(datetime.toDate());
+    }
+
+
+    /**
+     * Returns the current date time as a DateTime.
+     *
+     * @return DateTime  The current date and time.
+     */
+    public static DateTime getCurrentDateTime() {
+        return new DateTime();
     }
 
 
     /**
      * Hashes a string using the SHA-256 hashing algorithm. This doesn't generate unique values.
-     * @param input Input string
-     * @return String
-     * @throws NoSuchAlgorithmException  If the algorithm doesn't exist
+     *
+     * @param  input   Input string.
+     * @return String  The hashed string.
+     * @throws NoSuchAlgorithmException  If the algorithm doesn't exist.
      */
     public static String hashString(String input) throws NoSuchAlgorithmException {
 
