@@ -9,16 +9,20 @@ import models.User;
 import models.S3File;
 import play.data.Form;
 
+import play.libs.Json;
 import play.mvc.*;
 import views.html.Analysts.*;
 import utils.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import org.joda.time.DateTime;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 import static play.libs.Json.toJson;
 
@@ -128,7 +132,6 @@ public class Analysts extends AbstractController {
      * @param id  Id of the analyst to update.
      * @return Result  The list page or the edit page if in error.
      */
-    @BodyParser.Of(BodyParser.Json.class)
     public static Result update(Long id) {
         User loggedInUser = getLoggedInUser();
         Form<Analyst> analystForm = null;
@@ -329,7 +332,17 @@ public class Analysts extends AbstractController {
      */
     public static Result editProfileImage(Long id) {
         Analyst analyst = Analyst.find.byId(id);
-        return ok(tagAnalystImage.render(analyst));
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(tagAnalystImage.render(analyst)); // This template handles null analysts
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (analyst == null) {
+                return noAnalyst(id);
+            }
+            return ok(analyst.getProfileImageAsJson());
+        } else {
+            return badRequest();
+        }
     }
 
 
@@ -340,7 +353,17 @@ public class Analysts extends AbstractController {
      */
     public static Result editCvDocument(Long id) {
         Analyst analyst = Analyst.find.byId(id);
-        return ok(tagAnalystCV.render(analyst));
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(tagAnalystCV.render(analyst)); // This template handles null analysts
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (analyst == null) {
+                return noAnalyst(id);
+            }
+            return ok(analyst.getCvDocumentAsJson());
+        } else {
+            return badRequest();
+        }
     }
 
 
@@ -350,7 +373,7 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result uploadProfileImage(Long id) {
-        return uploadFile(id, "profile");
+        return checkUpload(id, "profile");
     }
 
 
@@ -360,49 +383,99 @@ public class Analysts extends AbstractController {
      * @return Result
      */
     public static Result uploadCvDocument(Long id) {
-        return uploadFile(id, "document");
+        return checkUpload(id, "document");
     }
 
-    
+
+    /**
+     * Calls the uploadFile method and returns JSON if requested.
+     *
+     * @param id        Id of the analyst.
+     * @param fileType  "profile" or "document".
+     * @return String   If an error occurred or "OK" if successful.
+     */
+    private static Result checkUpload(Long id, String fileType) {
+        // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
+        String result = uploadFile(id, fileType);
+        if (request().accepts("text/html")) {
+            return ok(result);
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (result.startsWith("ERROR")) {
+                return ok(getErrorAsJson(result));
+            } else {
+                return ok(getSuccessAsJson(result));
+            }
+        } else {
+            return badRequest();
+        }
+    }
+
+
     /**
      * Uploads a file to AWS S3 and sets the analyst field value.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id        Id of the analyst
+     * @param fileType  "profile" or "document".
+     * @return String   If an error occurred or "OK" if successful.
      */
-    public static Result uploadFile(Long id, String fileType) {
+    public static String uploadFile(Long id, String fileType) {
         File file = null;
         try {
-            if (id == 0) { // Uploads to new analysts should be prevented by the view, but test anyway
-                return ok("Analyst must be saved before uploading files.");
+            // Uploads to new analysts should be prevented by the view, but test for JSON
+            if (id == 0) {
+                return "ERROR: Analyst must be saved before uploading files.";
             }
+
             // Get the analyst
             Analyst analyst = Analyst.find.byId(id);
             if (analyst == null) {
-                return ok("ERROR: Analyst not found. File not saved.");
+                return "ERROR: Analyst not found. File not saved.";
             }
 
-            // Get the file part from the form
+            boolean hasForm = false;
+            String fileName = null;
+            String contentType = null;
+
+            // Get the file details from the form
+            Http.MultipartFormData.FilePart filePart = null;
             Http.MultipartFormData body = request().body().asMultipartFormData();
-            Http.MultipartFormData.FilePart filePart = body.getFile(fileType);
+            if (body != null) {
+                hasForm = true;
+                filePart = body.getFile(fileType);
+                if (filePart != null) {
+                    fileName = filePart.getFilename();
+                    file = filePart.getFile();
+                    contentType = filePart.getContentType();
+                }
+            }
+
+            // JSON requests may not have a form
+            if (!hasForm && (request().accepts("application/json") || request().accepts("text/json"))) {
+                file = request().body().asRaw().asFile();
+                // Raw files don't have the correct file name and content type
+                if (fileType.equals("profile")) {
+                    fileName = "Profile";
+                } else {
+                    fileName = "CV";
+                }
+                contentType = Files.probeContentType(file.toPath()); // Usually null, but get for the test below
+            }
+            filePart = null;
+
+            // If uploading a profile image, check it is an image
+            if (fileType.equals("profile") && contentType != null) {
+                if (!contentType.startsWith("image/")) {
+                    return "ERROR: File " + fileName + " is not an image. File not saved.";
+                }
+            }
 
             // Check the file exists
-            String fileName = "";
-            if (filePart != null) {
-                fileName = filePart.getFilename();
-
-                // If uploading a profile image, check it is an image
-                if (fileType.equals("profile")) {
-                    String contentType = filePart.getContentType();
-                    if (!contentType.startsWith("image/")) {
-                        return ok("File " + fileName + " is not an image. File not saved.");
-                    }
-                }
+            if (file != null) {
 
                 // Check if the file exceeds the maximum allowable size
-                file = filePart.getFile();
                 if (Files.size(file.toPath()) > Utils.MAX_FILE_SIZE) {
-                    return ok("File " + fileName + " exceeds the maximum size allowed of " +
-                              Utils.MAX_FILE_SIZE_STRING + ". File not saved.");
+                    return "ERROR: File " + fileName + " exceeds the maximum size allowed of " +
+                           Utils.MAX_FILE_SIZE_STRING + ". File not saved.";
                 }
 
                 // Check if the analyst already has a file and delete it
@@ -420,10 +493,9 @@ public class Analysts extends AbstractController {
 
                 // Save the new file to AWS S3
                 S3File s3File = new S3File();
-                s3File.name = filePart.getFilename();
-                s3File.file = filePart.getFile();
+                s3File.name = fileName;
+                s3File.file = file;
                 s3File.save();
-                filePart = null;
 
                 // Save the s3File to the analyst, update and show a message
                 if (fileType.equals("profile")) {
@@ -432,15 +504,20 @@ public class Analysts extends AbstractController {
                     analyst.cvDocument = s3File;
                 }
                 analyst.update();
-                flash(Utils.KEY_SUCCESS,
-                      "File: " + fileName + " uploaded to analyst: " + analyst.getFullName());
-                return ok("OK"); // The Ajax call from editAnalyst checks for "OK"
+                String msg = "File: " + fileName + " uploaded to analyst: " + analyst.getFullName();
+                if (request().accepts("text/html")) {
+                    flash(Utils.KEY_SUCCESS, msg);
+                    return "OK"; // The Ajax call from editAnalyst checks for "OK"
+                } else {
+                    return msg; // for JSON
+                }
             } else { // File not found
-                return ok("Please select a file.");
+                return "ERROR: Please select a file.";
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Utils.eHandler("Analysts.uploadFile(" + id + ", " + fileType + ")", e);
-            return ok(String.format("%s Changes not saved.", e.getMessage()));
+            return "ERROR: " + String.format("%s Changes not saved.", e.getMessage());
         } finally {
             // Free up resources
             if (file != null) {

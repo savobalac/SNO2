@@ -401,6 +401,7 @@ public class Users extends AbstractController {
         User user = User.find.byId(id);
         Group group = Group.find.byId(groupId);
         try {
+            // Check if the user and group exist
             if (user == null) {
                 return "ERROR: User not found. Changes not saved.";
             }

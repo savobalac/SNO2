@@ -77,8 +77,7 @@ public class S3File extends Model {
         if (S3Plugin.amazonS3 == null) {
             Logger.error("Could not save because amazonS3 was null");
             throw new RuntimeException("Could not save");
-        }
-        else {
+        } else {
             this.bucket = S3Plugin.s3Bucket;
 
             super.save(); // assigns an id
@@ -98,8 +97,7 @@ public class S3File extends Model {
         if (S3Plugin.amazonS3 == null) {
             Logger.error("Could not delete because amazonS3 was null");
             throw new RuntimeException("Could not delete");
-        }
-        else {
+        } else {
             S3Plugin.amazonS3.deleteObject(bucket, getActualFileName());
             super.delete();
         }

@@ -480,5 +480,33 @@ public class Analyst extends Model {
     }
 
 
+    /**
+     * Gets the analyst's profile image as JSON.
+     *
+     * @return ObjectNode  The profile image as a JSON object node.
+     */
+    public ObjectNode getProfileImageAsJson() {
+        ObjectNode analystNode = Json.newObject();
+        if (profileImage != null) {
+            analystNode.put("profileImage", profileImage.toJson());
+        }
+        return analystNode;
+    }
+
+
+    /**
+     * Gets the analyst's CV as JSON.
+     *
+     * @return ObjectNode  The CV as a JSON object node.
+     */
+    public ObjectNode getCvDocumentAsJson() {
+        ObjectNode analystNode = Json.newObject();
+        if (cvDocument != null) {
+            analystNode.put("cvDocument", cvDocument.toJson());
+        }
+        return analystNode;
+    }
+
+
 }
 
