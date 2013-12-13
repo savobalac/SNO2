@@ -130,7 +130,7 @@ public class Analysts extends AbstractController {
      * Updates the analyst from the form.
      *
      * @param id  Id of the analyst to update.
-     * @return Result  The list page or the edit page if in error.
+     * @return Result  The list page or the edit page if in error (in JSON if requested).
      */
     public static Result update(Long id) {
         User loggedInUser = getLoggedInUser();
@@ -271,8 +271,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Deletes the analyst.
-     * @param id Id of the analyst to delete
-     * @return Result
+     *
+     * @param id  Id of the analyst to delete.
+     * @return Result  The list page or a message in JSON.
      */
     public static Result delete(Long id) {
         try {
@@ -327,8 +328,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Displays a (usually embedded) form to display and upload a profile image.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id  Id of the analyst.
+     * @return Result  The profile image template or JSON.
      */
     public static Result editProfileImage(Long id) {
         Analyst analyst = Analyst.find.byId(id);
@@ -348,8 +350,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Displays a (usually embedded) form to display and upload a CV document.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id  Id of the analyst.
+     * @return Result  The CV document template or JSON.
      */
     public static Result editCvDocument(Long id) {
         Analyst analyst = Analyst.find.byId(id);
@@ -369,8 +372,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Uploads the profile image.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id  Id of the analyst.
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result uploadProfileImage(Long id) {
         return checkUpload(id, "profile");
@@ -379,8 +383,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Uploads the CV document.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id  Id of the analyst.
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result uploadCvDocument(Long id) {
         return checkUpload(id, "document");
@@ -392,7 +397,7 @@ public class Analysts extends AbstractController {
      *
      * @param id        Id of the analyst.
      * @param fileType  "profile" or "document".
-     * @return String   If an error occurred or "OK" if successful.
+     * @return Result   Contains "OK" if successful or an error message.
      */
     private static Result checkUpload(Long id, String fileType) {
         // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
@@ -416,7 +421,7 @@ public class Analysts extends AbstractController {
      *
      * @param id        Id of the analyst
      * @param fileType  "profile" or "document".
-     * @return String   If an error occurred or "OK" if successful.
+     * @return String   Contains "OK" if successful or an error message.
      */
     public static String uploadFile(Long id, String fileType) {
         File file = null;
@@ -530,20 +535,32 @@ public class Analysts extends AbstractController {
 
     /**
      * Displays a (usually embedded) form to display the desks an analyst is assigned to.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id  Id of the analyst.
+     * @return Result  The desks template or JSON.
      */
     public static Result editDesks(Long id) {
         Analyst analyst = Analyst.find.byId(id);
-        return ok(tagListDeskAnalysts.render(analyst));
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+        return ok(tagListDeskAnalysts.render(analyst)); // This template handles null analysts
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (analyst == null) {
+                return noAnalyst(id);
+            }
+            return ok(analyst.getDesksAsJson());
+        } else {
+            return badRequest();
+        }
     }
 
 
     /**
      * Assigns the analyst to a desk.
-     * @param id      Id of the analyst
-     * @param deskId  Id of the desk
-     * @return Result
+     *
+     * @param id       Id of the analyst.
+     * @param deskId   Id of the desk.
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result addDesk(Long id, Long deskId) {
         return changeDesk(id, deskId, "add");
@@ -552,9 +569,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Deletes a desk from the analyst.
-     * @param id      Id of the analyst
-     * @param deskId  Id of the desk
-     * @return Result
+     * @param id       Id of the analyst
+     * @param deskId   Id of the desk
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result delDesk(Long id, Long deskId) {
         return changeDesk(id, deskId, "delete");
@@ -562,21 +579,47 @@ public class Analysts extends AbstractController {
 
 
     /**
-     * Adds or deletes a desk to/from the analyst.
-     * @param id      Id of the analyst
-     * @param deskId  Id of the desk
-     * @param action  "add" or "delete"
-     * @return Result
+     * Checks if the analyst can update a desk and calls the updateDesk method.
+     *
+     * @param id       Id of the .
+     * @param groupId  Id of the group.
+     * @param action   "add" or "delete".
+     * @return Result  Contains "OK" if successful or an error message.
      */
-    private static Result changeDesk(Long id, Long deskId, String action) {
+    private static Result changeDesk(Long id, Long groupId, String action) {
+        // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
+        String result = updateDesk(id, groupId, action);
+        if (request().accepts("text/html")) {
+            return ok(result);
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (result.startsWith("ERROR")) {
+                return ok(getErrorAsJson(result));
+            } else {
+                return ok(getSuccessAsJson(result));
+            }
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Adds or deletes a desk to/from the analyst.
+     *
+     * @param id       Id of the analyst.
+     * @param deskId   Id of the desk.
+     * @param action   "add" or "delete".
+     * @return Result  Contains "OK" if successful or an error message.
+     */
+    private static String updateDesk(Long id, Long deskId, String action) {
         Analyst analyst = Analyst.find.byId(id);
         Desk desk = Desk.find.byId(deskId);
         try {
             if (analyst == null) {
-                return ok("ERROR: Analyst not found. Changes not saved.");
+                return "ERROR: Analyst not found. Changes not saved.";
             }
             if (desk == null) {
-                return ok("ERROR: Desk not found. Changes not saved.");
+                return "ERROR: Desk not found. Changes not saved.";
             } else {
                 // Add, delete or return an error
                 if (action.equals("add")) {
@@ -584,14 +627,18 @@ public class Analysts extends AbstractController {
                 } else if (action.equals("delete")) {
                     analyst.delDesk(desk);
                 } else {
-                    return ok("ERROR: incorrect action, use add or delete");
+                    return "ERROR: incorrect action, use add or delete";
                 }
-                return ok("OK"); // "OK" is used by the calling Ajax function
+                if (request().accepts("text/html")) {
+                    return "OK"; // "OK" is used by the calling Ajax function
+                } else {
+                    return "Analyst: " + id + ", " + action + " desk: " + deskId + " was successful."; // for JSON
+                }
             }
         }
         catch (Exception e) {
             Utils.eHandler("Analysts.changeDesk(" + id + ", " + deskId + ", " + action + ")", e);
-            return ok("ERROR: " + e.getMessage());
+            return "ERROR: " + e.getMessage();
         }
     }
 

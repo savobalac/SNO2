@@ -341,7 +341,7 @@ public class Users extends AbstractController {
      *
      * @param id       Id of the user.
      * @param groupId  Id of the group.
-     * @return Result
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result addGroup(Long id, Long groupId) {
         return changeGroup(id, groupId, "add");
@@ -353,7 +353,7 @@ public class Users extends AbstractController {
      *
      * @param id       Id of the user.
      * @param groupId  Id of the group.
-     * @return Result  If an error occurred or "OK" if successful.
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result delGroup(Long id, Long groupId) {
         return changeGroup(id, groupId, "delete");
@@ -366,7 +366,7 @@ public class Users extends AbstractController {
      * @param id       Id of the user.
      * @param groupId  Id of the group.
      * @param action   "add" or "delete".
-     * @return String  If an error occurred or "OK" if successful.
+     * @return Result  Contains "OK" if successful or an error message.
      */
     private static Result changeGroup(Long id, Long groupId, String action) {
         if (Secured.isAdminUser()) { // Check if an admin user
@@ -395,7 +395,7 @@ public class Users extends AbstractController {
      * @param id       Id of the user.
      * @param groupId  Id of the group.
      * @param action   "add" or "delete".
-     * @return String  If an error occurred or "OK" if successful.
+     * @return String  Contains "OK" if successful or an error message.
      */
     private static String updateGroup(Long id, Long groupId, String action) {
         User user = User.find.byId(id);
@@ -422,8 +422,7 @@ public class Users extends AbstractController {
                     return "User: " + id + ", " + action + " group: " + groupId + " was successful."; // for JSON
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Utils.eHandler("Users.changeGroup(" + id + ", " + groupId + ", " + action + ")", e);
             return "ERROR: " + e.getMessage();
         }

@@ -109,7 +109,7 @@ public abstract class AbstractController extends Controller {
      * @param  msg  The message.
      * @return ObjectNode  The error as a JSON object node.
      */
-    static ObjectNode getErrorAsJson(String msg) {
+    public static ObjectNode getErrorAsJson(String msg) {
         return getJson(Utils.KEY_ERROR, msg);
     }
 

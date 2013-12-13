@@ -449,6 +449,18 @@ public class Analyst extends Model {
 
 
     /**
+     * Gets the analyst's desks as JSON.
+     *
+     * @return ObjectNode  The analyst's desks as a JSON object node.
+     */
+    public ObjectNode getDesksAsJson() {
+        ObjectNode deskNodes = Json.newObject();
+        deskNodes.put("desks", getDesksAsJsonArray(deskNodes));
+        return deskNodes;
+    }
+
+
+    /**
      * Gets the analyst's desks as a JSON array node.
      *
      * @param  analystNode  The analyst as a JSON ObjectNode

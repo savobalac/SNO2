@@ -1,6 +1,7 @@
 import java.text.ParseException;
 import java.util.Locale;
 
+import controllers.AbstractController;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -102,7 +103,18 @@ public class Global extends GlobalSettings {
      * Return a bad request message if it wasn't possible to bind the request parameters.
      */
     public Promise<SimpleResult> onBadRequest(RequestHeader request, String error) {
-        return Promise.<SimpleResult>pure(badRequest("Don't try to hack the URI!"));
+        String msg = "Was not possible to bind the request parameters.";
+        if (request.accepts("text/html")) {
+            return Promise.<SimpleResult>pure(notFound(
+                    views.html.pageNotFound.render(request.uri() + " " + msg)
+            ));
+        } else if (request.accepts("application/json") || request.accepts("text/json")) {
+            return Promise.<SimpleResult>pure(badRequest(
+                    AbstractController.getErrorAsJson(msg + " Please send a valid JSON body.")
+            ));
+        } else {
+            return Promise.<SimpleResult>pure(badRequest(msg));
+        }
     }
 
 
