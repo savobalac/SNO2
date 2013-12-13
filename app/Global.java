@@ -29,6 +29,8 @@ import static play.mvc.Results.*;
  * Also provides a formatter that works with the JodaDateTime annotation
  * to ensure valid datetime values from JSON pass form validation.
  *
+ * Provides a custom Application Error and Page Not Found pages, and handles invalid request parameters and JSON bodies.
+ *
  * Date:        10/12/13
  * Time:        11:32
  *
@@ -83,9 +85,18 @@ public class Global extends GlobalSettings {
      * Return the custom application error page if an internal server error occurs.
      */
     public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {
-        return Promise.<SimpleResult>pure(internalServerError(
-                views.html.applicationError.render(t)
-        ));
+        String msg = "Internal server error";
+        if (request.accepts("text/html")) {
+            return Promise.<SimpleResult>pure(internalServerError(
+                    views.html.applicationError.render(t)
+            ));
+        } else if (request.accepts("application/json") || request.accepts("text/json")) {
+            return Promise.<SimpleResult>pure(internalServerError(
+                    AbstractController.getErrorAsJson(msg + ": " + t)
+            ));
+        } else {
+            return Promise.<SimpleResult>pure(badRequest(msg));
+        }
     }
 
 
@@ -93,9 +104,18 @@ public class Global extends GlobalSettings {
      * Return the custom page not found page if the URI is not found.
      */
     public Promise<SimpleResult> onHandlerNotFound(RequestHeader request) {
-        return Promise.<SimpleResult>pure(notFound(
-                views.html.pageNotFound.render(request.uri())
-        ));
+        String msg = "URL not found";
+        if (request.accepts("text/html")) {
+            return Promise.<SimpleResult>pure(notFound(
+                    views.html.pageNotFound.render(request.uri())
+            ));
+        } else if (request.accepts("application/json") || request.accepts("text/json")) {
+            return Promise.<SimpleResult>pure(notFound(
+                    AbstractController.getErrorAsJson(msg + ": " + request.uri())
+            ));
+        } else {
+            return Promise.<SimpleResult>pure(badRequest(msg));
+        }
     }
 
 
@@ -106,7 +126,7 @@ public class Global extends GlobalSettings {
         String msg = "Was not possible to bind the request parameters.";
         if (request.accepts("text/html")) {
             return Promise.<SimpleResult>pure(notFound(
-                    views.html.pageNotFound.render(request.uri() + " " + msg)
+                    views.html.pageNotFound.render(request.uri() + ". " + msg)
             ));
         } else if (request.accepts("application/json") || request.accepts("text/json")) {
             return Promise.<SimpleResult>pure(badRequest(

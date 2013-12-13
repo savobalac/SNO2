@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Desk;
@@ -9,22 +8,13 @@ import models.User;
 import models.S3File;
 import play.data.Form;
 
-import play.libs.Json;
 import play.mvc.*;
 import views.html.Analysts.*;
 import utils.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import org.joda.time.DateTime;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Collections;
-
-import static play.libs.Json.toJson;
 
 /**
  * Analysts controller with methods to list, create, edit, update and delete.
@@ -151,7 +141,9 @@ public class Analysts extends AbstractController {
                 Analyst newAnalyst = analystForm.get(); // Get the analyst data
 
                 // Updates have a non-zero id
-                if (id != 0) {
+                if (id == 0) {
+                    newAnalyst.createOn = Utils.getCurrentDateTime();
+                } else {
                     // Check analyst exists and return if not
                     Analyst existingAnalyst = Analyst.find.byId(id);
                     if (existingAnalyst == null) {
@@ -543,7 +535,7 @@ public class Analysts extends AbstractController {
         Analyst analyst = Analyst.find.byId(id);
         // Return data in HTML or JSON as requested
         if (request().accepts("text/html")) {
-        return ok(tagListDeskAnalysts.render(analyst)); // This template handles null analysts
+            return ok(tagListDeskAnalysts.render(analyst)); // This template handles null analysts
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
             if (analyst == null) {
                 return noAnalyst(id);
@@ -645,18 +637,30 @@ public class Analysts extends AbstractController {
 
     /**
      * Displays a (usually embedded) form to display the notes that have been written about an analyst.
-     * @param id Id of the analyst
-     * @return Result
+     *
+     * @param id  Id of the analyst.
+     * @return Result  The notes template or JSON.
      */
     public static Result editNotes(Long id) {
         Analyst analyst = Analyst.find.byId(id);
-        return ok(tagListNotes.render(analyst));
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(tagListNotes.render(analyst)); // This template handles null analysts
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (analyst == null) {
+                return noAnalyst(id);
+            }
+            return ok(analyst.getNotesAsJson());
+        } else {
+            return badRequest();
+        }
     }
 
 
     /**
      * Creates a new note.
-     * @return Result
+     *
+     * @return Result  The edit page.
      */
     public static Result createNote(Long aId) {
         return editNote(aId, 0L);
@@ -665,45 +669,96 @@ public class Analysts extends AbstractController {
 
     /**
      * Displays a form to create a new or edit an existing note.
-     * @param aId Id of the analyst
-     * @param nId Id of the note to edit
-     * @return Result
+     *
+     * @param aId Id of the analyst.
+     * @param nId Id of the note to edit.
+     * @return Result  The edit page or the note as JSON.
      */
     public static Result editNote(Long aId, Long nId) {
 
-        // Get the analyst
+        // Check analyst exists and return if not
         Analyst analyst = Analyst.find.byId(aId);
+        if (analyst == null) {
+            return noAnalyst(aId);
+        }
 
-        // New notes have id 0
+        // New notes have id 0 and don't exist
         Form<Note> noteForm;
+        Note note;
         if (nId <= 0L) {
-            Note note = new Note();
+            note = new Note();
             note.analyst = analyst; // Set the analyst
-            noteForm = Form.form(Note.class).fill(note);
         }
         else {
-            noteForm = Form.form(Note.class).fill(Note.find.byId(nId));
+            // Check note exists and return if not
+            note = Note.find.byId(nId);
+            if (note == null) {
+                return noNote(aId, nId);
+            }
         }
-        return ok(editNote.render(((nId<0)?(0L):(nId)), aId, noteForm, getLoggedInUser()));
+        noteForm = Form.form(Note.class).fill(note);
+
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(editNote.render(((nId<0)?(0L):(nId)), aId, noteForm, getLoggedInUser()));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(note.toJson());
+        } else {
+            return badRequest();
+        }
 
     }
 
 
     /**
+     * Returns either the edit analyst page or a JSON message when the note doesn't exist.
+     *
+     * @param aId Id of the analyst.
+     * @param nId Id of the note.
+     * @return Result  The edit page or a JSON message.
+     */
+    private static Result noNote(Long aId, Long nId) {
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return edit(aId);
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getErrorAsJson("Note: " + nId + " for analyst: " + aId + " does not exist."));
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
      * Updates the note from the form.
-     * @param aId Id of the analyst
-     * @param nId Id of the note to edit
-     * @return Result
+     *
+     * @param aId  Id of the analyst.
+     * @param nId  Id of the note to edit.
+     * @return Result  The edit analyst page, edit note page if in error, or JSON.
      */
     public static Result updateNote(Long aId, Long nId) {
-        Form<Note> noteForm = Form.form(Note.class).bindFromRequest(); // Get the form data
         User loggedInUser = getLoggedInUser();
+        Form<Note> noteForm = null;
         try {
-            if (noteForm.hasErrors()) { // Return to the editNote page
-                return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
+            noteForm = Form.form(Note.class).bindFromRequest(); // Get the form data
+            // Check if there are errors
+            if (noteForm.hasErrors()) {
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    return badRequest(editNote.render(nId, aId, noteForm, loggedInUser)); // Return to the editNote page
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getErrorsAsJson(noteForm));
+                } else {
+                    return badRequest();
+                }
             } else {
-                // Get the analyst and note data
+                // Check analyst exists and return if not
                 Analyst analyst = Analyst.find.byId(aId);
+                if (analyst == null) {
+                    return noAnalyst(aId);
+                }
+
+                // Get the note data
                 Note note = noteForm.get();
 
                 // Get the current date and time
@@ -718,81 +773,155 @@ public class Analysts extends AbstractController {
                     note.save();
                     analyst.addNote(note);
                     msg = "Note: " + note.title + " created.";
-                } else { // Get the currently-stored note
+                } else {
+                    // Check note exists and return if not
                     Note existingNote = Note.find.byId(nId);
+                    if (existingNote == null) {
+                        return noNote(aId, nId);
+                    }
                     note.createdDt = existingNote.createdDt; // Ensure the created datetime isn't overwritten
                     note.updatedBy = loggedInUser;
                     note.updatedDt = now;
                     note.update();
                     msg = "Note: " + note.title + " updated.";
                 }
-                flash(Utils.KEY_SUCCESS, msg);
 
-                // Redirect to the edit analyst page
-                return redirect(controllers.routes.Analysts.edit(aId));
+                // Return data in HTML or JSON as requested
+                if (request().accepts("text/html")) {
+                    flash(Utils.KEY_SUCCESS, msg);
+                    return redirect(controllers.routes.Analysts.edit(aId)); // Redirect to the edit analyst page
+                } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                    return ok(getSuccessAsJson(msg));
+                } else {
+                    return badRequest();
+                }
             }
         } catch (Exception e) {
-            // Log an error, show a message and return to the editNote page
+            // Log an error
             Utils.eHandler("Analysts.updateNote(" + aId + ", " + nId + ")", e);
-            showSaveError(e); // Method in AbstractController
-            return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
+
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                showSaveError(e);
+                return badRequest(editNote.render(nId, aId, noteForm, loggedInUser));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                String msg;
+                if (nId == 0) {
+                    msg = "Note for analyst: " + aId + " not created.";
+                } else {
+                    msg = "Note: " + nId + " for analyst: " + aId + " not updated.";
+                }
+                msg += " Error: " + e.getMessage();
+                return ok(getErrorAsJson(msg));
+            } else {
+                return badRequest();
+            }
         }
     }
 
 
     /**
-     * Deletes a note from the analyst. This version is called from the note list via Ajax.
-     * @param aId     Id of the analyst
-     * @param noteId  Id of the note
-     * @return Result
+     * Calls the delNoteAjax method and checks for errors. This version is called from the note list via Ajax.
+     *
+     * @param aId      Id of the analyst.
+     * @param noteId   Id of the note.
+     * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result delNote(Long aId, Long noteId) {
+        // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
+        String result = delNoteFromAjax(aId, noteId);
+        if (request().accepts("text/html")) {
+            return ok(result);
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (result.startsWith("ERROR")) {
+                return ok(getErrorAsJson(result));
+            } else {
+                return ok(getSuccessAsJson(result));
+            }
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Deletes a note from the analyst. This version is called from the note list via Ajax (via delNote above).
+     *
+     * @param aId      Id of the analyst.
+     * @param noteId   Id of the note.
+     * @return String  Contains "OK" if successful or an error message.
+     */
+    private static String delNoteFromAjax(Long aId, Long noteId) {
         Analyst analyst = Analyst.find.byId(aId);
         Note note = Note.find.byId(noteId);
         try {
             if (analyst == null) {
-                return ok("ERROR: Analyst not found. Changes not saved.");
+                return "ERROR: Analyst not found. Changes not saved.";
             }
             if (note == null) {
-                return ok("ERROR: Note not found. Changes not saved.");
+                return "ERROR: Note not found. Changes not saved.";
             } else {
                 // Remove the note from the analyst and delete it
                 analyst.delNote(note);
                 note.delete();
-                return ok("OK"); // "OK" is used by the calling Ajax function
+                return "OK"; // "OK" is used by the calling Ajax function
             }
         }
         catch (Exception e) {
             Utils.eHandler("Analysts.delNote(" + aId + ", " + noteId + ")", e);
-            return ok("ERROR: " + e.getMessage());
+            return "ERROR: " + e.getMessage();
         }
     }
 
 
     /**
      * Deletes the analyst. This version is called from the editNote page.
-     * @param aId     Id of the analyst
-     * @param noteId  Id of the note
-     * @return Result
+     *
+     * @param aId      Id of the analyst.
+     * @param noteId   Id of the note.
+     * @return Result  The edit analyst page or JSON.
      */
     public static Result deleteNote(Long aId, Long noteId) {
         try {
-            // Find the analyst and note
+            // Check analyst exists and return if not
             Analyst analyst = Analyst.find.byId(aId);
-            Note note = Note.find.byId(noteId);
-            String title = note.title;
+            if (analyst == null) {
+                return noAnalyst(aId);
+            }
 
-            // Remove the note from the analyst, delete it and show a message
+            // Check note exists and return if not
+            Note note = Note.find.byId(noteId);
+            if (note == null) {
+                return noNote(aId, noteId);
+            }
+
+            // Remove the note from the analyst and delete it
+            String msg = "Note: " + note.title + " deleted.";
             analyst.delNote(note);
             note.delete();
-            flash(Utils.KEY_SUCCESS, "Note: " + title + " deleted.");
+
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                flash(Utils.KEY_SUCCESS, msg);
+                return redirect(controllers.routes.Analysts.edit(aId)); // Redirect to the edit analyst page
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(getSuccessAsJson(msg));
+            } else {
+                return badRequest();
+            }
         } catch (Exception e) {
-            // Log an error and show a message
+            // Log an error
             Utils.eHandler("Analysts.deleteNote(" + aId + ", " + noteId + ")", e);
-            showSaveError(e); // Method in AbstractController
-        } finally {
-            // Redirect to the edit analyst page
-            return redirect(controllers.routes.Analysts.edit(aId));
+            String msg = "Note: " + noteId + " not deleted from analyst: " + aId + ". Error: " + e.getMessage();
+            // Return data in HTML or JSON as requested
+            if (request().accepts("text/html")) {
+                showSaveError(e);
+                return redirect(controllers.routes.Analysts.edit(aId));
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(getErrorAsJson(msg));
+            } else {
+                return badRequest();
+            }
         }
     }
 

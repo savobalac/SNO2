@@ -332,8 +332,8 @@ public class Analyst extends Model {
         ObjectNode result = Json.newObject();
         ArrayNode analystNodes = result.arrayNode();
         for (Analyst analyst : analysts) {
-            ObjectNode userResult = analyst.toJson(loggedInUser);
-            analystNodes.add(userResult);
+            ObjectNode analystResult = analyst.toJson(loggedInUser);
+            analystNodes.add(analystResult);
         }
         result.put("analysts", analystNodes);
         return result;
@@ -473,6 +473,18 @@ public class Analyst extends Model {
             deskNodes.add(deskNode);
         }
         return deskNodes;
+    }
+
+
+    /**
+     * Gets the analyst's notes as JSON.
+     *
+     * @return ObjectNode  The analyst's notes as a JSON object node.
+     */
+    public ObjectNode getNotesAsJson() {
+        ObjectNode noteNodes = Json.newObject();
+        noteNodes.put("notes", getNotesAsJsonArray(noteNodes));
+        return noteNodes;
     }
 
 
