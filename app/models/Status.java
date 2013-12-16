@@ -52,6 +52,25 @@ public class Status extends Model {
 
 
     /**
+     * Returns a map of statuses dependant on the user's group(s) typically used in a select.
+     * @return Map<String,String>
+     */
+    public static Map<String,String> options(User user) {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        List<Status> statuses = Status.find.where().orderBy("sortorder").findList();
+        for(Status status : statuses) {
+            // Add all status values if the user is an admin, manager or staff user
+            // Otherwise don't include the status "Deleted" and those starting with "Removed"
+            if (user.isAdminOrManagerOrStaff() ||
+                !(status.statusName.equals("Deleted") || status.statusName.startsWith("Removed"))) {
+                options.put(status.statusId.toString(), status.statusName);
+            }
+        }
+        return options;
+    }
+
+
+    /**
      * Converts the status to JSON.
      *
      * @return ObjectNode  The status as a JSON object node.
