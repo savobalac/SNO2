@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,13 +59,19 @@ public class Status extends Model {
      * @return Map<String,String>  A map of status id and status name.
      */
     public static Map<String,String> options(User user) {
-        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        List<Status> statuses = Status.find.where().orderBy("sortorder").findList();
-        for(Status status : statuses) {
-            // Add all status values if the user is an admin, manager or staff user
-            // Otherwise don't include the status "Deleted" and those starting with "Removed"
-            if (user.isAdminOrManagerOrStaff() || !(status.isDeletedOrRemoved())) {
-                options.put(status.statusId.toString(), status.statusName);
+
+        // Get all status values
+        Map<String,String> options = options();
+
+        // If the user isn't an admin, manager or staff user,
+        // remove status value Deleted" and those starting with "Removed"
+        if (!user.isAdminOrManagerOrStaff()) {
+            for (Iterator<Map.Entry<String,String>> it = options.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<String,String> status = it.next();
+                if (status.getValue().equals("Deleted") || status.getValue().startsWith("Removed")) {
+                    it.remove();
+                    break;
+                }
             }
         }
         return options;
