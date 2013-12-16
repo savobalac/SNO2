@@ -389,26 +389,15 @@ public class Analysts extends AbstractController {
 
 
     /**
-     * Calls the uploadFile method and returns JSON if requested.
+     * Calls the uploadFile method and returns data as requested.
      *
      * @param id        Id of the analyst.
      * @param fileType  "profile" or "document".
      * @return Result   Contains "OK" if successful or an error message.
      */
     private static Result checkUpload(Long id, String fileType) {
-        // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-        String result = uploadFile(id, fileType);
-        if (request().accepts("text/html")) {
-            return ok(result);
-        } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            if (result.startsWith("ERROR")) {
-                return ok(getErrorAsJson(result));
-            } else {
-                return ok(getSuccessAsJson(result));
-            }
-        } else {
-            return badRequest();
-        }
+        // Upload the file and return data as text or JSON as requested (browser calls use Ajax and test if "OK")
+        return getResponse(uploadFile(id, fileType)); // getResponse() is in AbstractController
     }
 
 
@@ -565,8 +554,9 @@ public class Analysts extends AbstractController {
 
     /**
      * Deletes a desk from the analyst.
-     * @param id       Id of the analyst
-     * @param deskId   Id of the desk
+     *
+     * @param id       Id of the analyst.
+     * @param deskId   Id of the desk.
      * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result delDesk(Long id, Long deskId) {
@@ -575,27 +565,16 @@ public class Analysts extends AbstractController {
 
 
     /**
-     * Checks if the analyst can update a desk and calls the updateDesk method.
+     * Calls the updateDesk method and returns data as requested.
      *
-     * @param id       Id of the .
+     * @param id       Id of the analyst.
      * @param groupId  Id of the group.
      * @param action   "add" or "delete".
      * @return Result  Contains "OK" if successful or an error message.
      */
     private static Result changeDesk(Long id, Long groupId, String action) {
-        // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-        String result = updateDesk(id, groupId, action);
-        if (request().accepts("text/html")) {
-            return ok(result);
-        } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            if (result.startsWith("ERROR")) {
-                return ok(getErrorAsJson(result));
-            } else {
-                return ok(getSuccessAsJson(result));
-            }
-        } else {
-            return badRequest();
-        }
+        // Update the desk and return data as text or JSON as requested (browser calls use Ajax and test if "OK")
+        return getResponse(updateDesk(id, groupId, action));
     }
 
 
@@ -825,31 +804,20 @@ public class Analysts extends AbstractController {
 
 
     /**
-     * Calls the delNoteAjax method and checks for errors. This version is called from the note list via Ajax.
+     * Calls the delNoteAjax method and returns data as requested. This version is called from the note list via Ajax.
      *
      * @param aId      Id of the analyst.
      * @param noteId   Id of the note.
      * @return Result  Contains "OK" if successful or an error message.
      */
     public static Result delNote(Long aId, Long noteId) {
-        // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-        String result = delNoteFromAjax(aId, noteId);
-        if (request().accepts("text/html")) {
-            return ok(result);
-        } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            if (result.startsWith("ERROR")) {
-                return ok(getErrorAsJson(result));
-            } else {
-                return ok(getSuccessAsJson(result));
-            }
-        } else {
-            return badRequest();
-        }
+        // Delete the note and return data as text or JSON as requested (browser calls use Ajax and test if "OK")
+        return getResponse(delNoteFromAjax(aId, noteId));
     }
 
 
     /**
-     * Deletes a note from the analyst. This version is called from the note list via Ajax (via delNote above).
+     * Deletes a note from the analyst. This version is called from the note list via Ajax.
      *
      * @param aId      Id of the analyst.
      * @param noteId   Id of the note.

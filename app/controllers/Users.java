@@ -361,7 +361,7 @@ public class Users extends AbstractController {
 
 
     /**
-     * Checks if the user can update a group and calls the updateGroup method.
+     * Calls the updateGroup method and returns data as requested
      *
      * @param id       Id of the user.
      * @param groupId  Id of the group.
@@ -371,18 +371,7 @@ public class Users extends AbstractController {
     private static Result changeGroup(Long id, Long groupId, String action) {
         if (Secured.isAdminUser()) { // Check if an admin user
             // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-            String result = updateGroup(id, groupId, action);
-            if (request().accepts("text/html")) {
-                return ok(result);
-            } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                if (result.startsWith("ERROR")) {
-                    return ok(getErrorAsJson(result));
-                } else {
-                    return ok(getSuccessAsJson(result));
-                }
-            } else {
-                return badRequest();
-            }
+            return getResponse(updateGroup(id, groupId, action)); // getResponse() is in AbstractController
         } else {
             return accessDenied(getLoggedInUser());
         }

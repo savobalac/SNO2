@@ -44,6 +44,27 @@ public abstract class AbstractController extends Controller {
 
 
     /**
+     * Converts a string response to a result. The content is HTML or JSON as requested.
+     *
+     * @param result   The response as a string, e.g. "OK" or starting with "ERROR".
+     * @return Result  A result containing the response, either as HTML or JSON.
+     */
+    static Result getResponse(String result) {
+        if (request().accepts("text/html")) {
+            return ok(result);
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            if (result.startsWith("ERROR")) {
+                return ok(getErrorAsJson(result));
+            } else {
+                return ok(getSuccessAsJson(result));
+            }
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
      * Gets the form validation errors as JSON with a key of "error", for example, { "error": "password required" }.
      * Using the form's standard errorAsJson method returns, for example, { "password": [ "This field is required" ] }.
      *
