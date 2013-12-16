@@ -39,7 +39,8 @@ public class Status extends Model {
 
     /**
      * Returns a map of all statuses typically used in a select.
-     * @return Map<String,String>
+     *
+     * @return Map<String,String>  A map of status id and status name.
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
@@ -53,7 +54,8 @@ public class Status extends Model {
 
     /**
      * Returns a map of statuses dependant on the user's group(s) typically used in a select.
-     * @return Map<String,String>
+     *
+     * @return Map<String,String>  A map of status id and status name.
      */
     public static Map<String,String> options(User user) {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
@@ -61,12 +63,21 @@ public class Status extends Model {
         for(Status status : statuses) {
             // Add all status values if the user is an admin, manager or staff user
             // Otherwise don't include the status "Deleted" and those starting with "Removed"
-            if (user.isAdminOrManagerOrStaff() ||
-                !(status.statusName.equals("Deleted") || status.statusName.startsWith("Removed"))) {
+            if (user.isAdminOrManagerOrStaff() || !(status.isDeletedOrRemoved())) {
                 options.put(status.statusId.toString(), status.statusName);
             }
         }
         return options;
+    }
+
+
+    /**
+     * Returns whether the status name is "Deleted" or starts with "Removed".
+     *
+     * @return boolean  True if the status name is "Deleted" or starts with "Removed".
+     */
+    public boolean isDeletedOrRemoved() {
+        return statusName.equals("Deleted") || statusName.startsWith("Removed");
     }
 
 

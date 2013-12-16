@@ -195,7 +195,8 @@ public class Analysts extends AbstractController {
 
                             // If the logged-in user is not an admin user, manager or staff,
                             //     paypalAccountEmail and all address fields are invisible;
-                            //     rank, emailverified, phoneVerified, contractSigned and wikiUsername are disabled.
+                            //     rank, emailverified, phoneVerified, contractSigned and wikiUsername are disabled;
+                            //     status values "Deleted" and those starting with "Removed" are removed from the list.
                             if (!loggedInUser.isStaff()) {
                                 newAnalyst.paypalAccountEmail   = existingAnalyst.paypalAccountEmail;
                                 newAnalyst.address1             = existingAnalyst.address1;
@@ -210,6 +211,9 @@ public class Analysts extends AbstractController {
                                 newAnalyst.phoneVerified        = existingAnalyst.phoneVerified;
                                 newAnalyst.contractSigned       = existingAnalyst.contractSigned;
                                 newAnalyst.wikiUsername         = existingAnalyst.wikiUsername;
+                                if (newAnalyst.status.isDeletedOrRemoved()) {
+                                    newAnalyst.status = existingAnalyst.status;
+                                }
                             }
                         }
                     }
