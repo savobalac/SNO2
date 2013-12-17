@@ -38,7 +38,6 @@ public class User extends Model {
     @Formats.NonEmpty                         // A non-empty format will convert spaces to null and ensure validation
     public String                   username;
 
-    @Constraints.Required
     @Formats.NonEmpty
     public String                   password;
 
@@ -317,7 +316,6 @@ public class User extends Model {
         }
         userNode.put("id", id.toString());
         userNode.put("username", username);
-        userNode.put("password", password);
         userNode.put("email", email);
         userNode.put("fullname", fullname);
         if (lastlogin != null) { // Non-required fields may be null

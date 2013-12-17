@@ -177,8 +177,11 @@ public class Users extends AbstractController {
                     User newUser = userForm.get(); // Get the user data
                     String confirmPassword = userForm.field("confirmPassword").value(); // Not part of the user model
 
-                    // If a new user, check that the confirmation password has been entered (other fields have validation)
+                    // If a new user, check that the password fields have been entered (other fields have validation)
                     if (id == 0) {
+                        if (newUser.password == null || newUser.password.trim().isEmpty()) {
+                            throw new Exception("Please enter a value for the password");
+                        }
                         if (confirmPassword == null || confirmPassword.trim().isEmpty()) {
                             throw new Exception("Please enter a value for the confirmation password");
                         }

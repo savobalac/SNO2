@@ -111,7 +111,6 @@ public class S3File extends Model {
      */
     public ObjectNode toJson() {
         ObjectNode result = Json.newObject();
-        result.put("id", id.toString());
         if (name != null) { // Non-required fields may be null
             result.put("name", name);
         }
