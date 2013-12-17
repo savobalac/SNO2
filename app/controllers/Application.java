@@ -39,7 +39,14 @@ public class Application extends AbstractController {
      */
     @Security.Authenticated(Secured.class) // Will require the user to be logged in
     public static Result index() {
-        return ok(index.render("SNO2", User.find.where().eq("username", request().username()).findUnique()) );
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            return ok(index.render("SNO2", User.find.where().eq("username", request().username()).findUnique()) );
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getSuccessAsJson("Home page."));
+        } else {
+            return badRequest();
+        }
     }
 
 
@@ -81,14 +88,7 @@ public class Application extends AbstractController {
             session().clear();
             String username = loginForm.get().username;
             session("username", username);
-            // Return data in HTML or JSON as requested
-            if (request().accepts("text/html")) {
-                return redirect(controllers.routes.Application.index());
-            } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                return ok(getSuccessAsJson("You have signed in " + username + "."));
-            } else {
-                return badRequest();
-            }
+            return redirect(controllers.routes.Application.index());
         }
     }
 
