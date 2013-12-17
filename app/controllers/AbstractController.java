@@ -21,6 +21,10 @@ import java.util.*;
  */
 public abstract class AbstractController extends Controller {
 
+    // Constants
+    public static final int PAGE_TYPE_LIST = 1;
+    public static final int PAGE_TYPE_EDIT = 2;
+
 
     /**
      * Returns the logged-in user.
@@ -49,7 +53,7 @@ public abstract class AbstractController extends Controller {
      * @param result   The response as a string, e.g. "OK" or starting with "ERROR".
      * @return Result  A result containing the response, either as HTML or JSON.
      */
-    static Result getResponse(String result) {
+    static Result getAjaxResponse(String result) {
         if (request().accepts("text/html")) {
             return ok(result);
         } else if (request().accepts("application/json") || request().accepts("text/json")) {

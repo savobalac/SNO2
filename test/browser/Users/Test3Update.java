@@ -63,7 +63,7 @@ public class Test3Update extends FluentTest {
 
             // Check that we're on the list users page and that the user was updated
             assertTrue("URL not the list users page", url().contentEquals("http://localhost:9000/users"));
-            assertTrue("User not updated", pageSource().contains("User: A New User Created by Testing successfully updated."));
+            assertTrue("User not updated", pageSource().contains("User: A New User Created by Testing updated."));
 
             // Check the email field was updated
             goTo("http://localhost:9000/users/" + id);
@@ -77,7 +77,7 @@ public class Test3Update extends FluentTest {
 
             // Check that we're on the user's page and that the password was updated
             assertTrue("URL not the user's page", url().contentEquals("http://localhost:9000/users/" + id));
-            assertTrue("Password not updated", pageSource().contains("Password successfully updated."));
+            assertTrue("Password not updated", pageSource().contains("Password updated."));
 
             // Log out and sign in using the new password
             goTo("http://localhost:9000/logout");

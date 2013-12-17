@@ -67,8 +67,8 @@ public class Test4Notes extends FluentTest {
             submit("#notesForm");
 
             // Check that we're on the edit analyst page and that the note was added
-            assertTrue("URL not the edit analyst page", url().contentEquals("http://localhost:9000/analysts/" + id));
-            assertTrue("New note not created", pageSource().contains("Note: A New Subject Created by Testing has been created."));
+            assertTrue("URL not the edit analyst page (1)", url().contentEquals("http://localhost:9000/analysts/" + id));
+            assertTrue("New note not created", pageSource().contains("Note: A New Subject Created by Testing created."));
 
             // Go to the notes page directly (html in tabs isn't available in the edit analyst page)
             goTo("http://localhost:9000/analysts/" + id + "/notes");
@@ -90,8 +90,8 @@ public class Test4Notes extends FluentTest {
                 submit("#notesForm");
 
                 // Check that we're on the edit analyst page and that the note was updated
-                assertTrue("URL not the edit analyst page", url().contentEquals("http://localhost:9000/analysts/" + id));
-                assertTrue("New note not updated", pageSource().contains("Note: A New Subject Created by Testing successfully updated."));
+                assertTrue("URL not the edit analyst page (2)", url().contentEquals("http://localhost:9000/analysts/" + id));
+                assertTrue("New note not updated", pageSource().contains("Note: A New Subject Created by Testing updated."));
 
                 // Check the content field was updated
                 goTo("http://localhost:9000/analysts/" + id + "/note/" + noteId);
@@ -102,7 +102,7 @@ public class Test4Notes extends FluentTest {
                 submit("#deleteForm");
 
                 // Check that we're on the edit analyst page and that the note is no longer in the list
-                assertTrue("URL not the edit analyst page", url().contentEquals("http://localhost:9000/analysts/" + id));
+                assertTrue("URL not the edit analyst page (3)", url().contentEquals("http://localhost:9000/analysts/" + id));
                 assertTrue("Note not deleted", pageSource().contains("Note: A New Subject Created by Testing deleted."));
                 goTo("http://localhost:9000/analysts/" + id + "/notes");
                 assertTrue("Note list not empty", pageSource().contains("No notes"));

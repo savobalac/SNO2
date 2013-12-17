@@ -139,7 +139,7 @@ public class Users extends AbstractController {
     private static Result noUser(Long id) {
         // Return data in HTML or JSON as requested
         if (request().accepts("text/html")) {
-            return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+            return list(0, "fullname", "asc", "", "");
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
             return ok(getErrorAsJson("User: " + id + " does not exist."));
         } else {
@@ -280,16 +280,7 @@ public class Users extends AbstractController {
                 // Delete the user
                 user.delete();
                 String msg = "User: " + fullName + " deleted.";
-
-                // Return data in HTML or JSON as requested
-                if (request().accepts("text/html")) {
-                    flash(Utils.KEY_SUCCESS, msg);
-                    return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
-                } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                    return ok(getSuccessAsJson(msg));
-                } else {
-                    return badRequest();
-                }
+                return actionSuccessful(id, msg, PAGE_TYPE_LIST);
             } catch (Exception e) {
                 // Log an error
                 Utils.eHandler("Users.delete(" + id + ")", e);
@@ -306,6 +297,34 @@ public class Users extends AbstractController {
             }
         } else {
             return accessDenied(getLoggedInUser());
+        }
+    }
+
+
+    /**
+     * Return the list/edit page or JSON when data is successfully created/updated/deleted.
+     *
+     * @param id       The user id.
+     * @param msg      The created/updated/deleted message.
+     * @return Result  A result containing the response, either as HTML or JSON.
+     */
+    private static Result actionSuccessful(Long id, String msg, int pageType) {
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            flash(Utils.KEY_SUCCESS, msg);
+            // Go to the list or edit page
+            switch (pageType) {
+                case PAGE_TYPE_LIST: // Redirect to remove the user from the query string
+                    return redirect(controllers.routes.Users.list(0, "fullname", "asc", "", ""));
+                case PAGE_TYPE_EDIT:
+                    return redirect(controllers.routes.Users.edit(id));
+                default:
+                    return null;
+            }
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getSuccessAsJson(msg));
+        } else {
+            return badRequest();
         }
     }
 
@@ -371,7 +390,7 @@ public class Users extends AbstractController {
     private static Result changeGroup(Long id, Long groupId, String action) {
         if (Secured.isAdminUser()) { // Check if an admin user
             // Return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-            return getResponse(updateGroup(id, groupId, action)); // getResponse() is in AbstractController
+            return getAjaxResponse(updateGroup(id, groupId, action)); // getAjaxResponse() is in AbstractController
         } else {
             return accessDenied(getLoggedInUser());
         }
@@ -514,22 +533,12 @@ public class Users extends AbstractController {
                     // Update the user
                     user.saveOrUpdate();
                     String msg = "Password updated.";
-
-                    // Return data in HTML or JSON as requested
-                    if (request().accepts("text/html")) {
-                        flash(Utils.KEY_SUCCESS, msg);
-                        return redirect(controllers.routes.Users.edit(id)); // Redirect to the edit user page
-                    } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                        return ok(getSuccessAsJson(msg));
-                    } else {
-                        return badRequest();
-                    }
+                    return actionSuccessful(id, msg, PAGE_TYPE_EDIT);
                 }
             } catch (Exception e) {
                 // Log an error
                 Utils.eHandler("Users.updatePassword(" + id + ")", e);
                 String msg = "Password for user: " + id + " not updated. Error: " + e.getMessage();
-                e.printStackTrace();
 
                 // Return data in HTML or JSON as requested
                 if (request().accepts("text/html")) {

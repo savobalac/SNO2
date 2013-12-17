@@ -49,7 +49,7 @@ public class Test1Create extends FluentTest {
 
         // Check that we're on the list analysts page and that a new analyst has been created
         assertTrue("URL not equal to the list analyst page", url().contentEquals("http://localhost:9000/analysts"));
-        assertTrue("Analyst not created", pageSource().contains("Analyst: Created by Testing A New Analyst has been created."));
+        assertTrue("Analyst not created", pageSource().contains("Analyst: Created by Testing A New Analyst created."));
     }
 
 

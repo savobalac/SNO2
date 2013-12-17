@@ -52,7 +52,7 @@ public class Test1Create extends FluentTest {
 
         // Check that we're on the list users page and that a new user has been created
         assertTrue("URL not the list users page", url().contentEquals("http://localhost:9000/users"));
-        assertTrue("User not created", pageSource().contains("User: A New User Created by Testing has been created."));
+        assertTrue("User not created", pageSource().contains("User: A New User Created by Testing created."));
     }
 
 

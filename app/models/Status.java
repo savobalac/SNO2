@@ -70,7 +70,6 @@ public class Status extends Model {
                 Map.Entry<String,String> status = it.next();
                 if (status.getValue().equals("Deleted") || status.getValue().startsWith("Removed")) {
                     it.remove();
-                    break;
                 }
             }
         }

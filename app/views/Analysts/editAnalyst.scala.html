@@ -106,9 +106,19 @@
                                         '_showConstraints -> false, 'style -> "width: 100%")
                             </div>
 
+                            <!-- If the user isn't an admin user, manager or staff,                                 -->
+                            <!-- and the status is deleted or removed, disable it, but keep the full list of values -->
                             <div class="form-group">
-                                @select(analystForm("status.statusId"), options(models.Status.options(user)),
-                                        'class -> "form-control", '_label -> "Status", 'style -> "width: 100%")
+                                @if( (!user.isAdminOrManagerOrStaff()) &&
+                                     (analystForm.field("status.statusName").value().equals("Deleted") ||
+                                      analystForm.field("status.statusName").value().startsWith("Removed")) ) {
+                                    @select(analystForm("status.statusId"), options(models.Status.options()),
+                                            'class -> "form-control", '_label -> "Status", 'style -> "width: 100%",
+                                            'disabled -> "")
+                                } else {
+                                    @select(analystForm("status.statusId"), options(models.Status.options(user)),
+                                            'class -> "form-control", '_label -> "Status", 'style -> "width: 100%")
+                                }
                             </div>
 
                         </div>

@@ -62,7 +62,7 @@ public class Test3Update extends FluentTest {
 
             // Check that we're on the list analysts page and that the analyst was updated
             assertTrue("URL not list analysts", url().contentEquals("http://localhost:9000/analysts"));
-            assertTrue("Analyst not updated", pageSource().contains("Analyst: Created by Testing A New Analyst successfully updated."));
+            assertTrue("Analyst not updated", pageSource().contains("Analyst: Created by Testing A New Analyst updated."));
 
             // Check the expertise field was updated
             goTo("http://localhost:9000/analysts/" + id);

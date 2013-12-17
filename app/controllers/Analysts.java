@@ -29,7 +29,6 @@ import org.joda.time.DateTime;
 @Security.Authenticated(Secured.class) // All methods will require the user to be logged in
 public class Analysts extends AbstractController {
 
-
     /**
      * Displays a paginated list of analysts.
      *
@@ -107,7 +106,7 @@ public class Analysts extends AbstractController {
     private static Result noAnalyst(Long id) {
         // Return data in HTML or JSON as requested
         if (request().accepts("text/html")) {
-            return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+            return list(0, "lastname", "asc", "", "");
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
             return ok(getErrorAsJson("Analyst: " + id + " does not exist."));
         } else {
@@ -228,17 +227,7 @@ public class Analysts extends AbstractController {
                 } else {
                     msg = "Analyst: " + fullName + " updated.";
                 }
-
-                // Return data in HTML or JSON as requested
-                if (request().accepts("text/html")) {
-                    // Redirect to the list page and remove the analyst from the query string
-                    flash(Utils.KEY_SUCCESS, msg);
-                    return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
-                } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                    return ok(getSuccessAsJson(msg));
-                } else {
-                    return badRequest();
-                }
+                return actionSuccessful(id, msg, PAGE_TYPE_LIST);
             }
         } catch (Exception e) {
             // Log an error
@@ -266,6 +255,34 @@ public class Analysts extends AbstractController {
 
 
     /**
+     * Return the list/edit page or JSON when data is successfully created/updated/deleted.
+     *
+     * @param id       The analyst id.
+     * @param msg      The created/updated/deleted message.
+     * @return Result  A result containing the response, either as HTML or JSON.
+     */
+    private static Result actionSuccessful(Long id, String msg, int pageType) {
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+            flash(Utils.KEY_SUCCESS, msg);
+            // Go to the list or edit page
+            switch (pageType) {
+                case PAGE_TYPE_LIST: // Redirect to remove the analyst from the query string
+                    return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
+                case PAGE_TYPE_EDIT:
+                    return redirect(controllers.routes.Analysts.edit(id));
+                default:
+                    return null;
+            }
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(getSuccessAsJson(msg));
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
      * Deletes the analyst.
      *
      * @param id  Id of the analyst to delete.
@@ -286,25 +303,22 @@ public class Analysts extends AbstractController {
 
             // Delete profile image and CV (no foreign keys)
             if (analyst.profileImage != null) {
-                S3File.find.byId(analyst.profileImage.id).delete();
+                S3File profileImage = S3File.find.byId(analyst.profileImage.id);
+                if (profileImage != null) {
+                    profileImage.delete();
+                }
             }
             if (analyst.cvDocument != null) {
-                S3File.find.byId(analyst.cvDocument.id).delete();
+                S3File cvDocument = S3File.find.byId(analyst.cvDocument.id);
+                if (cvDocument != null) {
+                    cvDocument.delete();
+                }
             }
 
             // Delete the analyst
             analyst.delete();
             String msg = "Analyst: " + fullName + " deleted.";
-
-            // Return data in HTML or JSON as requested
-            if (request().accepts("text/html")) {
-                flash(Utils.KEY_SUCCESS, msg);
-                return redirect(controllers.routes.Analysts.list(0, "lastname", "asc", "", ""));
-            } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                return ok(getSuccessAsJson(msg));
-            } else {
-                return badRequest();
-            }
+            return actionSuccessful(id, msg, PAGE_TYPE_LIST);
         } catch (Exception e) {
             // Log an error
             Utils.eHandler("Analysts.delete(" + id + ")", e);
@@ -397,7 +411,7 @@ public class Analysts extends AbstractController {
      */
     private static Result checkUpload(Long id, String fileType) {
         // Upload the file and return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-        return getResponse(uploadFile(id, fileType)); // getResponse() is in AbstractController
+        return getAjaxResponse(uploadFile(id, fileType)); // getAjaxResponse() is in AbstractController
     }
 
 
@@ -505,7 +519,6 @@ public class Analysts extends AbstractController {
                 return "ERROR: Please select a file.";
             }
         } catch (Exception e) {
-            e.printStackTrace();
             Utils.eHandler("Analysts.uploadFile(" + id + ", " + fileType + ")", e);
             return "ERROR: " + String.format("%s Changes not saved.", e.getMessage());
         } finally {
@@ -574,7 +587,7 @@ public class Analysts extends AbstractController {
      */
     private static Result changeDesk(Long id, Long groupId, String action) {
         // Update the desk and return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-        return getResponse(updateDesk(id, groupId, action));
+        return getAjaxResponse(updateDesk(id, groupId, action));
     }
 
 
@@ -747,7 +760,7 @@ public class Analysts extends AbstractController {
                 // Get the current date and time
                 DateTime now = Utils.getCurrentDateTime();
 
-                // Save if a new note, otherwise update, add the note to the analyst and show a message
+                // Save if a new note and add the note to the analyst, otherwise update, and show a message
                 String msg;
                 if (nId == 0) {
                     note.analyst = analyst;
@@ -768,16 +781,7 @@ public class Analysts extends AbstractController {
                     note.update();
                     msg = "Note: " + note.title + " updated.";
                 }
-
-                // Return data in HTML or JSON as requested
-                if (request().accepts("text/html")) {
-                    flash(Utils.KEY_SUCCESS, msg);
-                    return redirect(controllers.routes.Analysts.edit(aId)); // Redirect to the edit analyst page
-                } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                    return ok(getSuccessAsJson(msg));
-                } else {
-                    return badRequest();
-                }
+                return actionSuccessful(aId, msg, PAGE_TYPE_EDIT);
             }
         } catch (Exception e) {
             // Log an error
@@ -812,7 +816,7 @@ public class Analysts extends AbstractController {
      */
     public static Result delNote(Long aId, Long noteId) {
         // Delete the note and return data as text or JSON as requested (browser calls use Ajax and test if "OK")
-        return getResponse(delNoteFromAjax(aId, noteId));
+        return getAjaxResponse(delNoteFromAjax(aId, noteId));
     }
 
 
@@ -871,16 +875,7 @@ public class Analysts extends AbstractController {
             String msg = "Note: " + note.title + " deleted.";
             analyst.delNote(note);
             note.delete();
-
-            // Return data in HTML or JSON as requested
-            if (request().accepts("text/html")) {
-                flash(Utils.KEY_SUCCESS, msg);
-                return redirect(controllers.routes.Analysts.edit(aId)); // Redirect to the edit analyst page
-            } else if (request().accepts("application/json") || request().accepts("text/json")) {
-                return ok(getSuccessAsJson(msg));
-            } else {
-                return badRequest();
-            }
+            return actionSuccessful(aId, msg, PAGE_TYPE_EDIT);
         } catch (Exception e) {
             // Log an error
             Utils.eHandler("Analysts.deleteNote(" + aId + ", " + noteId + ")", e);
@@ -888,7 +883,7 @@ public class Analysts extends AbstractController {
             // Return data in HTML or JSON as requested
             if (request().accepts("text/html")) {
                 showSaveError(e);
-                return redirect(controllers.routes.Analysts.edit(aId));
+                return edit(aId);
             } else if (request().accepts("application/json") || request().accepts("text/json")) {
                 return ok(getErrorAsJson(msg));
             } else {

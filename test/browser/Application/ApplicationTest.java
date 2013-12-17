@@ -28,8 +28,8 @@ public class ApplicationTest extends FluentTest {
         submit("#signIn");
         assertTrue("URL not equal to the home page", url().contentEquals("http://localhost:9000/")); // The home (index) page
         assertTrue("Title not equal to SNO2", title().contentEquals("SNO2"));
-        assertTrue("Not the Home page", pageSource().contains("Hom"));
-        assertTrue("User is not Savo Balac", pageSource().contains("Savo Balac"));
+        assertTrue("Not the Home page", pageSource().contains("Home"));
+        assertTrue("User is not Savo Balac", pageSource().contains("Sav Balac"));
     }
 
 
