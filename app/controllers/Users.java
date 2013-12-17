@@ -180,7 +180,7 @@ public class Users extends AbstractController {
                     // Check id supplied by the form is the same as the id parameter (only possible via JSON)
                     if (!newUser.id.equals(id)) {
                         return ok(getErrorAsJson("User id in the data (" + newUser.id + ") " +
-                                "does not match the user id in the URL (" + id + ")."));
+                                                 "does not match the user id in the URL (" + id + ")."));
                     }
 
                     // If a new user, check that the password fields have been entered (other fields have validation)
