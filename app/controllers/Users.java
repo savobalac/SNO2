@@ -202,7 +202,7 @@ public class Users extends AbstractController {
                                                      "does not match the user id in the URL (" + id + ")."));
                         }
                         // Hash the password if the password has changed
-                        if (!newUser.password.equals(existingUser.password)) {
+                        if (newUser.password != null && !newUser.password.equals(existingUser.password)) {
                             newUser.password = Utils.hashString(newUser.password);
                         }
                     }
@@ -234,6 +234,7 @@ public class Users extends AbstractController {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 // Log an error
                 Utils.eHandler("Users.update(" + id + ")", e);
 
