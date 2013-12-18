@@ -19,7 +19,7 @@ import views.html.*;
  * Time: 12:59
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 public class Application extends AbstractController {
 
@@ -43,7 +43,7 @@ public class Application extends AbstractController {
         if (request().accepts("text/html")) {
             return ok(index.render("SNO2", User.find.where().eq("username", request().username()).findUnique()) );
         } else if (request().accepts("application/json") || request().accepts("text/json")) {
-            return ok(getSuccessAsJson("Home page."));
+            return ok(getSuccessAsJson("You are signed in " + request().username()));
         } else {
             return badRequest();
         }

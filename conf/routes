@@ -40,7 +40,11 @@ POST    /users/:id/delGroup/:groupId        controllers.Users.delGroup(id:Long, 
 GET     /users/:id/password                 controllers.Users.editPassword(id:Long)
 POST    /users/:id/password                 controllers.Users.updatePassword(id:Long)
 
-# Notes
+# Miscellaneous
+GET     /ranks                              controllers.Analysts.listRanks()
+GET     /desks                              controllers.Analysts.listDesks()
+GET     /statuses                           controllers.Analysts.listStatuses()
+GET     /groups                             controllers.Users.listGroups()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

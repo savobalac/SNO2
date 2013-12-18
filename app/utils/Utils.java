@@ -14,7 +14,7 @@ import java.util.*;
  * Time: 13:23
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 public class Utils {
 
@@ -42,8 +42,8 @@ public class Utils {
     /**
      * Logs caught exceptions.
      *
-     * @param module The module the exception occurred in.
-     * @param e      The exception thrown.
+     * @param module  The module the exception occurred in.
+     * @param e       The exception thrown.
      */
     public static void eHandler(String module, Exception e) {
         String msg = "ERROR in " + module + ": " + e.getMessage() + " (" + e.getClass() + ")";
@@ -54,8 +54,8 @@ public class Utils {
     /**
      * Logs application errors.
      *
-     * @param module  The module the error occurred in.
-     * @param message The error message.
+     * @param module   The module the error occurred in.
+     * @param message  The error message.
      */
     public static void errorHandler(String module, String message) {
         String msg = "ERROR in " + module + ": " + message;
@@ -66,8 +66,8 @@ public class Utils {
     /**
      * Logs application information.
      *
-     * @param module  The module the event occurred in.
-     * @param message The information message.
+     * @param module   The module the event occurred in.
+     * @param message  The information message.
      */
     public static void logEvent(String module, String message) {
         String msg = module + ": " + message;
@@ -78,9 +78,9 @@ public class Utils {
     /**
      * Logs a message. Log level and type to be implemented.
      *
-     * @param logLevel  0 = Normal, 1 = Debug, 2 = Verbose.
-     * @param logType  -1 = Error, 0 = General.
-     * @param msg      Description of the message.
+     * @param logLevel   0 = Normal, 1 = Debug, 2 = Verbose.
+     * @param logType   -1 = Error, 0 = General.
+     * @param msg       Description of the message.
      */
     public static void addLogMsg(int logLevel, int logType, String msg) {
         System.out.println("");
@@ -133,7 +133,7 @@ public class Utils {
      * Returns a friendly "Created on <date> at <time>" string.
      *
      * @param datetime  Input Timestamp.
-     * @return String  The formatted string.
+     * @return String   The formatted string.
      */
     public static String formatCreatedTimestamp(Timestamp datetime) {
         return "Created on " + formatTimestampVerbose(datetime);
@@ -144,7 +144,7 @@ public class Utils {
      * Returns a friendly "Created on <date> at <time>" string.
      *
      * @param datetime  Input DateTime.
-     * @return String  The formatted string.
+     * @return String   The formatted string.
      */
     public static String formatCreatedTimestamp(DateTime datetime) {
         return "Created on " + formatTimestampVerbose(datetime);
@@ -155,7 +155,7 @@ public class Utils {
      * Returns a friendly "Last updated on <date> at <time>" string.
      *
      * @param datetime  Input DateTime.
-     * @return String  The formatted string.
+     * @return String   The formatted string.
      */
     public static String formatUpdatedTimestamp(DateTime datetime) {
         return "Last updated on " + formatTimestampVerbose(datetime);
@@ -166,7 +166,7 @@ public class Utils {
      * Formats a timestamp as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34.
      *
      * @param datetime  The input Timestamp.
-     * @return String  The formatted timestamp.
+     * @return String   The formatted timestamp.
      */
     public static String formatTimestampVerbose(Timestamp datetime) {
         return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime) + " at " +
@@ -178,7 +178,7 @@ public class Utils {
      * Formats a datetime as "<date> at <time>", e.g. Monday 21-Oct-2013 at 12:34.
      *
      * @param datetime  The input DateTime.
-     * @return String  The formatted datetime.
+     * @return String   The formatted datetime.
      */
     public static String formatTimestampVerbose(DateTime datetime) {
         return new SimpleDateFormat("EEEE dd-MMM-yyyy").format(datetime.toDate()) + " at " +
@@ -190,7 +190,7 @@ public class Utils {
      * Formats a timestamp as "<date> <time>", e.g. 21-Oct-2013 12:34.
      *
      * @param datetime  The input Timestamp.
-     * @return String  The timestamp as a string.
+     * @return String   The timestamp as a string.
      */
     public static String formatTimestamp(Timestamp datetime) {
         return new SimpleDateFormat(DATETIME_FORMAT).format(datetime);
@@ -201,7 +201,7 @@ public class Utils {
      * Formats a datetime as "<date> <time>", e.g. 21-Oct-2013 12:34.
      *
      * @param datetime  The input DateTime.
-     * @return String  The datetime as a string.
+     * @return String   The datetime as a string.
      */
     public static String formatTimestamp(DateTime datetime) {
         return new SimpleDateFormat(DATETIME_FORMAT).format(datetime.toDate());
@@ -219,7 +219,8 @@ public class Utils {
 
 
     /**
-     * Hashes a string using the SHA-256 hashing algorithm. This doesn't generate unique values.
+     * Hashes a string using the SHA-256 hashing algorithm.
+     * This doesn't generate unique values - there is a very small chance that 2 input strings hash to the same value.
      *
      * @param  input   Input string.
      * @return String  The hashed string.

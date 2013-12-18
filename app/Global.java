@@ -12,7 +12,6 @@ import play.GlobalSettings;
 import play.api.mvc.EssentialFilter;
 import play.filters.csrf.CSRFFilter;
 
-import play.*;
 import play.mvc.*;
 import play.mvc.Http.*;
 import play.libs.F.*;
@@ -27,7 +26,7 @@ import static play.mvc.Results.*;
  * If an unwelcome attempt is made to get or post data, the response is "Invalid token found in form body".
  *
  * Also provides a formatter that works with the JodaDateTime annotation
- * to ensure valid datetime values from JSON pass form validation.
+ *   to ensure valid datetime values from JSON pass form validation.
  *
  * Provides a custom Application Error and Page Not Found pages, and handles invalid request parameters and JSON bodies.
  *
@@ -41,7 +40,7 @@ public class Global extends GlobalSettings {
 
 
     /*
-     * Return the CSRF filter.
+     * Returns the CSRF filter.
      */
     @Override
     public <T extends EssentialFilter> Class<T>[] filters() {
@@ -50,7 +49,7 @@ public class Global extends GlobalSettings {
 
 
     /*
-     * When the application starts, register the JodaDatTime annotation formatter.
+     * When the application starts, registers the JodaDateTime annotation formatter.
      */
     @Override
     public void onStart(Application app) {
@@ -123,14 +122,14 @@ public class Global extends GlobalSettings {
      * Return a bad request message if it wasn't possible to bind the request parameters.
      */
     public Promise<SimpleResult> onBadRequest(RequestHeader request, String error) {
-        String msg = "Was not possible to bind the request parameters.";
+        String msg = "Bad request";
         if (request.accepts("text/html")) {
             return Promise.<SimpleResult>pure(notFound(
-                    views.html.pageNotFound.render(request.uri() + ". " + msg)
+                    views.html.pageNotFound.render(request.uri() + ". ")
             ));
         } else if (request.accepts("application/json") || request.accepts("text/json")) {
             return Promise.<SimpleResult>pure(badRequest(
-                    AbstractController.getErrorAsJson(msg + " Please send a valid JSON body.")
+                    AbstractController.getErrorAsJson(msg + ". Please send a valid JSON body.")
             ));
         } else {
             return Promise.<SimpleResult>pure(badRequest(msg));

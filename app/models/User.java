@@ -195,6 +195,7 @@ public class User extends Model {
 
     /**
      * Returns the number of groups a user is assigned to (groups could be null).
+     *
      * @return int  The number of groups a user is assigned to.
      */
     public int getNumGroups() {

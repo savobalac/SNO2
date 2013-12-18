@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
@@ -36,17 +37,45 @@ public class Rank extends Model {
 
 
     /**
+     * Returns a list of all ranks.
+     *
+     * @return List<Rank>  List of all ranks.
+     */
+    public static List<Rank> getAll() {
+        return Rank.find.where().orderBy("name").findList();
+    }
+
+
+    /**
      * Returns a map of all ranks typically used in a select.
      *
      * @return Map<String,String>  All ranks with key: id and value: name.
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        List<Rank> ranks = Rank.find.where().orderBy("name").findList();
+        List<Rank> ranks = getAll();
         for(Rank rank : ranks) {
             options.put(rank.id.toString(), rank.name);
         }
         return options;
+    }
+
+
+    /**
+     * Gets all ranks as JSON.
+     *
+     * @return ObjectNode  The ranks as a JSON object node.
+     */
+    public static ObjectNode getAllAsJson() {
+        List<Rank> ranks = getAll();
+        ObjectNode result = Json.newObject();
+        ArrayNode rankNodes = result.arrayNode();
+        for (Rank rank : ranks) {
+            ObjectNode rankResult = rank.toJson();
+            rankNodes.add(rankResult);
+        }
+        result.put("ranks", rankNodes);
+        return result;
     }
 
 

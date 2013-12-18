@@ -22,7 +22,7 @@ import utils.Utils;
  * Time: 12:59
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 @Entity
 @Table(name="analyst")
@@ -113,13 +113,13 @@ public class Analyst extends Model {
     /**
      * Returns a page of analysts.
      *
-     * @param page          Page to display
-     * @param pageSize      Number of analysts per page
-     * @param sortBy        Analyst property used for sorting
-     * @param order         Sort order (either or asc or desc)
-     * @param filter        Filter applied on primary desk
-     * @param search        Search applied on lastname
-     * @return Page<Analyst>
+     * @param page          Page to display.
+     * @param pageSize      Number of analysts per page.
+     * @param sortBy        Analyst property used for sorting.
+     * @param order         Sort order (either or asc or desc).
+     * @param filter        Filter applied on primary desk.
+     * @param search        Search applied on lastname.
+     * @return Page<Analyst>  A page of analysts.
      */
     public static Page<Analyst> page(int page, int pageSize, String sortBy, String order, String filter, String search) {
 
@@ -151,7 +151,8 @@ public class Analyst extends Model {
 
     /**
      * Saves or updates the analyst.
-     * @throws Exception If there was a problem updating the DB
+     *
+     * @throws Exception  If there was a problem updating the DB.
      */
     public void saveOrUpdate() throws Exception {
         // The analyst id should be 0 for a new record
@@ -165,7 +166,8 @@ public class Analyst extends Model {
 
     /**
      * Returns the full name of the analyst.
-     * @return      String
+     *
+     * @return  String  Firstname and lastname.
      */
     public String getFullName() {
         return firstname + " " + lastname; // Both fields are not null in the DB and are required in the form
@@ -174,7 +176,8 @@ public class Analyst extends Model {
 
     /**
      * Returns the number of desks an analyst is assigned to (desks could be null).
-     * @return      int
+     *
+     * @return  int  The number of desks.
      */
     public int getNumDesks() {
         if (desks != null) {
@@ -188,8 +191,8 @@ public class Analyst extends Model {
     /**
      * Assigns a desk to the analyst.
      *
-     * @param desk  The desk to be added
-     * @throws      Exception    If there was a problem updating the DB
+     * @param desk  The desk to be added.
+     * @throws      Exception  If there was a problem updating the DB.
      */
     public void addDesk(Desk desk) throws Exception {
         try {
@@ -210,8 +213,8 @@ public class Analyst extends Model {
     /**
      * Deletes a desk from the analyst.
      *
-     * @param desk  The desk to be deleted
-     * @throws      Exception    If there was a problem updating the DB
+     * @param desk  The desk to be deleted.
+     * @throws      Exception  If there was a problem updating the DB.
      */
     public void delDesk(Desk desk) throws Exception {
         try {
@@ -233,7 +236,8 @@ public class Analyst extends Model {
 
     /**
      * Deletes all desks from the analyst.
-     * @throws Exception    If there was a problem updating the DB
+     *
+     * @throws Exception  If there was a problem updating the DB.
      */
     public void delAllDesks() throws Exception {
         try {
@@ -251,7 +255,8 @@ public class Analyst extends Model {
 
     /**
      * Returns the number of notes that have been recorded against the analyst (noteList could be null).
-     * @return      int
+     *
+     * @return  int  The number of notes.
      */
     public int getNumNotes() {
         if (noteList != null) {
@@ -265,8 +270,8 @@ public class Analyst extends Model {
     /**
      * Adds a note to the analyst.
      *
-     * @param note  The note to be added
-     * @throws      Exception    If there was a problem updating the DB
+     * @param note  The note to be added.
+     * @throws      Exception  If there was a problem updating the DB.
      */
     public void addNote(Note note) throws Exception {
         try {
@@ -284,8 +289,8 @@ public class Analyst extends Model {
     /**
      * Deletes a note from the analyst.
      *
-     * @param note  The note to be deleted
-     * @throws      Exception    If there was a problem updating the DB
+     * @param note  The note to be deleted.
+     * @throws      Exception  If there was a problem updating the DB.
      */
     public void delNote(Note note) throws Exception {
         try {
@@ -307,7 +312,7 @@ public class Analyst extends Model {
     /**
      * Deletes all notes from the analyst.
      *
-     * @throws Exception    If there was a problem updating the DB
+     * @throws Exception  If there was a problem updating the DB.
      */
     public void delAllNotes() throws Exception {
         try {
@@ -328,7 +333,7 @@ public class Analyst extends Model {
      * @return ObjectNode  The analysts as a JSON object node.
      */
     public static ObjectNode getAllAsJson(User loggedInUser) {
-        List<Analyst> analysts = Analyst.find.all();
+        List<Analyst> analysts = Analyst.find.where().orderBy("lastname").findList();
         ObjectNode result = Json.newObject();
         ArrayNode analystNodes = result.arrayNode();
         for (Analyst analyst : analysts) {
@@ -344,6 +349,7 @@ public class Analyst extends Model {
      * Converts the analyst and its desks to JSON. Analyst-desk is a many-many relationship.
      * Using Play's static toJson method results in a StackOverflow error (infinite recursion).
      *
+     * @param  loggedInUser  The logged-in user.
      * @return ObjectNode  The analyst as a JSON object node.
      */
     public ObjectNode toJson(User loggedInUser) {
@@ -463,7 +469,7 @@ public class Analyst extends Model {
     /**
      * Gets the analyst's desks as a JSON array node.
      *
-     * @param  analystNode  The analyst as a JSON ObjectNode
+     * @param  analystNode  The analyst as a JSON ObjectNode.
      * @return ArrayNode  The analyst's desks as a JSON array node.
      */
     private ArrayNode getDesksAsJsonArray(ObjectNode analystNode) {
@@ -491,7 +497,7 @@ public class Analyst extends Model {
     /**
      * Gets the analyst's notes as a JSON array node.
      *
-     * @param  analystNode  The analyst as a JSON ObjectNode
+     * @param  analystNode  The analyst as a JSON ObjectNode.
      * @return ArrayNode  The analyst's notes as a JSON array node.
      */
     private ArrayNode getNotesAsJsonArray(ObjectNode analystNode) {

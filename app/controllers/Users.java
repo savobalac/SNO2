@@ -335,6 +335,27 @@ public class Users extends AbstractController {
 
 
     /**
+     * Returns all groups. Only used for JSON requests.
+     *
+     * @return Result  All groups as JSON.
+     */
+    public static Result listGroups() {
+        if (Secured.isAdminUser()) { // Check if an admin user
+            // If HTML requested, go to the home page
+            if (request().accepts("text/html")) {
+                return redirect(controllers.routes.Application.index());
+            } else if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(Group.getAllAsJson());
+            } else {
+                return badRequest();
+            }
+        } else {
+            return accessDenied(getLoggedInUser());
+        }
+    }
+
+
+    /**
      * Displays a (usually embedded) form to display the groups a user is assigned to.
      *
      * @param id  Id of the user.

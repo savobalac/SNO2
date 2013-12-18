@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
@@ -19,7 +20,7 @@ import play.libs.Json;
  * Time: 14:42
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 @Entity
 public class Desk extends Model {
@@ -61,11 +62,29 @@ public class Desk extends Model {
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        List<Desk> desks = Desk.find.where().orderBy("name").findList();
+        List<Desk> desks = getAll();
         for(Desk desk : desks) {
             options.put(desk.deskId.toString(), desk.name);
         }
         return options;
+    }
+
+
+    /**
+     * Gets all desks as JSON.
+     *
+     * @return ObjectNode  The desks as a JSON object node.
+     */
+    public static ObjectNode getAllAsJson() {
+        List<Desk> desks = getAll();
+        ObjectNode result = Json.newObject();
+        ArrayNode deskNodes = result.arrayNode();
+        for (Desk desk : desks) {
+            ObjectNode deskResult = desk.toJson();
+            deskNodes.add(deskResult);
+        }
+        result.put("desks", deskNodes);
+        return result;
     }
 
 
@@ -78,9 +97,6 @@ public class Desk extends Model {
         ObjectNode result = Json.newObject();
         result.put("deskId", deskId.toString());
         result.put("name", name);
-        if (coordinator != null) { // Non-required fields may be null
-            result.put("coordinator", coordinator.toString());
-        }
         return result;
     }
 

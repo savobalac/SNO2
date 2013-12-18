@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.libs.Json;
 import play.data.validation.Constraints;
@@ -19,7 +20,7 @@ import java.util.Map;
  * Time: 12:52
  *
  * @author      Sav Balac
- * @version     1.0
+ * @version     1.1
  */
 @Entity
 @Table(name="groups") // Can't have a database table called "group"
@@ -60,11 +61,29 @@ public class Group extends Model {
      */
     public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        List<Group> groups = Group.find.where().orderBy("name").findList();
+        List<Group> groups = getAll();
         for(Group group : groups) {
             options.put(group.id.toString(), group.name);
         }
         return options;
+    }
+
+
+    /**
+     * Gets all groups as JSON.
+     *
+     * @return ObjectNode  The groups as a JSON object node.
+     */
+    public static ObjectNode getAllAsJson() {
+        List<Group> groups = getAll();
+        ObjectNode result = Json.newObject();
+        ArrayNode groupNodes = result.arrayNode();
+        for (Group group : groups) {
+            ObjectNode groupResult = group.toJson();
+            groupNodes.add(groupResult);
+        }
+        result.put("groups", groupNodes);
+        return result;
     }
 
 

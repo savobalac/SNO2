@@ -16,15 +16,16 @@ import java.security.NoSuchAlgorithmException;
  * Time: 11:37
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.2
  */
 public class Secured extends Security.Authenticator {
 
 
     /**
      * Gets the username.
-     * @param ctx The context object
-     * @return String The username
+     *
+     * @param ctx  The context object.
+     * @return String  The username.
      */
     @Override
     public String getUsername(Context ctx) {
@@ -60,8 +61,9 @@ public class Secured extends Security.Authenticator {
 
     /**
      * Goes to the login page if unauthorised.
-     * @param ctx The context object
-     * @return Result The login page
+     *
+     * @param ctx  The context object.
+     * @return Result  The login page.
      */
     @Override
     public Result onUnauthorized(Context ctx) {
@@ -71,7 +73,8 @@ public class Secured extends Security.Authenticator {
 
     /**
      * Checks if the logged-in user has admin rights.
-     * @return boolean If the user is an admin user
+     *
+     * @return boolean  If the user is an admin user.
      */
     public static boolean isAdminUser() {
         return User.isAdminUser(Context.current().request().username());

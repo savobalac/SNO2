@@ -17,7 +17,7 @@ import java.util.*;
  * Time:        12:56
  *
  * @author      Sav Balac
- * @version     1.0
+ * @version     1.1
  */
 public abstract class AbstractController extends Controller {
 
@@ -70,7 +70,7 @@ public abstract class AbstractController extends Controller {
 
     /**
      * Gets the form validation errors as JSON with a key of "error", for example, { "error": "password required" }.
-     * Using the form's standard errorAsJson method returns, for example, { "password": [ "This field is required" ] }.
+     * Using the form's standard errorAsJson method sets the key to the field in error.
      *
      * @param  form  The form.
      * @return ObjectNode  The errors as a JSON object node with a key of "error".

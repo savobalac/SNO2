@@ -10,7 +10,6 @@ import play.libs.Json;
 import utils.Utils;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Model class that maps to DB table note.
@@ -19,7 +18,7 @@ import java.sql.Timestamp;
  * Time: 11:57
  *
  * @author      Sav Balac
- * @version     1.0
+ * @version     1.1
  */
 @Entity
 public class Note extends Model {

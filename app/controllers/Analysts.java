@@ -4,6 +4,7 @@ import com.avaje.ebean.Page;
 import models.Analyst;
 import models.Desk;
 import models.Note;
+import models.Rank;
 import models.User;
 import models.S3File;
 import play.data.Form;
@@ -889,6 +890,57 @@ public class Analysts extends AbstractController {
             } else {
                 return badRequest();
             }
+        }
+    }
+
+
+    /**
+     * Returns all ranks. Only used for JSON requests.
+     *
+     * @return Result  All ranks as JSON.
+     */
+    public static Result listRanks() {
+        // If HTML requested, go to the home page
+        if (request().accepts("text/html")) {
+            return redirect(controllers.routes.Application.index());
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(Rank.getAllAsJson());
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Returns all desks. Only used for JSON requests.
+     *
+     * @return Result  All desks as JSON.
+     */
+    public static Result listDesks() {
+        // If HTML requested, go to the home page
+        if (request().accepts("text/html")) {
+            return redirect(controllers.routes.Application.index());
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(Desk.getAllAsJson());
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Returns all statuses. Only used for JSON requests.
+     *
+     * @return Result  All statuses as JSON.
+     */
+    public static Result listStatuses() {
+        // If HTML requested, go to the home page
+        if (request().accepts("text/html")) {
+            return redirect(controllers.routes.Application.index());
+        } else if (request().accepts("application/json") || request().accepts("text/json")) {
+            return ok(models.Status.getAllAsJson(getLoggedInUser()));
+        } else {
+            return badRequest();
         }
     }
 
