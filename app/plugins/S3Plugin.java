@@ -57,7 +57,6 @@ public class S3Plugin extends Plugin {
             } catch (Exception ex) {
                 // Log an error
                 Logger.error("Could not connect to Amazon S3", ex);
-                ex.printStackTrace();
             }
         }
     }
