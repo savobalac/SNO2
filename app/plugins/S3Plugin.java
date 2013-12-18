@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import play.Application;
 import play.Logger;
 import play.Plugin;
+import utils.Utils;
 
 /**
  * AWS S3 plugin for Play! 2. Contains methods to connect to Amazon S3 for file uploads.
@@ -47,12 +48,17 @@ public class S3Plugin extends Plugin {
         String accessKey = application.configuration().getString(AWS_ACCESS_KEY);
         String secretKey = application.configuration().getString(AWS_SECRET_KEY);
         s3Bucket = application.configuration().getString(AWS_S3_BUCKET);
-
         if ((accessKey != null) && (secretKey != null)) {
-            AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-            amazonS3 = new AmazonS3Client(awsCredentials);
-            amazonS3.createBucket(s3Bucket);
-            Logger.info("Using S3 Bucket: " + s3Bucket);
+            try {
+                AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+                amazonS3 = new AmazonS3Client(awsCredentials);
+                amazonS3.createBucket(s3Bucket);
+                Logger.info("Using S3 Bucket: " + s3Bucket);
+            } catch (Exception ex) {
+                // Log an error
+                Logger.error("Could not connect to Amazon S3", ex);
+                ex.printStackTrace();
+            }
         }
     }
 
