@@ -211,7 +211,10 @@ public class Analysts extends AbstractController {
                                 newAnalyst.phoneVerified        = existingAnalyst.phoneVerified;
                                 newAnalyst.contractSigned       = existingAnalyst.contractSigned;
                                 newAnalyst.wikiUsername         = existingAnalyst.wikiUsername;
-                                if (existingAnalyst.status.isDeletedOrRemoved()) { // Can't change existing status
+                                // Don't change the status if the supplied status is deleted or removed
+                                // Don't allow an existing status of deleted or removed to be changed
+                                if (newAnalyst.status.isDeletedOrRemoved() ||
+                                    existingAnalyst.status.isDeletedOrRemoved()) {
                                     newAnalyst.status = existingAnalyst.status;
                                 }
                             }
