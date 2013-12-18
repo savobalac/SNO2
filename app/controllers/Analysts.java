@@ -156,12 +156,6 @@ public class Analysts extends AbstractController {
                                                  "does not match the analyst id in the URL (" + id + ")."));
                     }
 
-                    // Check if the status has changed and, if so, do some processing (yet to be defined)
-                    if (!newAnalyst.status.equals(existingAnalyst.status)) {
-                        System.out.println("***** Status id changed from: " + existingAnalyst.status.statusId +
-                                                                    " to: " + newAnalyst.status.statusId);
-                    }
-
                     // If updating from HTML, disabled checkboxes have an associated disabled field with the original value
                     // Checkboxes, if unchecked or disabled, return null
                     if (request().accepts("text/html")) {
@@ -186,7 +180,6 @@ public class Analysts extends AbstractController {
 
                     // Updating from JSON. The following fields are invisible or disabled, so ignore the form values
                     } else {
-
                         // If the logged-in user is not an admin user or manager,
                         //     phone and emailAlternate are invisible.
                         if (!loggedInUser.isAdminOrManager()) {
@@ -220,7 +213,15 @@ public class Analysts extends AbstractController {
                             }
                         }
                     }
+
+                    // Check if the status has changed and, if so, do some processing (yet to be defined)
+                    if (!newAnalyst.status.equals(existingAnalyst.status)) {
+                        System.out.println("***** Status id changed from: " + existingAnalyst.status.statusId +
+                                                                    " to: " + newAnalyst.status.statusId);
+                    }
+
                 }
+
 
                 // Save if a new analyst, otherwise update, and show a message
                 newAnalyst.saveOrUpdate();
