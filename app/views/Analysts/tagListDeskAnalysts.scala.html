@@ -24,7 +24,7 @@
         </div>
     } else {
         <div class="row show-grid">
-            <div class="col-4">
+            <div class="col-lg-5">
                 <table class="table table-striped table-bordered table-condensed">
                     @for(desk <- analyst.desks) {
                         <tr>
@@ -45,7 +45,7 @@
     <!-- Allow a desk to be added (addDesk() is in editAnalyst) -->
     <div class="form-group">
         <label for="divAddDesk">Add Desk</label>
-        <div id="divAddDesk" class="col-4">
+        <div id="divAddDesk">
             <input type="Hidden" id="id" name="id" value="@analyst.analystId" />
             <div class="col-sm-4">
                 <select id="newDesk" name="newDesk" class="form-control">

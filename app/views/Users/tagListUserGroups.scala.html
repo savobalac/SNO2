@@ -24,7 +24,7 @@
         </div>
     } else {
         <div class="row show-grid">
-            <div class="col-4">
+            <div class="col-lg-5">
                 <table class="table table-striped table-bordered table-condensed">
                     @for(group <- user.groups) {
                         <tr>
@@ -45,7 +45,7 @@
     <!-- Allow a group to be added (addGroup() is in editUser) -->
     <div class="form-group">
         <label for="divAddGroup">Add Group</label>
-        <div id="divAddGroup" class="col-4"">
+        <div id="divAddGroup">
             <input type="Hidden" id="userId" name="userId" value="@user.id" />
             <div class="col-sm-2">
                 <select id="newGroup" name="newGroup" class="form-control">
